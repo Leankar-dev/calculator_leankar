@@ -1,16 +1,62 @@
-# calculator_05122025
+# Calculadora Neumórfica
 
-A new Flutter project.
+Uma calculadora Flutter com design neumórfico moderno.
 
-## Getting Started
+## Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Operações aritméticas básicas: adição, subtração, multiplicação e divisão
+- Cálculo de porcentagem
+- Suporte a entrada via teclado físico
+- Design neumórfico com suporte a tema claro/escuro
+- Separador decimal com vírgula (padrão brasileiro)
 
-A few resources to get you started if this is your first Flutter project:
+## Atalhos de Teclado
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+| Tecla | Ação |
+|-------|------|
+| `0-9` | Inserir números |
+| `+`, `-`, `*`, `/` | Operações |
+| `,` ou `.` | Separador decimal |
+| `Enter` ou `=` | Calcular resultado |
+| `Backspace` | Apagar último dígito |
+| `Escape` ou `Delete` | Limpar tudo |
+| `%` | Calcular porcentagem |
+| `C` | Limpar display |
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Como Executar
+
+```bash
+# Instalar dependências
+flutter pub get
+
+# Executar o app
+flutter run
+```
+
+## Tecnologias
+
+- Flutter SDK ^3.10.1
+- [flutter_neumorphic_plus](https://pub.dev/packages/flutter_neumorphic_plus) - Design neumórfico
+
+## Estrutura do Projeto
+
+```
+lib/
+├── main.dart                    # Ponto de entrada do app
+├── controllers/
+│   └── calculator_controller.dart   # Lógica de cálculo
+├── pages/
+│   └── calculator_page.dart     # Tela principal
+├── widgets/
+│   ├── button_widget.dart       # Botão neumórfico
+│   ├── calculator_display_widget.dart   # Display da calculadora
+│   └── calculator_keypad_widget.dart    # Teclado numérico
+└── utils/
+    └── enums/
+        └── operations_type.dart # Tipos de operações
+```
+
+## Autor
+
+- Email: leankar.dev@gmail.com
+- Website: https://leankar.dev
