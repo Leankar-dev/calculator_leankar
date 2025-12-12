@@ -114,69 +114,77 @@ class _CalculatorPageState extends State<CalculatorPage> {
         ),
         centerTitle: true,
       ),
-      body: KeyboardListener(
-        focusNode: _focusNode,
-        autofocus: true,
-        onKeyEvent: _handleKeyEvent,
-        child: Column(
-          children: [
-            CalculatorDisplayWidget(
-              displayText: _controller.displayText,
-              expressionDisplay: _controller.expressionDisplay,
-            ),
-            const SizedBox(height: 10),
-            CalculatorKeypadWidget(
-              onClear: _controller.clearDisplay,
-              onBackspace: _controller.backspace,
-              onPercentage: _controller.calculatePercentage,
-              onDecimal: _controller.appendDecimal,
-              onCalculate: _controller.calculateResult,
-              onNumberPressed: _controller.appendNumber,
-              onOperationPressed: _controller.setOperationType,
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Neumorphic(
-                      style: NeumorphicStyle(
-                        shape: NeumorphicShape.flat,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(16),
+      body: SafeArea(
+        child: KeyboardListener(
+          focusNode: _focusNode,
+          autofocus: true,
+          onKeyEvent: _handleKeyEvent,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CalculatorDisplayWidget(
+                    displayText: _controller.displayText,
+                    expressionDisplay: _controller.expressionDisplay,
+                  ),
+                  const SizedBox(height: 8),
+                  CalculatorKeypadWidget(
+                    onClear: _controller.clearDisplay,
+                    onBackspace: _controller.backspace,
+                    onPercentage: _controller.calculatePercentage,
+                    onDecimal: _controller.appendDecimal,
+                    onCalculate: _controller.calculateResult,
+                    onNumberPressed: _controller.appendNumber,
+                    onOperationPressed: _controller.setOperationType,
+                  ),
+                  const SizedBox(height: 8),
+                  // Footer com logo e informações de contato
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Neumorphic(
+                          style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                              BorderRadius.circular(12),
+                            ),
+                            depth: 3,
+                            intensity: 0.5,
+                            color: NeumorphicTheme.baseColor(context),
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            height: 50,
+                          ),
                         ),
-                        depth: 4,
-                        intensity: 0.5,
-                        color: NeumorphicTheme.baseColor(context),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        height: 60,
-                      ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '📧 leankar.dev@gmail.com',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '🌐 https://leankar.dev',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '📧 leankar.dev@gmail.com',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '🌐 https://leankar.dev',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
