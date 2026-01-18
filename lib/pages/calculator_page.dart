@@ -106,7 +106,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
         title: const Text(
-          'Calculadora',
+          'LAS Calculator',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -155,21 +155,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             intensity: 0.5,
                             color: NeumorphicTheme.baseColor(context),
                           ),
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(12),
                           child: Image.asset(
                             'assets/images/logo.png',
                             height: 50,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '📧 leankar.dev@gmail.com',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 12),
+                        // Text(
+                        //   '📧 leankar.dev@gmail.com',
+                        //   style: TextStyle(
+                        //     fontSize: 11,
+                        //     color: Colors.grey[600],
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 2),
                         Text(
                           '🌐 https://leankar.dev',
                           style: TextStyle(
