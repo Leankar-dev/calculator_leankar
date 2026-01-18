@@ -30,7 +30,7 @@ class ButtonWidget extends StatelessWidget {
             depth: 8,
             intensity: 0.65,
             surfaceIntensity: 0.25,
-            color: hasCustomColor ? color!.withOpacity(0.15) : baseColor,
+            color: hasCustomColor ? color!.withValues(alpha: 0.15) : baseColor,
             lightSource: LightSource.topLeft,
           ),
           padding: const EdgeInsets.all(16),

@@ -21,7 +21,7 @@ class CalculatorDisplayWidget extends StatelessWidget {
           depth: -8,
           intensity: 0.8,
           lightSource: LightSource.topLeft,
-          color: const Color(0xFF64B5F6).withOpacity(0.15),
+          color: const Color(0xFF64B5F6).withValues(alpha: 0.15),
         ),
         child: Container(
           height: 160,

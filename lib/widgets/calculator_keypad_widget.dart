@@ -1,5 +1,7 @@
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
-import 'package:calculator_05122025/widgets/button_widget.dart';
+import 'package:calculator_05122025/widgets/first_row_widget.dart';
+import 'package:calculator_05122025/widgets/last_row_widget.dart';
+import 'package:calculator_05122025/widgets/number_row_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class CalculatorKeypadWidget extends StatelessWidget {
@@ -27,87 +29,37 @@ class CalculatorKeypadWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFirstRow(),
-        _buildNumberRow(['7', '8', '9'], OperationsType.division, '\u{00F7}'),
-        _buildNumberRow(
-          ['4', '5', '6'],
-          OperationsType.multiplication,
-          '\u{00D7}',
+        FirstRowWidget(
+          onClear: onClear,
+          onBackspace: onBackspace,
+          onPercentage: onPercentage,
         ),
-        _buildNumberRow(
-          ['1', '2', '3'],
-          OperationsType.subtraction,
-          '\u{002D}',
+        NumberRowWidget(
+          numbers: const ['7', '8', '9'],
+          operation: OperationsType.division,
+          operationSymbol: '\u{00F7}',
+          onNumberPressed: onNumberPressed,
+          onOperationPressed: onOperationPressed,
         ),
-        _buildLastRow(),
-      ],
-    );
-  }
-
-  Widget _buildFirstRow() {
-    return Row(
-      children: [
-        ButtonWidget(
-          text: 'C',
-          onPressed: onClear,
-          color: const Color(0xFFE57373),
+        NumberRowWidget(
+          numbers: const ['4', '5', '6'],
+          operation: OperationsType.multiplication,
+          operationSymbol: '\u{00D7}',
+          onNumberPressed: onNumberPressed,
+          onOperationPressed: onOperationPressed,
         ),
-        ButtonWidget(
-          text: '\u{232B}',
-          onPressed: onBackspace,
-          color: const Color(0xFFFFB74D),
+        NumberRowWidget(
+          numbers: const ['1', '2', '3'],
+          operation: OperationsType.subtraction,
+          operationSymbol: '\u{002D}',
+          onNumberPressed: onNumberPressed,
+          onOperationPressed: onOperationPressed,
         ),
-        ButtonWidget(
-          text: '\u{0025}',
-          onPressed: onPercentage,
-          color: const Color(0xFF64B5F6),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNumberRow(
-    List<String> numbers,
-    OperationsType operation,
-    String operationSymbol,
-  ) {
-    return Row(
-      children: [
-        ...numbers.map(
-          (number) => ButtonWidget(
-            text: number,
-            onPressed: () => onNumberPressed(number),
-          ),
-        ),
-        ButtonWidget(
-          text: operationSymbol,
-          onPressed: () => onOperationPressed(operation),
-          color: const Color(0xFF64B5F6),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLastRow() {
-    return Row(
-      children: [
-        ButtonWidget(
-          text: '0',
-          onPressed: () => onNumberPressed('0'),
-        ),
-        ButtonWidget(
-          text: ',',
-          onPressed: onDecimal,
-        ),
-        ButtonWidget(
-          text: '=',
-          onPressed: onCalculate,
-          color: const Color(0xFF81C784),
-        ),
-        ButtonWidget(
-          text: '\u{002B}',
-          onPressed: () => onOperationPressed(OperationsType.addition),
-          color: const Color(0xFF64B5F6),
+        LastRowWidget(
+          onNumberPressed: onNumberPressed,
+          onDecimal: onDecimal,
+          onCalculate: onCalculate,
+          onOperationPressed: onOperationPressed,
         ),
       ],
     );

@@ -140,7 +140,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     onOperationPressed: _controller.setOperationType,
                   ),
                   const SizedBox(height: 8),
-                  // Footer com logo e informações de contato
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Column(
