@@ -274,15 +274,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
             padding: const EdgeInsets.all(12),
             child: Image.asset(
               'assets/images/logo2.png',
-              height: 50,
+              height: 45,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             'https://leankar.dev',
             style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
+              fontSize: 13,
+              color: Colors.blue,
             ),
           ),
         ],
