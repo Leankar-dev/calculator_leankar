@@ -1,3 +1,5 @@
+import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ButtonWidget extends StatelessWidget {
@@ -18,29 +20,36 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseColor = NeumorphicTheme.baseColor(context);
     final bool hasCustomColor = color != null;
+    final buttonFontSize = ResponsiveUtils.getButtonFontSize(context);
+    final buttonPadding = ResponsiveUtils.getButtonPadding(context);
+    final buttonSpacing = ResponsiveUtils.getButtonSpacing(context);
 
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: EdgeInsets.all(buttonSpacing),
         child: NeumorphicButton(
           onPressed: onPressed,
           style: NeumorphicStyle(
             shape: NeumorphicShape.concave,
-            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
-            depth: 8,
-            intensity: 0.65,
-            surfaceIntensity: 0.25,
-            color: hasCustomColor ? color!.withValues(alpha: 0.15) : baseColor,
+            boxShape: NeumorphicBoxShape.roundRect(
+              BorderRadius.circular(AppConstants.buttonBorderRadius),
+            ),
+            depth: AppConstants.buttonDepth,
+            intensity: AppConstants.buttonIntensity,
+            surfaceIntensity: AppConstants.buttonSurfaceIntensity,
+            color: hasCustomColor
+                ? color!.withValues(alpha: AppConstants.colorAlpha)
+                : baseColor,
             lightSource: LightSource.topLeft,
           ),
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(buttonPadding),
           child: Center(
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: buttonFontSize,
                 fontWeight: FontWeight.bold,
-                color: hasCustomColor ? color : Colors.black87,
+                color: hasCustomColor ? color : AppConstants.primaryTextColor,
               ),
             ),
           ),

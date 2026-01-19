@@ -110,7 +110,8 @@ void main() {
       );
 
       final textWidget = tester.widget<Text>(find.text('42'));
-      expect(textWidget.style?.fontSize, 48);
+      expect(textWidget.style?.fontSize, isNotNull);
+      expect(textWidget.style?.fontSize, greaterThanOrEqualTo(32));
       expect(textWidget.style?.fontWeight, FontWeight.bold);
     });
   });

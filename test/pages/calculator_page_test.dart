@@ -32,10 +32,10 @@ void main() {
       expect(find.byType(CalculatorKeypadWidget), findsOneWidget);
     });
 
-    testWidgets('deve exibir título "Calculadora"', (tester) async {
+    testWidgets('deve exibir título "Calculator"', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text('Calculadora'), findsOneWidget);
+      expect(find.text('Calculator'), findsOneWidget);
     });
 
     testWidgets('deve exibir "0" inicialmente no display', (tester) async {

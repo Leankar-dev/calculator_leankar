@@ -1,14 +1,29 @@
+import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/services/storage_service.dart';
+import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorController extends ChangeNotifier {
-  String _displayText = '0';
+  final StorageService _storageService;
+
+  String _displayText = AppConstants.initialDisplayValue;
   String _firstOperand = '';
   String _secondOperand = '';
   OperationsType? _currentOperation;
   bool _shouldResetDisplay = false;
+  List<CalculationHistory> _history = [];
+
+  CalculatorController({StorageService? storageService})
+      : _storageService = storageService ?? StorageService();
 
   String get displayText => _displayText;
+  List<CalculationHistory> get history => List.unmodifiable(_history);
+
+  Future<void> loadHistory() async {
+    _history = await _storageService.loadHistory();
+    notifyListeners();
+  }
 
   String get expressionDisplay {
     if (_firstOperand.isEmpty || _currentOperation == null) {
@@ -30,7 +45,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void clearDisplay() {
-    _displayText = '0';
+    _displayText = AppConstants.initialDisplayValue;
     _firstOperand = '';
     _secondOperand = '';
     _currentOperation = null;
@@ -42,16 +57,17 @@ class CalculatorController extends ChangeNotifier {
     if (_displayText.length > 1) {
       _displayText = _displayText.substring(0, _displayText.length - 1);
     } else {
-      _displayText = '0';
+      _displayText = AppConstants.initialDisplayValue;
     }
     notifyListeners();
   }
 
   void calculatePercentage() {
-    double value = double.tryParse(_displayText.replaceAll(',', '.')) ?? 0;
+    double value =
+        double.tryParse(_displayText.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
     if (_firstOperand.isNotEmpty && _currentOperation != null) {
       double firstValue =
-          double.tryParse(_firstOperand.replaceAll(',', '.')) ?? 0;
+          double.tryParse(_firstOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
       value = (firstValue * value) / 100;
     } else {
       value = value / 100;
@@ -64,7 +80,8 @@ class CalculatorController extends ChangeNotifier {
     if (_shouldResetDisplay) {
       _displayText = digit;
       _shouldResetDisplay = false;
-    } else if (_displayText == '0' && digit != ',') {
+    } else if (_displayText == AppConstants.initialDisplayValue &&
+        digit != AppConstants.decimalSeparator) {
       _displayText = digit;
     } else {
       _displayText += digit;
@@ -74,10 +91,10 @@ class CalculatorController extends ChangeNotifier {
 
   void appendDecimal() {
     if (_shouldResetDisplay) {
-      _displayText = '0,';
+      _displayText = '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
       _shouldResetDisplay = false;
-    } else if (!_displayText.contains(',')) {
-      _displayText += ',';
+    } else if (!_displayText.contains(AppConstants.decimalSeparator)) {
+      _displayText += AppConstants.decimalSeparator;
     }
     notifyListeners();
   }
@@ -86,8 +103,10 @@ class CalculatorController extends ChangeNotifier {
     if (_currentOperation == null || _firstOperand.isEmpty) return;
 
     _secondOperand = _displayText;
-    double first = double.tryParse(_firstOperand.replaceAll(',', '.')) ?? 0;
-    double second = double.tryParse(_secondOperand.replaceAll(',', '.')) ?? 0;
+    double first =
+        double.tryParse(_firstOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
+    double second =
+        double.tryParse(_secondOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
     double result = 0;
 
     switch (_currentOperation!) {
@@ -104,7 +123,7 @@ class CalculatorController extends ChangeNotifier {
         if (second != 0) {
           result = first / second;
         } else {
-          _displayText = 'Erro';
+          _displayText = AppConstants.divisionByZeroError;
           _firstOperand = '';
           _secondOperand = '';
           _currentOperation = null;
@@ -121,12 +140,13 @@ class CalculatorController extends ChangeNotifier {
     if (value == value.roundToDouble()) {
       return value.toInt().toString();
     } else {
-      String formatted = value.toStringAsFixed(8);
-      formatted = formatted.replaceAll('.', ',');
-      while (formatted.contains(',') && formatted.endsWith('0')) {
+      String formatted = value.toStringAsFixed(AppConstants.maxDecimalPlaces);
+      formatted = formatted.replaceAll('.', AppConstants.decimalSeparator);
+      while (formatted.contains(AppConstants.decimalSeparator) &&
+          formatted.endsWith(AppConstants.initialDisplayValue)) {
         formatted = formatted.substring(0, formatted.length - 1);
       }
-      if (formatted.endsWith(',')) {
+      if (formatted.endsWith(AppConstants.decimalSeparator)) {
         formatted = formatted.substring(0, formatted.length - 1);
       }
       return formatted;
@@ -136,11 +156,45 @@ class CalculatorController extends ChangeNotifier {
   void calculateResult() {
     if (_currentOperation == null || _firstOperand.isEmpty) return;
 
+    final expression =
+        '$_firstOperand ${_currentOperation!.symbol} $_displayText';
     _calculatePendingOperation();
+
+    if (_displayText != AppConstants.divisionByZeroError) {
+      _addToHistory(expression, _displayText);
+    }
+
     _firstOperand = _displayText;
     _secondOperand = '';
     _currentOperation = null;
     _shouldResetDisplay = true;
+    notifyListeners();
+  }
+
+  void _addToHistory(String expression, String result) {
+    _history.insert(
+      0,
+      CalculationHistory(
+        expression: expression,
+        result: result,
+        timestamp: DateTime.now(),
+      ),
+    );
+    _storageService.saveHistory(_history);
+  }
+
+  void useHistoryResult(CalculationHistory item) {
+    _displayText = item.result;
+    _firstOperand = '';
+    _secondOperand = '';
+    _currentOperation = null;
+    _shouldResetDisplay = true;
+    notifyListeners();
+  }
+
+  void clearHistory() {
+    _history.clear();
+    _storageService.clearHistory();
     notifyListeners();
   }
 }

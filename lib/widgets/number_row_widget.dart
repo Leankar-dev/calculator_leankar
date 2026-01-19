@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -31,7 +32,7 @@ class NumberRowWidget extends StatelessWidget {
         ButtonWidget(
           text: operationSymbol,
           onPressed: () => onOperationPressed(operation),
-          color: const Color(0xFF64B5F6),
+          color: AppConstants.operationButtonColor,
         ),
       ],
     );

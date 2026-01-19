@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -20,17 +21,17 @@ class FirstRowWidget extends StatelessWidget {
         ButtonWidget(
           text: 'C',
           onPressed: onClear,
-          color: const Color(0xFFE57373),
+          color: AppConstants.clearButtonColor,
         ),
         ButtonWidget(
-          text: '\u{232B}',
+          text: AppConstants.backspaceSymbol,
           onPressed: onBackspace,
-          color: const Color(0xFFFFB74D),
+          color: AppConstants.backspaceButtonColor,
         ),
         ButtonWidget(
-          text: '\u{0025}',
+          text: AppConstants.percentSymbol,
           onPressed: onPercentage,
-          color: const Color(0xFF64B5F6),
+          color: AppConstants.operationButtonColor,
         ),
       ],
     );

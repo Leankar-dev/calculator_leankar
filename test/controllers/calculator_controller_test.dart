@@ -2,11 +2,15 @@ import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../mocks/mock_storage_service.dart';
+
 void main() {
   late CalculatorController controller;
+  late MockStorageService mockStorageService;
 
   setUp(() {
-    controller = CalculatorController();
+    mockStorageService = MockStorageService();
+    controller = CalculatorController(storageService: mockStorageService);
   });
 
   group('CalculatorController', () {

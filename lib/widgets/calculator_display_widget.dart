@@ -1,3 +1,5 @@
+import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class CalculatorDisplayWidget extends StatelessWidget {
@@ -12,33 +14,46 @@ class CalculatorDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayHeight = ResponsiveUtils.getDisplayHeight(context);
+    final displayFontSize = ResponsiveUtils.getDisplayFontSize(context);
+    final expressionFontSize = ResponsiveUtils.getExpressionFontSize(context);
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(AppConstants.displayPadding),
       child: Neumorphic(
         style: NeumorphicStyle(
           shape: NeumorphicShape.concave,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(20)),
-          depth: -8,
-          intensity: 0.8,
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.circular(AppConstants.displayBorderRadius),
+          ),
+          depth: AppConstants.displayDepth,
+          intensity: AppConstants.displayIntensity,
           lightSource: LightSource.topLeft,
-          color: const Color(0xFF64B5F6).withValues(alpha: 0.15),
+          color: AppConstants.operationButtonColor.withValues(
+            alpha: AppConstants.colorAlpha,
+          ),
         ),
         child: Container(
-          height: 160,
+          constraints: BoxConstraints(minHeight: displayHeight),
           width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppConstants.displayPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
               if (expressionDisplay.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    expressionDisplay,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.grey[600],
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      expressionDisplay,
+                      style: TextStyle(
+                        fontSize: expressionFontSize,
+                        color: AppConstants.secondaryTextColor,
+                      ),
                     ),
                   ),
                 ),
@@ -47,10 +62,10 @@ class CalculatorDisplayWidget extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   displayText,
-                  style: const TextStyle(
-                    fontSize: 48,
+                  style: TextStyle(
+                    fontSize: displayFontSize,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppConstants.primaryTextColor,
                   ),
                   maxLines: 1,
                 ),

@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -21,22 +22,22 @@ class LastRowWidget extends StatelessWidget {
     return Row(
       children: [
         ButtonWidget(
-          text: '0',
-          onPressed: () => onNumberPressed('0'),
+          text: AppConstants.initialDisplayValue,
+          onPressed: () => onNumberPressed(AppConstants.initialDisplayValue),
         ),
         ButtonWidget(
-          text: ',',
+          text: AppConstants.decimalSeparator,
           onPressed: onDecimal,
         ),
         ButtonWidget(
           text: '=',
           onPressed: onCalculate,
-          color: const Color(0xFF81C784),
+          color: AppConstants.equalsButtonColor,
         ),
         ButtonWidget(
-          text: '\u{002B}',
+          text: AppConstants.additionSymbol,
           onPressed: () => onOperationPressed(OperationsType.addition),
-          color: const Color(0xFF64B5F6),
+          color: AppConstants.operationButtonColor,
         ),
       ],
     );
