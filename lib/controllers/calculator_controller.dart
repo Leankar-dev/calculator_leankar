@@ -1,6 +1,9 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/services/error_handler.dart';
+import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/services/storage_service.dart';
 import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:flutter/material.dart';
 
@@ -13,15 +16,40 @@ class CalculatorController extends ChangeNotifier {
   OperationsType? _currentOperation;
   bool _shouldResetDisplay = false;
   List<CalculationHistory> _history = [];
+  bool _isLoading = false;
+  bool _hasError = false;
 
   CalculatorController({StorageService? storageService})
       : _storageService = storageService ?? StorageService();
 
   String get displayText => _displayText;
   List<CalculationHistory> get history => List.unmodifiable(_history);
+  bool get isLoading => _isLoading;
+  bool get hasError => _hasError;
 
+  /// Carrega o histórico com tratamento de erro
   Future<void> loadHistory() async {
-    _history = await _storageService.loadHistory();
+    _isLoading = true;
+    notifyListeners();
+
+    final result = await _storageService.loadHistory();
+
+    result.fold(
+      onSuccess: (loadedHistory) {
+        _history = loadedHistory;
+        _hasError = false;
+      },
+      onFailure: (error, details) {
+        logger.warning(
+          'Falha ao carregar histórico: ${error.fullMessage}',
+          tag: 'CalculatorController',
+        );
+        _history = [];
+        _hasError = true;
+      },
+    );
+
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -33,10 +61,17 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void setOperationType(OperationsType operation) {
+    // Limpa estado de erro anterior se houver
+    if (_isErrorState()) {
+      clearDisplay();
+    }
+
     if (_firstOperand.isEmpty) {
       _firstOperand = _displayText;
     } else if (!_shouldResetDisplay && _currentOperation != null) {
       _calculatePendingOperation();
+      // Se houve erro na operação anterior, não continua
+      if (_isErrorState()) return;
       _firstOperand = _displayText;
     }
     _currentOperation = operation;
@@ -54,6 +89,12 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void backspace() {
+    // Se está em estado de erro, limpa tudo
+    if (_isErrorState()) {
+      clearDisplay();
+      return;
+    }
+
     if (_displayText.length > 1) {
       _displayText = _displayText.substring(0, _displayText.length - 1);
     } else {
@@ -63,20 +104,76 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void calculatePercentage() {
-    double value =
-        double.tryParse(_displayText.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
+    // Se está em estado de erro, não faz nada
+    if (_isErrorState()) return;
+
+    final parseResult = errorHandler.parseDouble(
+      _displayText,
+      decimalSeparator: AppConstants.decimalSeparator,
+    );
+
+    if (parseResult.isFailure) {
+      _setErrorDisplay(parseResult.error!);
+      return;
+    }
+
+    double value = parseResult.value;
+
     if (_firstOperand.isNotEmpty && _currentOperation != null) {
-      double firstValue =
-          double.tryParse(_firstOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
-      value = (firstValue * value) / 100;
+      final firstResult = errorHandler.parseDouble(
+        _firstOperand,
+        decimalSeparator: AppConstants.decimalSeparator,
+      );
+
+      if (firstResult.isFailure) {
+        _setErrorDisplay(firstResult.error!);
+        return;
+      }
+
+      value = (firstResult.value * value) / 100;
     } else {
       value = value / 100;
     }
+
+    // Valida o resultado
+    final validationResult = errorHandler.validateCalculationResult(value);
+    if (validationResult.isFailure) {
+      _setErrorDisplay(validationResult.error!);
+      return;
+    }
+
     _displayText = _formatResult(value);
+
+    logger.logCalculation(
+      operation: '%',
+      firstOperand: _firstOperand.isEmpty ? _displayText : _firstOperand,
+      secondOperand: parseResult.value.toString(),
+      result: _displayText,
+    );
+
     notifyListeners();
   }
 
   void appendNumber(String digit) {
+    // Se está em estado de erro, limpa e começa novo número
+    if (_isErrorState()) {
+      _displayText = digit;
+      _shouldResetDisplay = false;
+      notifyListeners();
+      return;
+    }
+
+    // Valida se pode adicionar mais dígitos
+    if (!_shouldResetDisplay &&
+        !errorHandler.isValidNumberInput(
+          _displayText,
+          digit,
+          decimalSeparator: AppConstants.decimalSeparator,
+        )) {
+      logger.debug('Entrada rejeitada: número muito longo', tag: 'Input');
+      return;
+    }
+
     if (_shouldResetDisplay) {
       _displayText = digit;
       _shouldResetDisplay = false;
@@ -90,8 +187,18 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void appendDecimal() {
+    // Se está em estado de erro, começa novo número com decimal
+    if (_isErrorState()) {
+      _displayText =
+          '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
+      _shouldResetDisplay = false;
+      notifyListeners();
+      return;
+    }
+
     if (_shouldResetDisplay) {
-      _displayText = '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
+      _displayText =
+          '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
       _shouldResetDisplay = false;
     } else if (!_displayText.contains(AppConstants.decimalSeparator)) {
       _displayText += AppConstants.decimalSeparator;
@@ -103,10 +210,30 @@ class CalculatorController extends ChangeNotifier {
     if (_currentOperation == null || _firstOperand.isEmpty) return;
 
     _secondOperand = _displayText;
-    double first =
-        double.tryParse(_firstOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
-    double second =
-        double.tryParse(_secondOperand.replaceAll(AppConstants.decimalSeparator, '.')) ?? 0;
+
+    // Parse dos operandos com tratamento de erro
+    final firstResult = errorHandler.parseDouble(
+      _firstOperand,
+      decimalSeparator: AppConstants.decimalSeparator,
+    );
+
+    if (firstResult.isFailure) {
+      _setErrorDisplay(firstResult.error!);
+      return;
+    }
+
+    final secondResult = errorHandler.parseDouble(
+      _secondOperand,
+      decimalSeparator: AppConstants.decimalSeparator,
+    );
+
+    if (secondResult.isFailure) {
+      _setErrorDisplay(secondResult.error!);
+      return;
+    }
+
+    final first = firstResult.value;
+    final second = secondResult.value;
     double result = 0;
 
     switch (_currentOperation!) {
@@ -120,23 +247,37 @@ class CalculatorController extends ChangeNotifier {
         result = first * second;
         break;
       case OperationsType.division:
-        if (second != 0) {
-          result = first / second;
-        } else {
-          _displayText = AppConstants.divisionByZeroError;
-          _firstOperand = '';
-          _secondOperand = '';
-          _currentOperation = null;
-          _shouldResetDisplay = true;
+        final divResult = errorHandler.safeDivide(first, second);
+        if (divResult.isFailure) {
+          _setErrorDisplay(divResult.error!);
           return;
         }
+        result = divResult.value;
         break;
     }
 
+    // Valida o resultado final
+    final validationResult = errorHandler.validateCalculationResult(result);
+    if (validationResult.isFailure) {
+      _setErrorDisplay(validationResult.error!);
+      return;
+    }
+
     _displayText = _formatResult(result);
+
+    logger.logCalculation(
+      operation: _currentOperation!.symbol,
+      firstOperand: _firstOperand,
+      secondOperand: _secondOperand,
+      result: _displayText,
+    );
   }
 
   String _formatResult(double value) {
+    // Tratamento para valores especiais (redundante mas seguro)
+    if (value.isNaN) return AppConstants.nanError;
+    if (value.isInfinite) return AppConstants.infinityError;
+
     if (value == value.roundToDouble()) {
       return value.toInt().toString();
     } else {
@@ -155,12 +296,14 @@ class CalculatorController extends ChangeNotifier {
 
   void calculateResult() {
     if (_currentOperation == null || _firstOperand.isEmpty) return;
+    if (_isErrorState()) return;
 
     final expression =
         '$_firstOperand ${_currentOperation!.symbol} $_displayText';
     _calculatePendingOperation();
 
-    if (_displayText != AppConstants.divisionByZeroError) {
+    // Só adiciona ao histórico se não houve erro
+    if (!_isErrorState()) {
       _addToHistory(expression, _displayText);
     }
 
@@ -180,7 +323,16 @@ class CalculatorController extends ChangeNotifier {
         timestamp: DateTime.now(),
       ),
     );
-    _storageService.saveHistory(_history);
+
+    // Salva assincronamente, sem bloquear
+    _storageService.saveHistory(_history).then((saveResult) {
+      if (saveResult.isFailure) {
+        logger.warning(
+          'Falha ao salvar histórico: ${saveResult.errorFullMessage}',
+          tag: 'CalculatorController',
+        );
+      }
+    });
   }
 
   void useHistoryResult(CalculationHistory item) {
@@ -194,7 +346,48 @@ class CalculatorController extends ChangeNotifier {
 
   void clearHistory() {
     _history.clear();
-    _storageService.clearHistory();
+    _storageService.clearHistory().then((result) {
+      if (result.isFailure) {
+        logger.warning(
+          'Falha ao limpar histórico: ${result.errorFullMessage}',
+          tag: 'CalculatorController',
+        );
+      }
+    });
     notifyListeners();
+  }
+
+  /// Verifica se o display está mostrando um erro
+  bool _isErrorState() {
+    return _displayText == AppConstants.divisionByZeroError ||
+        _displayText == AppConstants.infinityError ||
+        _displayText == AppConstants.nanError ||
+        _displayText == AppConstants.overflowError ||
+        _displayText == AppConstants.genericError;
+  }
+
+  /// Define o display para mostrar erro e limpa o estado
+  void _setErrorDisplay(ErrorType errorType) {
+    switch (errorType) {
+      case ErrorType.divisionByZero:
+        _displayText = AppConstants.divisionByZeroError;
+        break;
+      case ErrorType.infinity:
+        _displayText = AppConstants.infinityError;
+        break;
+      case ErrorType.notANumber:
+        _displayText = AppConstants.nanError;
+        break;
+      case ErrorType.overflow:
+        _displayText = AppConstants.overflowError;
+        break;
+      default:
+        _displayText = AppConstants.genericError;
+    }
+
+    _firstOperand = '';
+    _secondOperand = '';
+    _currentOperation = null;
+    _shouldResetDisplay = true;
   }
 }

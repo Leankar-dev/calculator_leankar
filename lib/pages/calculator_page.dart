@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
+import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
@@ -21,7 +22,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
   @override
   void initState() {
     super.initState();
-    _controller.loadHistory();
+    _initializeController();
+  }
+
+  Future<void> _initializeController() async {
+    try {
+      await _controller.loadHistory();
+    } catch (e, stackTrace) {
+      logger.error(
+        'Erro ao inicializar controller',
+        tag: 'CalculatorPage',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
@@ -45,68 +59,77 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void _handleKeyEvent(KeyEvent event) {
-    if (event is! KeyDownEvent) return;
+    try {
+      if (event is! KeyDownEvent) return;
 
-    final String? key = event.character;
-    final LogicalKeyboardKey logicalKey = event.logicalKey;
+      final String? key = event.character;
+      final LogicalKeyboardKey logicalKey = event.logicalKey;
 
-    if (logicalKey == LogicalKeyboardKey.enter ||
-        logicalKey == LogicalKeyboardKey.numpadEnter) {
-      _controller.calculateResult();
-      return;
-    }
+      if (logicalKey == LogicalKeyboardKey.enter ||
+          logicalKey == LogicalKeyboardKey.numpadEnter) {
+        _controller.calculateResult();
+        return;
+      }
 
-    if (logicalKey == LogicalKeyboardKey.backspace) {
-      _controller.backspace();
-      return;
-    }
+      if (logicalKey == LogicalKeyboardKey.backspace) {
+        _controller.backspace();
+        return;
+      }
 
-    if (logicalKey == LogicalKeyboardKey.escape ||
-        logicalKey == LogicalKeyboardKey.delete) {
-      _controller.clearDisplay();
-      return;
-    }
+      if (logicalKey == LogicalKeyboardKey.escape ||
+          logicalKey == LogicalKeyboardKey.delete) {
+        _controller.clearDisplay();
+        return;
+      }
 
-    if (key != null && RegExp(r'^[0-9]$').hasMatch(key)) {
-      _controller.appendNumber(key);
-      return;
-    }
+      if (key != null && RegExp(r'^[0-9]$').hasMatch(key)) {
+        _controller.appendNumber(key);
+        return;
+      }
 
-    if (key == '+') {
-      _controller.setOperationType(OperationsType.addition);
-      return;
-    }
-    if (key == '-') {
-      _controller.setOperationType(OperationsType.subtraction);
-      return;
-    }
-    if (key == '*' || key == 'x' || key == 'X') {
-      _controller.setOperationType(OperationsType.multiplication);
-      return;
-    }
-    if (key == '/') {
-      _controller.setOperationType(OperationsType.division);
-      return;
-    }
+      if (key == '+') {
+        _controller.setOperationType(OperationsType.addition);
+        return;
+      }
+      if (key == '-') {
+        _controller.setOperationType(OperationsType.subtraction);
+        return;
+      }
+      if (key == '*' || key == 'x' || key == 'X') {
+        _controller.setOperationType(OperationsType.multiplication);
+        return;
+      }
+      if (key == '/') {
+        _controller.setOperationType(OperationsType.division);
+        return;
+      }
 
-    if (key == ',' || key == '.') {
-      _controller.appendDecimal();
-      return;
-    }
+      if (key == ',' || key == '.') {
+        _controller.appendDecimal();
+        return;
+      }
 
-    if (key == '=') {
-      _controller.calculateResult();
-      return;
-    }
+      if (key == '=') {
+        _controller.calculateResult();
+        return;
+      }
 
-    if (key == '%') {
-      _controller.calculatePercentage();
-      return;
-    }
+      if (key == '%') {
+        _controller.calculatePercentage();
+        return;
+      }
 
-    if (key == 'c' || key == 'C') {
-      _controller.clearDisplay();
-      return;
+      if (key == 'c' || key == 'C') {
+        _controller.clearDisplay();
+        return;
+      }
+    } catch (e, stackTrace) {
+      logger.error(
+        'Erro ao processar evento de teclado',
+        tag: 'CalculatorPage',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

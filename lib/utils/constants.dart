@@ -117,9 +117,20 @@ class AppConstants {
 
   static const String decimalSeparator = ',';
 
-  static const String divisionByZeroError = 'Erro';
+  static const String divisionByZeroError = 'Erro: Div/0';
+
+  static const String infinityError = 'Erro: Infinito';
+
+  static const String nanError = 'Erro: Inválido';
+
+  static const String overflowError = 'Erro: Overflow';
+
+  static const String genericError = 'Erro';
 
   static const String initialDisplayValue = '0';
+
+  /// Limite máximo para exibição de números
+  static const double maxDisplayValue = 1e15;
 
   // ============================================
   // SÍMBOLOS UNICODE

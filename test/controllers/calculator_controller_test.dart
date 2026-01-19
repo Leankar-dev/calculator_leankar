@@ -132,7 +132,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro');
+        expect(controller.displayText, 'Erro: Div/0');
       });
 
       test('deve mostrar expressão durante operação', () {

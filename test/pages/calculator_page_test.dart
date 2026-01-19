@@ -219,7 +219,7 @@ void main() {
       await tester.tap(equalsButton);
       await tester.pumpAndSettle();
 
-      expect(findInDisplay('Erro'), findsOneWidget);
+      expect(findInDisplay('Erro: Div/0'), findsOneWidget);
     });
 
     testWidgets('deve calcular porcentagem', (tester) async {
