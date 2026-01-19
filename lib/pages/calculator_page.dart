@@ -106,7 +106,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
         title: const Text(
-          'LAS Calculator',
+          'Calculator',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -157,7 +157,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           ),
                           padding: const EdgeInsets.all(12),
                           child: Image.asset(
-                            'assets/images/logo.png',
+                            'assets/images/logo2.png',
                             height: 50,
                           ),
                         ),
