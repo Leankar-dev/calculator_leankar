@@ -132,6 +132,15 @@ class AppConstants {
   /// Limite máximo para exibição de números
   static const double maxDisplayValue = 1e15;
 
+  /// Separador de milhares (padrão brasileiro)
+  static const String thousandsSeparator = '.';
+
+  /// Limite para usar notação científica (números muito pequenos)
+  static const double scientificThresholdSmall = 1e-6;
+
+  /// Limite para usar notação científica (números muito grandes)
+  static const double scientificThresholdLarge = 1e12;
+
   // ============================================
   // SÍMBOLOS UNICODE
   // ============================================

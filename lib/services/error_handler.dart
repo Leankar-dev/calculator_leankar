@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
+import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:calculator_05122025/utils/result.dart';
 
 /// Serviço centralizado para tratamento de erros.
@@ -34,24 +35,17 @@ class ErrorHandler {
     return Result.success(value);
   }
 
-  /// Faz parse seguro de string para double
+  /// Faz parse seguro de string para double.
+  /// Aceita números formatados com separador de milhares e notação científica.
   Result<double> parseDouble(String value, {String decimalSeparator = ','}) {
     if (value.isEmpty) {
       return Result.failure(
           ErrorType.invalidNumber, 'Valor vazio não pode ser convertido');
     }
 
-    // Normaliza o separador decimal
-    final normalized = value.replaceAll(decimalSeparator, '.');
+    // Usa o NumberFormatter para fazer o parse (suporta milhares e notação científica)
+    final parsed = NumberFormatter.parse(value);
 
-    // Verifica caracteres inválidos
-    if (!RegExp(r'^-?\d*\.?\d+$').hasMatch(normalized)) {
-      logger.logError(ErrorType.invalidNumber,
-          tag: 'Parse', details: 'Valor inválido: $value');
-      return Result.failure(ErrorType.invalidNumber, 'Formato inválido: $value');
-    }
-
-    final parsed = double.tryParse(normalized);
     if (parsed == null) {
       logger.logError(ErrorType.invalidNumber,
           tag: 'Parse', details: 'Não foi possível converter: $value');

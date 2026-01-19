@@ -5,6 +5,7 @@ import 'package:calculator_05122025/services/storage_service.dart';
 import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
+import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorController extends ChangeNotifier {
@@ -274,24 +275,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   String _formatResult(double value) {
-    // Tratamento para valores especiais (redundante mas seguro)
-    if (value.isNaN) return AppConstants.nanError;
-    if (value.isInfinite) return AppConstants.infinityError;
-
-    if (value == value.roundToDouble()) {
-      return value.toInt().toString();
-    } else {
-      String formatted = value.toStringAsFixed(AppConstants.maxDecimalPlaces);
-      formatted = formatted.replaceAll('.', AppConstants.decimalSeparator);
-      while (formatted.contains(AppConstants.decimalSeparator) &&
-          formatted.endsWith(AppConstants.initialDisplayValue)) {
-        formatted = formatted.substring(0, formatted.length - 1);
-      }
-      if (formatted.endsWith(AppConstants.decimalSeparator)) {
-        formatted = formatted.substring(0, formatted.length - 1);
-      }
-      return formatted;
-    }
+    return NumberFormatter.format(value);
   }
 
   void calculateResult() {
