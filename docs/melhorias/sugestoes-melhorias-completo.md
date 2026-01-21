@@ -167,39 +167,22 @@ void _addToHistory(String expression, String result) {
 
 ## Widgets e UI
 
-### 5. Adicionar Feedback Tátil (Haptic Feedback) ❌
-**Prioridade: Média** | **Status: Não implementado**
+### 5. Adicionar Feedback Tátil (Haptic Feedback) ✅
+**Prioridade: Média** | **Status: Implementado**
 
-Melhorar a experiência do usuário com feedback tátil ao pressionar botões.
+> **Implementado (21/01/2026):** `lib/widgets/button_widget.dart` agora inclui:
+> - `HapticFeedback.lightImpact()` em todos os botões
+> - Feedback tátil funciona em iOS e Android
+> - Ignorado automaticamente em desktop (Windows/macOS/Linux)
 
-**Sugestão:**
-```dart
-// No ButtonWidget
-import 'package:flutter/services.dart';
+### ~~6. Implementar Animações~~ 🗑️ (Removido)
+**Status: REMOVIDO - Não necessário para o escopo atual**
 
-onPressed: () {
-  HapticFeedback.lightImpact();
-  widget.onPressed();
-}
-```
-
-### 6. Implementar Animações ❌
-**Prioridade: Baixa** | **Status: Não implementado**
-
-Adicionar animações sutis para melhorar a experiência do usuário.
-
-**Sugestão:**
-```dart
-// No CalculatorDisplayWidget
-AnimatedSwitcher(
-  duration: const Duration(milliseconds: 300),
-  child: Text(
-    displayText,
-    key: ValueKey(displayText),
-    style: const TextStyle(fontSize: 48),
-  ),
-)
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Para uma calculadora, a prioridade é **velocidade e responsividade**
+> - Animações no display podem atrapalhar digitação rápida
+> - O design neumórfico já fornece feedback visual nos botões
+> - Overhead de complexidade não justifica o benefício visual
 
 ### 7. Melhorar Responsividade ✅
 **Prioridade: Alta** | **Status: Implementado**
@@ -268,57 +251,28 @@ Widget build(BuildContext context) {
 
 ## Testes
 
-### 9. Adicionar Testes de Integração ❌
-**Prioridade: Alta** | **Status: Não implementado**
+### ~~9. Adicionar Testes de Integração~~ 🗑️ (Removido)
+**Status: REMOVIDO - Testes de widget já cobrem fluxos completos**
 
-Criar testes de integração para fluxos completos.
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - `test/pages/calculator_page_test.dart` já testa **fluxos completos** de usuário
+> - 92 testes passando cobrindo: todas as operações, divisão por zero, porcentagem, teclado, etc.
+> - Testes de integração formais seriam úteis apenas para performance em dispositivo real
+> - Overhead de configuração (`integration_test/`) não justifica para calculadora simples
+>
+> **Reconsiderar se:** precisar testar em múltiplos dispositivos ou performance crítica.
 
-**Sugestão:**
-```dart
-// integration_test/app_test.dart
-void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+### ~~10. Implementar Testes Golden~~ 🗑️ (Removido)
+**Status: REMOVIDO - Overhead não justifica para projeto solo**
 
-  testWidgets('Fluxo completo de cálculo', (tester) async {
-    await tester.pumpWidget(const MyApp());
-    
-    // Testar sequência de operações
-    await tester.tap(find.text('5'));
-    await tester.tap(find.text('+'));
-    await tester.tap(find.text('3'));
-    await tester.tap(find.text('='));
-    
-    expect(find.text('8'), findsOneWidget);
-  });
-}
-```
-
-### 10. Implementar Testes Golden ❌
-**Prioridade: Média** | **Status: Não implementado**
-
-Adicionar testes de snapshot visual.
-
-**Sugestão:**
-```dart
-// test/widgets/golden/calculator_display_golden_test.dart
-void main() {
-  testWidgets('Display rendering matches golden', (tester) async {
-    await tester.pumpWidget(
-      NeumorphicApp(
-        home: CalculatorDisplayWidget(
-          displayText: '123',
-          expressionDisplay: '100 +',
-        ),
-      ),
-    );
-
-    await expectLater(
-      find.byType(CalculatorDisplayWidget),
-      matchesGoldenFile('goldens/calculator_display.png'),
-    );
-  });
-}
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Design neumórfico usa sombras dinâmicas - difícil manter golden estável
+> - Qualquer ajuste de cor/padding quebra os testes e exige regenerar imagens
+> - Goldens são sensíveis a OS/GPU - falham em máquinas diferentes
+> - UI da calculadora é simples; regressões visuais são percebidas ao rodar o app
+> - Arquivos de imagem aumentam tamanho do repositório
+>
+> **Reconsiderar se:** projeto crescer com equipe maior ou design system complexo.
 
 ### 11. Melhorar Cobertura de Testes de Edge Cases ⏳
 **Prioridade: Alta** | **Status: Parcialmente implementado**
@@ -498,36 +452,14 @@ class NumberFormatter {
 
 ## Acessibilidade
 
-### 16. Adicionar Suporte a Screen Readers ❌
-**Prioridade: Alta** | **Status: Não implementado**
+### 16. Adicionar Suporte a Screen Readers ✅
+**Prioridade: Alta** | **Status: Implementado**
 
-Melhorar acessibilidade com Semantics.
-
-**Sugestão:**
-```dart
-// No ButtonWidget
-Semantics(
-  button: true,
-  label: _getSemanticLabel(text),
-  child: NeumorphicButton(
-    // ... resto do código
-  ),
-)
-
-String _getSemanticLabel(String text) {
-  switch (text) {
-    case '\u{00F7}': return 'Dividir';
-    case '\u{00D7}': return 'Multiplicar';
-    case '\u{002D}': return 'Subtrair';
-    case '\u{002B}': return 'Adicionar';
-    case '\u{232B}': return 'Apagar';
-    case '\u{0025}': return 'Porcentagem';
-    case '=': return 'Igual';
-    case 'C': return 'Limpar';
-    default: return text;
-  }
-}
-```
+> **Implementado (21/01/2026):** `lib/widgets/button_widget.dart` agora inclui:
+> - Widget `Semantics` envolvendo cada botão
+> - Método `_getSemanticLabel()` traduzindo símbolos para texto legível
+> - Labels acessíveis: "Dividir", "Multiplicar", "Subtrair", "Adicionar", etc.
+> - Funciona com TalkBack (Android) e VoiceOver (iOS)
 
 ### 17. Melhorar Contraste de Cores ❌
 **Prioridade: Média** | **Status: Não implementado**
@@ -894,35 +826,30 @@ void appendNumber(String digit) {
 
 | Status | Quantidade | Itens |
 |--------|------------|-------|
-| ✅ Implementado | 14 | #1, #2, #4, #7, #8, #12, #13, #14, #15, #20, #29, #33, #37 |
+| ✅ Implementado | 16 | #1, #2, #4, #5, #7, #8, #12, #13, #14, #15, #16, #20, #29, #33, #37 |
 | ⏳ Parcial | 4 | #11, #23, #24, #25 |
-| 🗑️ Removido | 4 | #27, #30, #34, #38 |
-| ❌ Pendente | 7 | #3, #5, #6, #9, #10, #16, #17, #18, #19, #21, #22, #26, #28 |
+| 🗑️ Removido | 7 | #6, #9, #10, #27, #30, #34, #38 |
+| ❌ Pendente | 13 | #3, #17, #18, #19, #21, #22, #26, #28, #31, #32, #35, #36, #39, #40 |
 
 ### Fase 1 - Crítico (Itens Pendentes Prioritários)
-1. ❌ Suporte a Screen Readers (#16) - Acessibilidade essencial
-2. ⏳ Testes de Edge Cases (#11) - Aumentar cobertura
-3. ❌ Testes de Integração (#9) - Garantir fluxos completos
+1. ⏳ Testes de Edge Cases (#11) - Aumentar cobertura
 
 ### Fase 2 - Importante
-7. ❌ Feedback Tátil (#5) - Melhora UX significativamente
-8. ⏳ Otimizar Rebuild de Widgets (#24) - Performance
-9. ❌ i18n Completo (#18) - Preparar para internacionalização
-10. ❌ Melhorar Contraste de Cores (#17) - Acessibilidade
-11. ❌ Deploy Automático (#28) - CI/CD
+7. ⏳ Otimizar Rebuild de Widgets (#24) - Performance
+8. ❌ i18n Completo (#18) - Preparar para internacionalização
+9. ❌ Melhorar Contraste de Cores (#17) - Acessibilidade
+10. ❌ Deploy Automático (#28) - CI/CD
 
 ### Fase 3 - Melhorias
-12. ❌ Temas Customizáveis (#19) - Dark mode toggle
-13. ⏳ Documentação de API (#25) - Dartdoc completo
-14. ❌ Animações (#6) - Polish visual
-15. ❌ Testes Golden (#10) - Regressão visual
-16. ❌ Criar Diagramas de Arquitetura (#26)
+11. ❌ Temas Customizáveis (#19) - Dark mode toggle
+12. ⏳ Documentação de API (#25) - Dartdoc completo
+13. ❌ Criar Diagramas de Arquitetura (#26)
 
 ### Fase 4 - Recursos Adicionais (opcional)
-17. ❌ Modo Científico (#21)
-18. ❌ Conversor de Unidades (#22)
-19. ⏳ Lazy Loading paginado (#23)
-20. ❌ Estado Imutável (#3) - Apenas se implementar Undo/Redo (#31)
+14. ❌ Modo Científico (#21)
+15. ❌ Conversor de Unidades (#22)
+16. ⏳ Lazy Loading paginado (#23)
+17. ❌ Estado Imutável (#3) - Apenas se implementar Undo/Redo (#31)
 
 ---
 
@@ -1149,12 +1076,29 @@ Cada melhoria foi projetada para:
 - ✅ Melhorar a experiência do usuário
 - ✅ Preparar o app para crescimento futuro
 
-**Última atualização:** 20 de Janeiro de 2026
-**Versão do documento:** 2.8
+**Última atualização:** 21 de Janeiro de 2026
+**Versão do documento:** 3.3
 
 ---
 
 ## Changelog
+
+### v3.3 (21/01/2026)
+- Item #16 (Suporte a Screen Readers) marcado como implementado - Semantics adicionado aos botões
+- Atualizado resumo: 16 implementados, 7 removidos, 13 pendentes
+
+### v3.2 (21/01/2026)
+- Removido item #10 (Testes Golden) - overhead não justifica para projeto solo
+- Atualizado resumo: 15 implementados, 7 removidos, 14 pendentes
+
+### v3.1 (21/01/2026)
+- Removido item #9 (Testes de Integração) - testes de widget já cobrem fluxos completos
+- Atualizado resumo: 15 implementados, 6 removidos, 15 pendentes
+
+### v3.0 (21/01/2026)
+- Item #5 (Feedback Tátil) marcado como implementado - HapticFeedback.lightImpact() adicionado
+- Removido item #6 (Animações) - prioridade é velocidade, animações podem atrapalhar
+- Atualizado resumo: 15 implementados, 5 removidos, 16 pendentes
 
 ### v2.8 (20/01/2026)
 - Removido item #38 (Widget de Memória) - fora do escopo, histórico já existe
