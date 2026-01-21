@@ -78,53 +78,17 @@ class CalculationService {
 
 ## Controle de Estado
 
-### 3. Implementar Estado Imutável ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~3. Implementar Estado Imutável~~ 🗑️ (Removido)
+**Status: REMOVIDO - Código atual já funciona bem**
 
-> **Reavaliação (20/01/2026):** Prioridade rebaixada de Alta para Baixa. O código atual já possui boas práticas (variáveis privadas, `List.unmodifiable`, métodos controlados). O estado é simples (8 variáveis planas) e o overhead de implementação não compensa para o escopo atual. **Recomendado apenas se** for implementar Undo/Redo (#31) ou expansões significativas.
-
-O `CalculatorController` usa variáveis mutáveis. Considere usar um estado imutável.
-
-**Sugestão:**
-```dart
-// lib/models/calculator_state.dart
-class CalculatorState {
-  final String displayText;
-  final String firstOperand;
-  final String secondOperand;
-  final OperationsType? currentOperation;
-  final bool shouldResetDisplay;
-
-  const CalculatorState({
-    this.displayText = '0',
-    this.firstOperand = '',
-    this.secondOperand = '',
-    this.currentOperation,
-    this.shouldResetDisplay = false,
-  });
-
-  CalculatorState copyWith({
-    String? displayText,
-    String? firstOperand,
-    String? secondOperand,
-    OperationsType? currentOperation,
-    bool? shouldResetDisplay,
-  }) {
-    return CalculatorState(
-      displayText: displayText ?? this.displayText,
-      firstOperand: firstOperand ?? this.firstOperand,
-      secondOperand: secondOperand ?? this.secondOperand,
-      currentOperation: currentOperation ?? this.currentOperation,
-      shouldResetDisplay: shouldResetDisplay ?? this.shouldResetDisplay,
-    );
-  }
-}
-```
-
-**Benefícios:**
-- Mais fácil de testar
-- Previne bugs relacionados a estado mutável
-- Facilita implementação de undo/redo
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Código atual já usa boas práticas (variáveis privadas, `List.unmodifiable`)
+> - Estado é simples (8 variáveis planas) - não justifica refatoração
+> - 92 testes passando - código funciona bem
+> - Útil apenas se implementar Undo/Redo, que também foi removido
+> - Overhead de implementação não compensa para o escopo atual
+>
+> **Reconsiderar se:** decidir implementar Undo/Redo no futuro.
 
 ### 4. Adicionar Histórico de Cálculos ✅
 **Prioridade: Baixa** | **Status: Implementado**
@@ -461,94 +425,49 @@ class NumberFormatter {
 > - Labels acessíveis: "Dividir", "Multiplicar", "Subtrair", "Adicionar", etc.
 > - Funciona com TalkBack (Android) e VoiceOver (iOS)
 
-### 17. Melhorar Contraste de Cores ❌
-**Prioridade: Média** | **Status: Não implementado**
+### ~~17. Melhorar Contraste de Cores~~ 🗑️ (Removido)
+**Status: REMOVIDO - Contraste atual já é adequado**
 
-Garantir contraste adequado para acessibilidade.
-
-**Sugestão:**
-```dart
-// Verificar contraste WCAG AA (4.5:1) para texto normal
-// Usar ferramentas como https://webaim.org/resources/contrastchecker/
-
-// Adicionar temas com alto contraste
-class HighContrastTheme {
-  static NeumorphicThemeData lightTheme = const NeumorphicThemeData(
-    baseColor: Color(0xFFFFFFFF),
-    defaultTextColor: Color(0xFF000000),
-    // ... outras configurações
-  );
-}
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Texto principal (resultado) tem contraste excelente (~10:1) ✅
+> - Texto secundário (expressão) está no limite (~3.5:1) mas é informativo, não crítico
+> - Cores dos botões são para destaque visual, não fundo de texto
+> - Tema claro padrão já é legível para uso normal
+> - Tema de alto contraste adicionaria complexidade sem benefício claro
+>
+> **Reconsiderar se:** receber feedback de usuários com dificuldades visuais.
 
 ---
 
 ## Internacionalização
 
-### 18. Implementar i18n Completo ❌
-**Prioridade: Média** | **Status: Não implementado**
+### ~~18. Implementar i18n Completo~~ 🗑️ (Removido)
+**Status: REMOVIDO - Over-engineering para o escopo atual**
 
-> **Nota:** O pacote `intl` está instalado mas é usado apenas para formatação de números, não para internacionalização de strings.
-
-Adicionar suporte completo a múltiplos idiomas.
-
-**Sugestão:**
-```dart
-// lib/l10n/app_en.arb
-{
-  "appTitle": "Calculator Leankar",
-  "clear": "Clear",
-  "backspace": "Backspace",
-  "percentage": "Percentage",
-  "errorDivisionByZero": "Division by zero"
-}
-
-// lib/l10n/app_pt.arb
-{
-  "appTitle": "Calculadora Leankar",
-  "clear": "Limpar",
-  "backspace": "Apagar",
-  "percentage": "Porcentagem",
-  "errorDivisionByZero": "Divisão por zero"
-}
-
-// pubspec.yaml
-flutter:
-  generate: true
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Botões usam símbolos universais (0-9, +, -, ×, ÷, =, C, %) - não precisam tradução
+> - Apenas ~16 strings precisariam tradução (erros e labels de acessibilidade)
+> - Projeto pessoal com público brasileiro
+> - Pacote `intl` já está em uso para formatação numérica (vírgula decimal)
+> - Configurar l10n completo para ~16 strings é over-engineering
+>
+> **Reconsiderar se:** decidir publicar internacionalmente.
 
 ---
 
 ## Recursos Adicionais
 
-### 19. Adicionar Temas Customizáveis ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~19. Adicionar Temas Customizáveis~~ 🗑️ (Removido)
+**Status: REMOVIDO - Feature "nice to have" sem benefício claro**
 
-> **Nota:** O tema escuro está definido em `app_calculator.dart` mas não há UI para alternar entre temas.
-
-Permitir que o usuário escolha temas personalizados.
-
-**Sugestão:**
-```dart
-// lib/models/theme_model.dart
-class ThemeModel extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
-  Color _accentColor = Colors.blue;
-
-  ThemeMode get themeMode => _themeMode;
-  Color get accentColor => _accentColor;
-
-  void setThemeMode(ThemeMode mode) {
-    _themeMode = mode;
-    notifyListeners();
-  }
-
-  void setAccentColor(Color color) {
-    _accentColor = color;
-    notifyListeners();
-  }
-}
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Tema claro atual funciona bem com design neumórfico
+> - Calculadora é app utilitário - usuário abre, calcula, fecha
+> - Implementação requer ~100-150 linhas (ThemeModel, UI, persistência)
+> - Benefício apenas estético, não funcional
+> - Tema escuro já está definido mas pode ser ativado manualmente se necessário
+>
+> **Reconsiderar se:** receber feedback de usuários pedindo dark mode.
 
 ### 20. Implementar Persistência Local ✅
 **Prioridade: Baixa** | **Status: Implementado**
@@ -586,60 +505,29 @@ class StorageService {
 }
 ```
 
-### 21. Adicionar Modo Científico ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~21. Adicionar Modo Científico~~ 🗑️ (Removido)
+**Status: REMOVIDO - Fora do escopo de calculadora básica**
 
-Expandir funcionalidades para calculadora científica.
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Mudaria o escopo de "calculadora básica" para "calculadora científica"
+> - Requer redesenho significativo (UI, controller, testes)
+> - Complexidade alta: operações unárias vs binárias, precedência, parênteses
+> - Objetivo original é app de calculadora básica com design neumórfico
+> - Se necessário, melhor criar projeto separado
+>
+> **Reconsiderar se:** decidir expandir para app de calculadora completa.
 
-**Sugestão:**
-```dart
-// lib/utils/enums/operations_type.dart
-enum OperationsType {
-  addition(symbol: '+'),
-  subtraction(symbol: '-'),
-  multiplication(symbol: '×'),
-  division(symbol: '÷'),
-  // Novas operações
-  sine(symbol: 'sin'),
-  cosine(symbol: 'cos'),
-  tangent(symbol: 'tan'),
-  squareRoot(symbol: '√'),
-  power(symbol: '^'),
-  logarithm(symbol: 'log');
-  
-  final String symbol;
-  const OperationsType({required this.symbol});
-}
-```
+### ~~22. Implementar Modo de Conversão de Unidades~~ 🗑️ (Removido)
+**Status: REMOVIDO - Fora do escopo de calculadora básica**
 
-### 22. Implementar Modo de Conversão de Unidades ❌
-**Prioridade: Baixa** | **Status: Não implementado**
-
-Adicionar conversor de unidades (comprimento, peso, temperatura, etc.).
-
-**Sugestão:**
-```dart
-// lib/pages/converter_page.dart
-class ConverterPage extends StatelessWidget {
-  const ConverterPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: NeumorphicAppBar(
-        title: const Text('Conversor'),
-      ),
-      body: Column(
-        children: [
-          // Seletor de categoria (comprimento, peso, etc)
-          // Inputs de origem e destino
-          // Botão de converter
-        ],
-      ),
-    );
-  }
-}
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Funcionalidade completamente nova, não uma melhoria
+> - Não tem relação direta com calculadora básica
+> - Requer nova página, nova lógica, nova UI (~350+ linhas)
+> - Seria praticamente um "mini-app" dentro do app
+> - Se necessário, melhor criar projeto separado "utilitários"
+>
+> **Reconsiderar se:** decidir criar app multi-funcional.
 
 ---
 
@@ -716,32 +604,17 @@ class CalculatorController extends ChangeNotifier {
 }
 ```
 
-### 26. Criar Diagramas de Arquitetura ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~26. Criar Diagramas de Arquitetura~~ 🗑️ (Removido)
+**Status: REMOVIDO - Arquitetura simples já documentada no CLAUDE.md**
 
-Adicionar diagramas UML ou de fluxo na documentação.
-
-**Sugestão:**
-```markdown
-<!-- docs/architecture.md -->
-# Arquitetura
-
-## Diagrama de Componentes
-
-┌─────────────────┐
-│   MyApp         │
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│ CalculatorPage  │
-└────────┬────────┘
-         │
-    ┌────┴────┐
-    │         │
-┌───▼───┐ ┌──▼──────────────────┐
-│Display│ │CalculatorController │
-└───────┘ └─────────────────────┘
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Arquitetura simples (MVC básico com ~10 arquivos)
+> - CLAUDE.md já descreve a estrutura do projeto
+> - Diagramas ASCII são limitados e difíceis de manter
+> - Projeto solo - desenvolvedor já conhece a arquitetura
+> - Diagramas ficam desatualizados rapidamente
+>
+> **Reconsiderar se:** projeto crescer significativamente ou adicionar contribuidores.
 
 ---
 
@@ -758,33 +631,17 @@ Adicionar diagramas UML ou de fluxo na documentação.
 >
 > **Reconsiderar se:** começar a fazer deploy para web ou adicionar contribuidores.
 
-### 28. Configurar Deploy Automático ❌
-**Prioridade: Média** | **Status: Não implementado**
+### ~~28. Configurar Deploy Automático~~ 🗑️ (Removido)
+**Status: REMOVIDO - Consistente com remoção do #27 (GitHub Actions)**
 
-Automatizar build e deploy para web.
-
-**Sugestão:**
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      - run: flutter pub get
-      - run: flutter build web --release
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-```
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Item #27 (GitHub Actions CI) já foi removido - mesma lógica se aplica
+> - Projeto solo - deploy manual é suficiente (`flutter build web`)
+> - Não há GitHub Pages configurado atualmente
+> - Calculadora é mais útil como app mobile/desktop que web
+> - Overhead de configuração não justifica para projeto pessoal
+>
+> **Reconsiderar se:** decidir publicar versão web do app.
 
 ---
 
@@ -828,28 +685,20 @@ void appendNumber(String digit) {
 |--------|------------|-------|
 | ✅ Implementado | 16 | #1, #2, #4, #5, #7, #8, #12, #13, #14, #15, #16, #20, #29, #33, #37 |
 | ⏳ Parcial | 4 | #11, #23, #24, #25 |
-| 🗑️ Removido | 7 | #6, #9, #10, #27, #30, #34, #38 |
-| ❌ Pendente | 13 | #3, #17, #18, #19, #21, #22, #26, #28, #31, #32, #35, #36, #39, #40 |
+| 🗑️ Removido | 17 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #26, #27, #28, #30, #31, #32, #34, #38 |
+| ❌ Pendente | 3 | #35, #36, #39, #40 |
 
 ### Fase 1 - Crítico (Itens Pendentes Prioritários)
 1. ⏳ Testes de Edge Cases (#11) - Aumentar cobertura
 
 ### Fase 2 - Importante
-7. ⏳ Otimizar Rebuild de Widgets (#24) - Performance
-8. ❌ i18n Completo (#18) - Preparar para internacionalização
-9. ❌ Melhorar Contraste de Cores (#17) - Acessibilidade
-10. ❌ Deploy Automático (#28) - CI/CD
+3. ⏳ Otimizar Rebuild de Widgets (#24) - Performance
 
 ### Fase 3 - Melhorias
-11. ❌ Temas Customizáveis (#19) - Dark mode toggle
-12. ⏳ Documentação de API (#25) - Dartdoc completo
-13. ❌ Criar Diagramas de Arquitetura (#26)
+4. ⏳ Documentação de API (#25) - Dartdoc completo
 
 ### Fase 4 - Recursos Adicionais (opcional)
-14. ❌ Modo Científico (#21)
-15. ❌ Conversor de Unidades (#22)
-16. ⏳ Lazy Loading paginado (#23)
-17. ❌ Estado Imutável (#3) - Apenas se implementar Undo/Redo (#31)
+5. ⏳ Lazy Loading paginado (#23)
 
 ---
 
@@ -870,57 +719,31 @@ As sugestões abaixo foram identificadas na análise mais recente do código e c
 
 ---
 
-### 31. Implementar Undo/Redo ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~31. Implementar Undo/Redo~~ 🗑️ (Removido)
+**Status: REMOVIDO - Funcionalidade incomum em calculadoras**
 
-Adicionar capacidade de desfazer/refazer operações usando um padrão Command ou mantendo um stack de estados.
-
-**Sugestão:**
-```dart
-class CalculatorController extends ChangeNotifier {
-  final List<CalculatorState> _undoStack = [];
-  final List<CalculatorState> _redoStack = [];
-
-  void undo() {
-    if (_undoStack.isEmpty) return;
-    _redoStack.add(_currentState);
-    _currentState = _undoStack.removeLast();
-    notifyListeners();
-  }
-
-  void redo() {
-    if (_redoStack.isEmpty) return;
-    _undoStack.add(_currentState);
-    _currentState = _redoStack.removeLast();
-    notifyListeners();
-  }
-}
-```
-
-**Benefícios:**
-- Melhora UX permitindo corrigir erros
-- Funciona bem com estado imutável (#3)
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Funcionava melhor com Estado Imutável (#3) - já removido
+> - Undo/Redo é incomum em calculadoras - padrão é "C" (limpar)
+> - Backspace (⌫) já permite corrigir erros de digitação
+> - Histórico já permite reusar resultados anteriores
+> - Requer 2 novos botões - quebra layout atual
+>
+> **Reconsiderar se:** feedback de usuários indicar necessidade.
 
 ---
 
-### 32. Adicionar Suporte a Expressões Completas ❌
-**Prioridade: Média** | **Status: Não implementado**
+### ~~32. Adicionar Suporte a Expressões Completas~~ 🗑️ (Removido)
+**Status: REMOVIDO - Mudança arquitetural fora do escopo**
 
-Permitir entrada de expressões completas como "5 + 3 * 2" com precedência de operadores correta.
-
-**Sugestão:**
-```dart
-// lib/services/expression_parser.dart
-class ExpressionParser {
-  Result<double> parse(String expression) {
-    // Implementar Shunting-yard algorithm ou usar pacote math_expressions
-  }
-}
-```
-
-**Benefícios:**
-- Funcionalidade avançada sem complexidade excessiva
-- Prepara para modo científico
+> **Reavaliação (21/01/2026):** Este item foi **removido** pois:
+> - Mudança fundamental na arquitetura - calculadora usa operação imediata
+> - Complexidade alta - parser de expressões, precedência de operadores
+> - Calculadoras básicas usam operação imediata, não expressões
+> - "Prepara para modo científico" - já removido (#21)
+> - Comportamento atual é padrão e funciona bem
+>
+> **Reconsiderar se:** decidir criar calculadora científica.
 
 ---
 
@@ -1077,11 +900,47 @@ Cada melhoria foi projetada para:
 - ✅ Preparar o app para crescimento futuro
 
 **Última atualização:** 21 de Janeiro de 2026
-**Versão do documento:** 3.3
+**Versão do documento:** 4.2
 
 ---
 
 ## Changelog
+
+### v4.2 (21/01/2026)
+- Removido item #31 (Undo/Redo) - funcionalidade incomum, backspace e histórico já atendem
+- Atualizado resumo: 16 implementados, 16 removidos, 4 pendentes
+
+### v4.1 (21/01/2026)
+- Removido item #3 (Estado Imutável) - código atual já funciona bem, Undo/Redo não será implementado
+- Atualizado resumo: 16 implementados, 15 removidos, 5 pendentes
+
+### v4.0 (21/01/2026)
+- Removido item #22 (Conversor de Unidades) - fora do escopo de calculadora básica
+- Atualizado resumo: 16 implementados, 14 removidos, 6 pendentes
+
+### v3.9 (21/01/2026)
+- Removido item #21 (Modo Científico) - fora do escopo de calculadora básica
+- Atualizado resumo: 16 implementados, 13 removidos, 7 pendentes
+
+### v3.8 (21/01/2026)
+- Removido item #26 (Diagramas de Arquitetura) - arquitetura simples já documentada no CLAUDE.md
+- Atualizado resumo: 16 implementados, 12 removidos, 8 pendentes
+
+### v3.7 (21/01/2026)
+- Removido item #19 (Temas Customizáveis) - feature "nice to have" sem benefício claro
+- Atualizado resumo: 16 implementados, 11 removidos, 9 pendentes
+
+### v3.6 (21/01/2026)
+- Removido item #28 (Deploy Automático) - consistente com remoção do #27, deploy manual é suficiente
+- Atualizado resumo: 16 implementados, 10 removidos, 10 pendentes
+
+### v3.5 (21/01/2026)
+- Removido item #18 (i18n Completo) - over-engineering para ~16 strings em projeto solo
+- Atualizado resumo: 16 implementados, 9 removidos, 11 pendentes
+
+### v3.4 (21/01/2026)
+- Removido item #17 (Contraste de Cores) - contraste atual já é adequado (~10:1 para texto principal)
+- Atualizado resumo: 16 implementados, 8 removidos, 12 pendentes
 
 ### v3.3 (21/01/2026)
 - Item #16 (Suporte a Screen Readers) marcado como implementado - Semantics adicionado aos botões
