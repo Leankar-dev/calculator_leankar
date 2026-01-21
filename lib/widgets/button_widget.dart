@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ButtonWidget extends StatelessWidget {
@@ -28,7 +29,10 @@ class ButtonWidget extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(buttonSpacing),
         child: NeumorphicButton(
-          onPressed: onPressed,
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            onPressed();
+          },
           style: NeumorphicStyle(
             shape: NeumorphicShape.concave,
             boxShape: NeumorphicBoxShape.roundRect(
