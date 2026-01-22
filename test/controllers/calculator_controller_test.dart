@@ -213,5 +213,440 @@ void main() {
         expect(notifyCount, 4);
       });
     });
+
+    // ============================================
+    // TESTES DE EDGE CASES
+    // ============================================
+
+    group('Limites de entrada', () {
+      test('deve limitar número de dígitos (máximo 15)', () {
+        // Tenta adicionar 20 dígitos
+        for (int i = 0; i < 20; i++) {
+          controller.appendNumber('9');
+        }
+        // Remove separadores de milhares para contar dígitos
+        final digitsOnly = controller.displayText.replaceAll('.', '');
+        expect(digitsOnly.length, lessThanOrEqualTo(15));
+      });
+
+      test('deve limitar casas decimais', () {
+        controller.appendNumber('1');
+        controller.appendDecimal();
+        // Tenta adicionar 15 dígitos após a vírgula
+        for (int i = 0; i < 15; i++) {
+          controller.appendNumber('3');
+        }
+        final parts = controller.displayText.split(',');
+        expect(parts.length, 2);
+        // O limite é de 15 dígitos no total (não apenas decimais)
+        final totalDigits =
+            parts[0].replaceAll('.', '').length + parts[1].length;
+        expect(totalDigits, lessThanOrEqualTo(15));
+      });
+
+      test('não deve permitir múltiplos zeros no início', () {
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        expect(controller.displayText, '0');
+      });
+
+      test('deve permitir zero após vírgula', () {
+        controller.appendDecimal();
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        controller.appendNumber('5');
+        expect(controller.displayText, '0,005');
+      });
+    });
+
+    group('Comportamento após erro', () {
+      test('deve limpar erro ao digitar novo número', () {
+        // Causa erro de divisão por zero
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        // Digita novo número
+        controller.appendNumber('7');
+        expect(controller.displayText, '7');
+      });
+
+      test('deve limpar erro ao adicionar decimal', () {
+        // Causa erro
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        // Adiciona decimal
+        controller.appendDecimal();
+        expect(controller.displayText, '0,');
+      });
+
+      test('deve limpar erro ao definir operação', () {
+        // Causa erro
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        // Define nova operação - limpa o erro e inicia nova operação com 0
+        controller.setOperationType(OperationsType.addition);
+        expect(controller.displayText, '0');
+        // Após limpar erro e definir operação, a expressão mostra "0 +"
+        expect(controller.expressionDisplay, '0 +');
+      });
+
+      test('deve limpar erro ao pressionar backspace', () {
+        // Causa erro
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        // Pressiona backspace
+        controller.backspace();
+        expect(controller.displayText, '0');
+        expect(controller.expressionDisplay, '');
+      });
+
+      test('não deve calcular porcentagem em estado de erro', () {
+        // Causa erro
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        // Tenta calcular porcentagem
+        controller.calculatePercentage();
+        expect(controller.displayText, 'Erro: Div/0');
+      });
+    });
+
+    group('Casos especiais de operação', () {
+      test('não deve fazer nada ao pressionar = sem operação pendente', () {
+        controller.appendNumber('5');
+        controller.calculateResult();
+        expect(controller.displayText, '5');
+      });
+
+      test('deve manter resultado ao pressionar = múltiplas vezes', () {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('3');
+        controller.calculateResult();
+        expect(controller.displayText, '8');
+
+        // Pressiona = novamente (não deve mudar, pois operação foi limpa)
+        controller.calculateResult();
+        expect(controller.displayText, '8');
+      });
+
+      test('deve permitir mudar operador antes de digitar segundo número', () {
+        controller.appendNumber('1');
+        controller.appendNumber('0');
+        controller.setOperationType(OperationsType.addition);
+        expect(controller.expressionDisplay, '10 +');
+
+        controller.setOperationType(OperationsType.subtraction);
+        expect(controller.expressionDisplay, '10 -');
+
+        controller.appendNumber('3');
+        controller.calculateResult();
+        expect(controller.displayText, '7');
+      });
+
+      test('deve calcular 0 dividido por número', () {
+        controller.appendNumber('0');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('5');
+        controller.calculateResult();
+        expect(controller.displayText, '0');
+      });
+
+      test('deve calcular resultado negativo', () {
+        controller.appendNumber('3');
+        controller.setOperationType(OperationsType.subtraction);
+        controller.appendNumber('1');
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, '-7');
+      });
+
+      test('deve multiplicar por zero', () {
+        controller.appendNumber('9');
+        controller.appendNumber('9');
+        controller.appendNumber('9');
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, '0');
+      });
+
+      test('deve calcular operação encadeada que resulta em erro', () {
+        controller.appendNumber('1');
+        controller.setOperationType(OperationsType.subtraction);
+        controller.appendNumber('1');
+        controller.setOperationType(OperationsType.division);
+        // Agora display é 0, então 0 / 0 deveria dar erro? Não, 5 / 0 dá erro
+        // Vamos fazer: 5 + 5 = 10, depois / 0
+        controller.clearDisplay();
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        expect(controller.displayText, '10');
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+      });
+    });
+
+    group('Casos de borda de entrada', () {
+      test('backspace quando display já é 0 deve manter 0', () {
+        expect(controller.displayText, '0');
+        controller.backspace();
+        expect(controller.displayText, '0');
+      });
+
+      test('múltiplos backspaces devem parar em 0', () {
+        controller.appendNumber('1');
+        controller.appendNumber('2');
+        controller.backspace();
+        controller.backspace();
+        controller.backspace();
+        controller.backspace();
+        expect(controller.displayText, '0');
+      });
+
+      test('backspace deve remover vírgula', () {
+        controller.appendNumber('5');
+        controller.appendDecimal();
+        expect(controller.displayText, '5,');
+        controller.backspace();
+        expect(controller.displayText, '5');
+      });
+
+      test('deve iniciar com 0, antes de vírgula quando display é 0', () {
+        controller.appendDecimal();
+        expect(controller.displayText, '0,');
+      });
+
+      test('deve resetar display ao digitar número após resultado', () {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('3');
+        controller.calculateResult();
+        expect(controller.displayText, '8');
+
+        // Digita novo número
+        controller.appendNumber('2');
+        expect(controller.displayText, '2');
+      });
+
+      test('deve continuar operação com resultado anterior', () {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('3');
+        controller.calculateResult();
+        expect(controller.displayText, '8');
+
+        // Continua com nova operação
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('2');
+        controller.calculateResult();
+        expect(controller.displayText, '16');
+      });
+    });
+
+    group('Histórico', () {
+      test('deve carregar histórico vazio inicialmente', () async {
+        await controller.loadHistory();
+        expect(controller.history, isEmpty);
+        expect(controller.isLoading, false);
+        expect(controller.hasError, false);
+      });
+
+      test('deve adicionar cálculo ao histórico', () async {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('3');
+        controller.calculateResult();
+
+        // Aguarda o save assíncrono
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        expect(controller.history, hasLength(1));
+        expect(controller.history.first.expression, '5 + 3');
+        expect(controller.history.first.result, '8');
+      });
+
+      test('deve limpar histórico', () async {
+        // Adiciona item ao histórico
+        controller.appendNumber('2');
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('3');
+        controller.calculateResult();
+
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(controller.history, hasLength(1));
+
+        controller.clearHistory();
+        expect(controller.history, isEmpty);
+      });
+
+      test('deve usar resultado do histórico', () async {
+        // Adiciona item ao histórico
+        controller.appendNumber('1');
+        controller.appendNumber('0');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('5');
+        controller.calculateResult();
+
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(controller.history, hasLength(1));
+
+        // Limpa e usa o histórico
+        controller.clearDisplay();
+        controller.useHistoryResult(controller.history.first);
+
+        expect(controller.displayText, '15');
+        expect(controller.expressionDisplay, '');
+      });
+
+      test('deve tratar erro ao carregar histórico', () async {
+        mockStorageService.shouldFail = true;
+        await controller.loadHistory();
+
+        expect(controller.history, isEmpty);
+        expect(controller.hasError, true);
+        expect(controller.isLoading, false);
+      });
+
+      test('não deve adicionar erro ao histórico', () async {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        expect(controller.history, isEmpty);
+      });
+    });
+
+    group('Overflow e validação', () {
+      test('deve mostrar erro de overflow para números muito grandes', () {
+        // 1e15 * 100 > limite (precisa exceder 1e15)
+        controller.appendNumber('1');
+        for (int i = 0; i < 14; i++) {
+          controller.appendNumber('0');
+        }
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('1');
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        controller.calculateResult();
+
+        expect(controller.displayText, 'Erro: Overflow');
+      });
+
+      test('deve usar notação científica para números grandes permitidos', () {
+        // Número >= 1e12 usa notação científica (scientificThresholdLarge)
+        controller.appendNumber('1');
+        for (int i = 0; i < 12; i++) {
+          controller.appendNumber('0');
+        }
+        // 1e12 * 1 = 1e12
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('1');
+        controller.calculateResult();
+
+        // Deve usar notação científica
+        expect(controller.displayText.contains('e'), isTrue);
+      });
+    });
+
+    group('Edge cases de porcentagem', () {
+      test('porcentagem de 0 deve ser 0', () {
+        expect(controller.displayText, '0');
+        controller.calculatePercentage();
+        expect(controller.displayText, '0');
+      });
+
+      test('porcentagem de 100 deve ser 1', () {
+        controller.appendNumber('1');
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        controller.calculatePercentage();
+        expect(controller.displayText, '1');
+      });
+
+      test('porcentagem em operação de subtração', () {
+        // 200 - 50% = 200 - 100 = 100
+        controller.appendNumber('2');
+        controller.appendNumber('0');
+        controller.appendNumber('0');
+        controller.setOperationType(OperationsType.subtraction);
+        controller.appendNumber('5');
+        controller.appendNumber('0');
+        controller.calculatePercentage();
+        expect(controller.displayText, '100');
+      });
+
+      test('porcentagem decimal', () {
+        controller.appendNumber('5');
+        controller.appendNumber('0');
+        controller.appendDecimal();
+        controller.appendNumber('5');
+        controller.calculatePercentage();
+        expect(controller.displayText, '0,505');
+      });
+    });
+
+    group('Operações com decimais edge cases', () {
+      test('deve calcular divisão com resultado decimal longo', () {
+        controller.appendNumber('1');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('3');
+        controller.calculateResult();
+
+        // Deve ter vírgula e casas decimais limitadas
+        expect(controller.displayText.contains(','), isTrue);
+        final parts = controller.displayText.split(',');
+        expect(parts[1].length, lessThanOrEqualTo(8));
+      });
+
+      test('deve remover zeros desnecessários do resultado', () {
+        controller.appendNumber('2');
+        controller.appendDecimal();
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.multiplication);
+        controller.appendNumber('2');
+        controller.calculateResult();
+
+        expect(controller.displayText, '5');
+      });
+
+      test('deve manter precisão em operações decimais', () {
+        controller.appendNumber('0');
+        controller.appendDecimal();
+        controller.appendNumber('1');
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('0');
+        controller.appendDecimal();
+        controller.appendNumber('2');
+        controller.calculateResult();
+
+        expect(controller.displayText, '0,3');
+      });
+    });
   });
 }
