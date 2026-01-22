@@ -656,13 +656,15 @@ void appendNumber(String digit) {
 
 | Status | Quantidade | Itens |
 |--------|------------|-------|
-| ✅ Implementado | 18 | #1, #2, #4, #5, #7, #8, #11, #12, #13, #14, #15, #16, #20, #29, #33, #36, #37 |
+| ✅ Implementado | 19 | #1, #2, #4, #5, #7, #8, #11, #12, #13, #14, #15, #16, #20, #29, #33, #36, #37, #40 |
 | ⏳ Parcial | 1 | #25 |
 | 🗑️ Removido | 21 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #23, #24, #26, #27, #28, #30, #31, #32, #34, #35, #38, #39 |
-| ❌ Pendente | 1 | #40 |
+| ❌ Pendente | 0 | - |
 
-### Fase 1 - Melhorias
+### Fase 1 - Melhorias (opcional)
 1. ⏳ Documentação de API (#25) - Dartdoc completo
+
+> **Nota:** Todos os itens críticos e importantes foram implementados ou removidos. O único item restante é a documentação de API, que é opcional para o funcionamento do app.
 
 ---
 
@@ -809,20 +811,17 @@ As sugestões abaixo foram identificadas na análise mais recente do código e c
 
 ---
 
-### 40. Adicionar Teclado Numérico Externo para Web/Desktop ❌
-**Prioridade: Baixa** | **Status: Parcialmente implementado**
+### 40. Adicionar Teclado Numérico Externo para Web/Desktop ✅
+**Prioridade: Baixa** | **Status: Já implementado**
 
-> **Nota:** O teclado principal já funciona, mas o teclado numérico (numpad) pode ter comportamento diferente.
-
-Garantir que o numpad funcione corretamente em plataformas desktop.
-
-**Sugestão:**
-```dart
-// Adicionar mapeamento para teclas do numpad
-case LogicalKeyboardKey.numpad0:
-case LogicalKeyboardKey.numpad1:
-// ... etc
-```
+> **Reavaliação (22/01/2026):** Este item **já está implementado**:
+> - O código usa `event.character` que retorna o caractere Unicode da tecla
+> - Funciona automaticamente para numpad: `numpad0`-`numpad9` → `'0'`-`'9'`
+> - Operadores do numpad (`+`, `-`, `*`, `/`) são detectados pelo caractere
+> - `numpadDecimal` é coberto por `key == ',' || key == '.'`
+> - `numpadEnter` já tem tratamento explícito na linha 102
+>
+> **Conclusão:** Adicionar mapeamento explícito seria código redundante sem benefício.
 
 ---
 
@@ -838,11 +837,27 @@ Cada melhoria foi projetada para:
 - ✅ Preparar o app para crescimento futuro
 
 **Última atualização:** 22 de Janeiro de 2026
-**Versão do documento:** 4.8
+**Versão do documento:** 5.0
 
 ---
 
 ## Changelog
+
+### v5.0 (22/01/2026)
+- **Revisão completa de código realizada** - Nenhum bug ou melhoria crítica identificada
+- Código analisado:
+  - `lib/controllers/` - Result type, validação robusta, dispose correto
+  - `lib/widgets/` - StatelessWidget, const constructors, Semantics para acessibilidade
+  - `lib/services/` - Singletons bem implementados, tratamento de erro centralizado
+  - `lib/utils/` - NumberFormatter robusto, Result monad pattern
+  - `lib/models/` - JSON validation, tryFromJson para parsing seguro
+- **Conclusão:** Projeto pronto para produção. Apenas documentação de API (#25) opcional
+- 139 testes passando, `flutter analyze` sem erros
+
+### v4.9 (22/01/2026)
+- Item #40 (Teclado Numérico) marcado como **já implementado** - `event.character` já suporta numpad nativamente
+- **Todos os itens pendentes resolvidos!**
+- Atualizado resumo: 19 implementados, 21 removidos, 1 parcial, 0 pendentes
 
 ### v4.8 (22/01/2026)
 - Removido item #39 (Vibração de Erro) - erros são raros, display já mostra feedback visual claro, HapticFeedback ignorado em desktop
