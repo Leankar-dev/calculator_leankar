@@ -75,8 +75,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
       final String? key = event.character;
       final LogicalKeyboardKey logicalKey = event.logicalKey;
 
-      // Atalhos com Ctrl (Windows/Linux) ou Cmd (macOS)
-      final isControlPressed = HardwareKeyboard.instance.isControlPressed ||
+      final isControlPressed =
+          HardwareKeyboard.instance.isControlPressed ||
           HardwareKeyboard.instance.isMetaPressed;
 
       if (isControlPressed) {

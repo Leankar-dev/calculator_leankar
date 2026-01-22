@@ -1,9 +1,7 @@
 import 'dart:math' as math;
-
 import 'package:calculator_05122025/utils/constants.dart';
 import 'package:intl/intl.dart';
 
-/// Classe utilitária para formatação e parse de números.
 class NumberFormatter {
   NumberFormatter._();
 

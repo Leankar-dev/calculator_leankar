@@ -1,15 +1,14 @@
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 
-/// Classe que representa o resultado de uma operação que pode falhar.
 class Result<T> {
   final T? _value;
   final ErrorType? _error;
   final String? _errorDetails;
 
   const Result._({T? value, ErrorType? error, String? errorDetails})
-      : _value = value,
-        _error = error,
-        _errorDetails = errorDetails;
+    : _value = value,
+      _error = error,
+      _errorDetails = errorDetails;
 
   factory Result.success(T value) => Result._(value: value);
 
@@ -23,7 +22,8 @@ class Result<T> {
   T get value {
     if (_error != null) {
       throw StateError(
-          'Tentativa de acessar valor de um Result com erro: ${_error.fullMessage}');
+        'Tentativa de acessar valor de um Result com erro: ${_error.fullMessage}',
+      );
     }
     return _value as T;
   }

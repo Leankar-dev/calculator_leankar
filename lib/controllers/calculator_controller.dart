@@ -22,14 +22,13 @@ class CalculatorController extends ChangeNotifier {
   bool _hasError = false;
 
   CalculatorController({StorageService? storageService})
-      : _storageService = storageService ?? StorageService();
+    : _storageService = storageService ?? StorageService();
 
   String get displayText => _displayText;
   List<CalculationHistory> get history => List.unmodifiable(_history);
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
 
-  /// Carrega o histórico com tratamento de erro
   Future<void> loadHistory() async {
     _isLoading = true;
     notifyListeners();
@@ -63,7 +62,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void setOperationType(OperationsType operation) {
-    // Limpa estado de erro anterior se houver
     if (_isErrorState()) {
       clearDisplay();
     }
@@ -72,7 +70,6 @@ class CalculatorController extends ChangeNotifier {
       _firstOperand = _displayText;
     } else if (!_shouldResetDisplay && _currentOperation != null) {
       _calculatePendingOperation();
-      // Se houve erro na operação anterior, não continua
       if (_isErrorState()) return;
       _firstOperand = _displayText;
     }
@@ -91,7 +88,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void backspace() {
-    // Se está em estado de erro, limpa tudo
     if (_isErrorState()) {
       clearDisplay();
       return;
@@ -106,7 +102,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void calculatePercentage() {
-    // Se está em estado de erro, não faz nada
     if (_isErrorState()) return;
 
     final parseResult = errorHandler.parseDouble(
@@ -137,7 +132,6 @@ class CalculatorController extends ChangeNotifier {
       value = value / 100;
     }
 
-    // Valida o resultado
     final validationResult = errorHandler.validateCalculationResult(value);
     if (validationResult.isFailure) {
       _setErrorDisplay(validationResult.error!);
@@ -157,7 +151,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void appendNumber(String digit) {
-    // Se está em estado de erro, limpa e começa novo número
     if (_isErrorState()) {
       _displayText = digit;
       _shouldResetDisplay = false;
@@ -165,7 +158,6 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    // Valida se pode adicionar mais dígitos
     if (!_shouldResetDisplay &&
         !errorHandler.isValidNumberInput(
           _displayText,
@@ -189,7 +181,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void appendDecimal() {
-    // Se está em estado de erro, começa novo número com decimal
     if (_isErrorState()) {
       _displayText =
           '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
@@ -213,7 +204,6 @@ class CalculatorController extends ChangeNotifier {
 
     _secondOperand = _displayText;
 
-    // Parse dos operandos com tratamento de erro
     final firstResult = errorHandler.parseDouble(
       _firstOperand,
       decimalSeparator: AppConstants.decimalSeparator,
@@ -258,7 +248,6 @@ class CalculatorController extends ChangeNotifier {
         break;
     }
 
-    // Valida o resultado final
     final validationResult = errorHandler.validateCalculationResult(result);
     if (validationResult.isFailure) {
       _setErrorDisplay(validationResult.error!);
@@ -309,7 +298,6 @@ class CalculatorController extends ChangeNotifier {
       ),
     );
 
-    // Salva assincronamente, sem bloquear
     _storageService.saveHistory(_history).then((saveResult) {
       if (saveResult.isFailure) {
         logger.warning(
@@ -342,10 +330,7 @@ class CalculatorController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Copia o valor atual do display para a área de transferência.
-  /// Retorna true se copiou com sucesso, false caso contrário.
   Future<bool> copyToClipboard() async {
-    // Não copia se estiver em estado de erro
     if (_isErrorState()) {
       logger.debug('Tentativa de copiar em estado de erro', tag: 'Clipboard');
       return false;
@@ -361,8 +346,6 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  /// Cola um valor da área de transferência no display.
-  /// Retorna true se colou com sucesso, false caso contrário.
   Future<bool> pasteFromClipboard() async {
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
@@ -379,7 +362,6 @@ class CalculatorController extends ChangeNotifier {
         return false;
       }
 
-      // Valida se o número está dentro dos limites
       final validationResult = errorHandler.validateCalculationResult(parsed);
       if (validationResult.isFailure) {
         logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
@@ -397,7 +379,6 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  /// Verifica se o display está mostrando um erro
   bool _isErrorState() {
     return _displayText == AppConstants.divisionByZeroError ||
         _displayText == AppConstants.infinityError ||
@@ -406,7 +387,6 @@ class CalculatorController extends ChangeNotifier {
         _displayText == AppConstants.genericError;
   }
 
-  /// Define o display para mostrar erro e limpa o estado
   void _setErrorDisplay(ErrorType errorType) {
     switch (errorType) {
       case ErrorType.divisionByZero:

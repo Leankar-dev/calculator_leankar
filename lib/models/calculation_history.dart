@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/result.dart';
@@ -23,9 +22,7 @@ class CalculationHistory {
     };
   }
 
-  /// Factory com validação de campos
   factory CalculationHistory.fromJson(Map<String, dynamic> json) {
-    // Valida campos obrigatórios
     final expression = json['expression'];
     final result = json['result'];
     final timestamp = json['timestamp'];
@@ -40,7 +37,6 @@ class CalculationHistory {
       throw FormatException('Campo "timestamp" inválido ou ausente');
     }
 
-    // Parse seguro do timestamp
     DateTime parsedTimestamp;
     try {
       parsedTimestamp = DateTime.parse(timestamp);
@@ -55,7 +51,6 @@ class CalculationHistory {
     );
   }
 
-  /// Tenta criar a partir de JSON, retornando null se inválido
   static CalculationHistory? tryFromJson(Map<String, dynamic> json) {
     try {
       return CalculationHistory.fromJson(json);
@@ -72,8 +67,6 @@ class CalculationHistory {
     return jsonEncode(history.map((h) => h.toJson()).toList());
   }
 
-  /// Decodifica lista JSON com tratamento de erro robusto
-  /// Retorna Result com a lista ou erro
   static Result<List<CalculationHistory>> decodeList(String jsonString) {
     try {
       if (jsonString.isEmpty) {
@@ -90,7 +83,9 @@ class CalculationHistory {
           details: 'JSON malformado: ${e.toString()}',
         );
         return Result.failure(
-            ErrorType.corruptedData, 'JSON malformado: ${e.toString()}');
+          ErrorType.corruptedData,
+          'JSON malformado: ${e.toString()}',
+        );
       }
 
       if (decoded is! List) {
@@ -99,8 +94,10 @@ class CalculationHistory {
           tag: 'CalculationHistory',
           details: 'Esperado List, recebido ${decoded.runtimeType}',
         );
-        return Result.failure(ErrorType.corruptedData,
-            'Formato inválido: esperado lista, recebido ${decoded.runtimeType}');
+        return Result.failure(
+          ErrorType.corruptedData,
+          'Formato inválido: esperado lista, recebido ${decoded.runtimeType}',
+        );
       }
 
       final List<CalculationHistory> history = [];
