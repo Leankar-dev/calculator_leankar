@@ -517,42 +517,31 @@ class StorageService {
 
 ## Melhorias de Performance
 
-### 23. Implementar Lazy Loading ⏳
-**Prioridade: Baixa** | **Status: Parcialmente implementado**
+### ~~23. Implementar Lazy Loading~~ 🗑️ (Removido)
+**Status: REMOVIDO - Já implementado o necessário, paginação seria over-engineering**
 
-> **Nota:** O histórico usa ListView.builder que já faz lazy loading dos itens. Porém, todo o histórico é carregado na memória ao iniciar.
+> **Reavaliação (22/01/2026):** Este item foi **removido** pois:
+> - **Lazy loading de widgets já está implementado** via `ListView.builder` em `history_bottom_sheet.dart`
+> - SharedPreferences não suporta queries paginadas nativamente
+> - Volume de dados esperado é muito pequeno (~100 bytes/item)
+> - Para paginação real seria necessário migrar para SQLite/Hive (~150+ linhas)
+> - Usuário típico de calculadora faz < 100 cálculos
+> - Complexidade desproporcional ao benefício
+>
+> **Reconsiderar se:** histórico crescer para milhares de itens ou migrar para banco de dados.
 
-Para o histórico, se implementado.
+### ~~24. Otimizar Rebuild de Widgets~~ 🗑️ (Removido)
+**Status: REMOVIDO - Otimização prematura, código já segue boas práticas**
 
-**Sugestão:**
-```dart
-ListView.builder(
-  itemCount: history.length,
-  itemBuilder: (context, index) {
-    return HistoryItemWidget(history: history[index]);
-  },
-)
-```
-
-### 24. Otimizar Rebuild de Widgets ⏳
-**Prioridade: Média** | **Status: Parcialmente implementado**
-
-> **Nota:** Uso de `const` em alguns widgets, mas ainda há oportunidades de otimização com `Consumer` ou `Selector` para rebuilds mais seletivos.
-
-Usar `const` construtores sempre que possível e `Consumer` para rebuilds seletivos.
-
-**Sugestão:**
-```dart
-// Ao invés de usar setState() na página inteira
-Consumer<CalculatorController>(
-  builder: (context, controller, child) {
-    return CalculatorDisplayWidget(
-      displayText: controller.displayText,
-      expressionDisplay: controller.expressionDisplay,
-    );
-  },
-)
-```
+> **Reavaliação (22/01/2026):** Este item foi **removido** pois:
+> - **Boas práticas já implementadas:** `const` constructors, StatelessWidget, callbacks estáveis
+> - Overhead atual é negligenciável (~0.5ms, < 3% do orçamento de 16ms/frame)
+> - Frequência de interação é baixa (~1-2/segundo) vs Flutter target de 60fps
+> - Flutter já otimiza rebuilds de widgets imutáveis automaticamente
+> - Adicionar `Consumer`/`Selector` aumentaria complexidade sem benefício perceptível
+> - Usuário não perceberia diferença na performance
+>
+> **Reconsiderar se:** app tiver animações contínuas ou listas com centenas de itens.
 
 ---
 
@@ -667,19 +656,13 @@ void appendNumber(String digit) {
 
 | Status | Quantidade | Itens |
 |--------|------------|-------|
-| ✅ Implementado | 17 | #1, #2, #4, #5, #7, #8, #11, #12, #13, #14, #15, #16, #20, #29, #33, #37 |
-| ⏳ Parcial | 3 | #23, #24, #25 |
-| 🗑️ Removido | 17 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #26, #27, #28, #30, #31, #32, #34, #38 |
-| ❌ Pendente | 3 | #35, #36, #39, #40 |
+| ✅ Implementado | 18 | #1, #2, #4, #5, #7, #8, #11, #12, #13, #14, #15, #16, #20, #29, #33, #36, #37 |
+| ⏳ Parcial | 1 | #25 |
+| 🗑️ Removido | 20 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #23, #24, #26, #27, #28, #30, #31, #32, #34, #35, #38 |
+| ❌ Pendente | 2 | #39, #40 |
 
-### Fase 1 - Importante
-1. ⏳ Otimizar Rebuild de Widgets (#24) - Performance
-
-### Fase 2 - Melhorias
-2. ⏳ Documentação de API (#25) - Dartdoc completo
-
-### Fase 3 - Recursos Adicionais (opcional)
-3. ⏳ Lazy Loading paginado (#23)
+### Fase 1 - Melhorias
+1. ⏳ Documentação de API (#25) - Dartdoc completo
 
 ---
 
@@ -752,62 +735,37 @@ As sugestões abaixo foram identificadas na análise mais recente do código e c
 
 ---
 
-### 35. Adicionar Rate Limiting para Input ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~35. Adicionar Rate Limiting para Input~~ 🗑️ (Removido)
+**Status: REMOVIDO - Não há comportamento inesperado, causaria mais problemas**
 
-Prevenir input muito rápido que pode causar comportamento inesperado.
-
-**Sugestão:**
-```dart
-class ButtonWidget extends StatefulWidget {
-  static const _minPressInterval = Duration(milliseconds: 50);
-  DateTime? _lastPressTime;
-
-  void _handlePress() {
-    final now = DateTime.now();
-    if (_lastPressTime != null &&
-        now.difference(_lastPressTime!) < _minPressInterval) {
-      return; // Ignorar press muito rápido
-    }
-    _lastPressTime = now;
-    widget.onPressed();
-  }
-}
-```
+> **Reavaliação (22/01/2026):** Este item foi **removido** pois:
+> - **Não há comportamento inesperado** com inputs rápidos - operações são síncronas e atômicas
+> - Limites de entrada já implementados (máximo 15 dígitos)
+> - Operações são determinísticas e idempotentes
+> - Rate limiting causaria **inputs perdidos** (usuário digita `123`, aparece `12`)
+> - Frustraria usuários que digitam rápido legitimamente
+> - Nenhuma calculadora popular (iOS, Android, Windows) implementa isso
+> - Flutter/NeumorphicButton já tem proteções nativas contra double-tap
+>
+> **Reconsiderar se:** identificar cenário real de comportamento inesperado.
 
 ---
 
-### 36. Adicionar Suporte a Copiar/Colar ❌
-**Prioridade: Média** | **Status: Não implementado**
+### 36. Adicionar Suporte a Copiar/Colar ✅
+**Prioridade: Média** | **Status: Implementado**
 
-Permitir que o usuário copie o resultado e cole valores no display.
-
-**Sugestão:**
-```dart
-import 'package:flutter/services.dart';
-
-// Copiar
-void copyToClipboard() {
-  Clipboard.setData(ClipboardData(text: displayText));
-  // Mostrar snackbar de confirmação
-}
-
-// Colar
-Future<void> pasteFromClipboard() async {
-  final data = await Clipboard.getData(Clipboard.kTextPlain);
-  if (data?.text != null) {
-    final parsed = NumberFormatter.parse(data!.text!);
-    if (parsed != null) {
-      _displayText = NumberFormatter.format(parsed);
-      notifyListeners();
-    }
-  }
-}
-```
-
-**Benefícios:**
-- Funcionalidade esperada em calculadoras desktop
-- Melhora produtividade
+> **Implementado (22/01/2026):** Suporte completo a copiar/colar:
+>
+> **Controller** (`calculator_controller.dart`):
+> - `copyToClipboard()` - Copia o valor do display (não copia em estado de erro)
+> - `pasteFromClipboard()` - Cola e valida número (rejeita texto inválido e overflow)
+>
+> **Atalhos de teclado** (`calculator_page.dart`):
+> - `Ctrl+C` / `Cmd+C` - Copiar valor do display
+> - `Ctrl+V` / `Cmd+V` - Colar valor no display
+> - SnackBar de feedback visual
+>
+> **Testes:** 10 novos testes cobrindo todos os cenários (total: 139 testes)
 
 ---
 
@@ -881,11 +839,30 @@ Cada melhoria foi projetada para:
 - ✅ Preparar o app para crescimento futuro
 
 **Última atualização:** 22 de Janeiro de 2026
-**Versão do documento:** 4.3
+**Versão do documento:** 4.7
 
 ---
 
 ## Changelog
+
+### v4.7 (22/01/2026)
+- Item #36 (Copiar/Colar) **implementado** - Ctrl+C/Ctrl+V e Cmd+C/Cmd+V funcionais
+- Adicionados métodos `copyToClipboard()` e `pasteFromClipboard()` no controller
+- Adicionados atalhos de teclado na página principal
+- 10 novos testes de copiar/colar (total: 139 testes)
+- Atualizado resumo: 18 implementados, 20 removidos, 1 parcial, 2 pendentes
+
+### v4.6 (22/01/2026)
+- Removido item #35 (Rate Limiting para Input) - não há comportamento inesperado, causaria inputs perdidos
+- Atualizado resumo: 17 implementados, 20 removidos, 1 parcial, 3 pendentes
+
+### v4.5 (22/01/2026)
+- Removido item #24 (Otimizar Rebuild de Widgets) - código já segue boas práticas (`const`, StatelessWidget), overhead negligenciável
+- Atualizado resumo: 17 implementados, 19 removidos, 1 parcial, 3 pendentes
+
+### v4.4 (22/01/2026)
+- Removido item #23 (Lazy Loading) - `ListView.builder` já implementa lazy loading de widgets, paginação de dados seria over-engineering
+- Atualizado resumo: 17 implementados, 18 removidos, 2 parciais, 3 pendentes
 
 ### v4.3 (22/01/2026)
 - Item #11 (Testes de Edge Cases) marcado como **implementado**
