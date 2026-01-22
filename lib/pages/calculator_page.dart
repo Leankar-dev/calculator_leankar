@@ -58,12 +58,45 @@ class _CalculatorPageState extends State<CalculatorPage> {
     );
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   void _handleKeyEvent(KeyEvent event) {
     try {
       if (event is! KeyDownEvent) return;
 
       final String? key = event.character;
       final LogicalKeyboardKey logicalKey = event.logicalKey;
+
+      // Atalhos com Ctrl (Windows/Linux) ou Cmd (macOS)
+      final isControlPressed = HardwareKeyboard.instance.isControlPressed ||
+          HardwareKeyboard.instance.isMetaPressed;
+
+      if (isControlPressed) {
+        if (logicalKey == LogicalKeyboardKey.keyC) {
+          _controller.copyToClipboard().then((success) {
+            if (success && mounted) {
+              _showSnackBar('Valor copiado');
+            }
+          });
+          return;
+        }
+        if (logicalKey == LogicalKeyboardKey.keyV) {
+          _controller.pasteFromClipboard().then((success) {
+            if (!success && mounted) {
+              _showSnackBar('Valor inválido para colar');
+            }
+          });
+          return;
+        }
+      }
 
       if (logicalKey == LogicalKeyboardKey.enter ||
           logicalKey == LogicalKeyboardKey.numpadEnter) {

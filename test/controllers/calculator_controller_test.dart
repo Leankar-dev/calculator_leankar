@@ -1,10 +1,13 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../mocks/mock_storage_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late CalculatorController controller;
   late MockStorageService mockStorageService;
 
@@ -646,6 +649,134 @@ void main() {
         controller.calculateResult();
 
         expect(controller.displayText, '0,3');
+      });
+    });
+
+    group('Copiar e Colar', () {
+      late String clipboardContent;
+
+      setUp(() {
+        clipboardContent = '';
+        // Mock do clipboard para testes
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform,
+                (MethodCall methodCall) async {
+          if (methodCall.method == 'Clipboard.setData') {
+            final Map<String, dynamic> args =
+                methodCall.arguments as Map<String, dynamic>;
+            clipboardContent = args['text'] as String;
+            return null;
+          }
+          if (methodCall.method == 'Clipboard.getData') {
+            return <String, dynamic>{'text': clipboardContent};
+          }
+          return null;
+        });
+      });
+
+      tearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, null);
+      });
+
+      test('deve copiar valor do display para clipboard', () async {
+        controller.appendNumber('1');
+        controller.appendNumber('2');
+        controller.appendNumber('3');
+
+        final success = await controller.copyToClipboard();
+        expect(success, isTrue);
+        expect(clipboardContent, '123');
+      });
+
+      test('não deve copiar quando em estado de erro', () async {
+        // Causa erro
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.displayText, 'Erro: Div/0');
+
+        final success = await controller.copyToClipboard();
+        expect(success, isFalse);
+      });
+
+      test('deve colar número válido do clipboard', () async {
+        // Configura clipboard com número válido
+        clipboardContent = '456';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isTrue);
+        expect(controller.displayText, '456');
+      });
+
+      test('deve colar número com vírgula decimal', () async {
+        clipboardContent = '3,14';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isTrue);
+        expect(controller.displayText, '3,14');
+      });
+
+      test('deve colar número com ponto como separador de milhares', () async {
+        // No formato brasileiro, ponto é separador de milhares
+        clipboardContent = '1.234';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isTrue);
+        // 1.234 é interpretado como 1234 (mil duzentos e trinta e quatro)
+        expect(controller.displayText, '1.234');
+      });
+
+      test('deve rejeitar texto não numérico ao colar', () async {
+        clipboardContent = 'abc';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isFalse);
+        expect(controller.displayText, '0');
+      });
+
+      test('deve rejeitar clipboard vazio', () async {
+        clipboardContent = '';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isFalse);
+      });
+
+      test('deve atualizar display após colar valor válido', () async {
+        controller.appendNumber('9');
+        controller.appendNumber('9');
+        expect(controller.displayText, '99');
+
+        clipboardContent = '42';
+        final success = await controller.pasteFromClipboard();
+
+        expect(success, isTrue);
+        expect(controller.displayText, '42');
+      });
+
+      test('deve rejeitar número fora dos limites ao colar', () async {
+        // Número maior que 1e15
+        clipboardContent = '9999999999999999';
+
+        final success = await controller.pasteFromClipboard();
+        expect(success, isFalse);
+      });
+
+      test('deve copiar número formatado com separador de milhares', () async {
+        // Simula um resultado grande
+        controller.appendNumber('1');
+        controller.appendNumber('2');
+        controller.appendNumber('3');
+        controller.appendNumber('4');
+        controller.appendNumber('5');
+        controller.appendNumber('6');
+        controller.appendNumber('7');
+
+        final success = await controller.copyToClipboard();
+        expect(success, isTrue);
+        // O display mostra com separador de milhares
+        expect(clipboardContent, controller.displayText);
       });
     });
   });

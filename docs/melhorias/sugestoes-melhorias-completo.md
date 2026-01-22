@@ -658,8 +658,8 @@ void appendNumber(String digit) {
 |--------|------------|-------|
 | ✅ Implementado | 18 | #1, #2, #4, #5, #7, #8, #11, #12, #13, #14, #15, #16, #20, #29, #33, #36, #37 |
 | ⏳ Parcial | 1 | #25 |
-| 🗑️ Removido | 20 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #23, #24, #26, #27, #28, #30, #31, #32, #34, #35, #38 |
-| ❌ Pendente | 2 | #39, #40 |
+| 🗑️ Removido | 21 | #3, #6, #9, #10, #17, #18, #19, #21, #22, #23, #24, #26, #27, #28, #30, #31, #32, #34, #35, #38, #39 |
+| ❌ Pendente | 1 | #40 |
 
 ### Fase 1 - Melhorias
 1. ⏳ Documentação de API (#25) - Dartdoc completo
@@ -794,19 +794,18 @@ As sugestões abaixo foram identificadas na análise mais recente do código e c
 
 ---
 
-### 39. Implementar Vibração de Erro ❌
-**Prioridade: Baixa** | **Status: Não implementado**
+### ~~39. Implementar Vibração de Erro~~ 🗑️ (Removido)
+**Status: REMOVIDO - Benefício marginal, erros são raros**
 
-Adicionar feedback tátil diferenciado para erros.
-
-**Sugestão:**
-```dart
-void _handleError(ErrorType error) {
-  HapticFeedback.heavyImpact(); // Vibração forte para erro
-  _displayText = error.message;
-  notifyListeners();
-}
-```
+> **Reavaliação (22/01/2026):** Este item foi **removido** pois:
+> - Erros são **raros** em uso normal (divisão por zero, overflow)
+> - Display já mostra **feedback visual claro** ("Erro: Div/0")
+> - Em **desktop (Windows)**, HapticFeedback é ignorado
+> - Nenhuma calculadora popular implementa vibração diferenciada para erros
+> - Implementação exigiria refatoração moderada do controller
+> - Benefício marginal comparado ao esforço
+>
+> **Reconsiderar se:** app for exclusivamente para mobile e receber feedback de usuários.
 
 ---
 
@@ -839,11 +838,15 @@ Cada melhoria foi projetada para:
 - ✅ Preparar o app para crescimento futuro
 
 **Última atualização:** 22 de Janeiro de 2026
-**Versão do documento:** 4.7
+**Versão do documento:** 4.8
 
 ---
 
 ## Changelog
+
+### v4.8 (22/01/2026)
+- Removido item #39 (Vibração de Erro) - erros são raros, display já mostra feedback visual claro, HapticFeedback ignorado em desktop
+- Atualizado resumo: 18 implementados, 21 removidos, 1 parcial, 1 pendente
 
 ### v4.7 (22/01/2026)
 - Item #36 (Copiar/Colar) **implementado** - Ctrl+C/Ctrl+V e Cmd+C/Cmd+V funcionais

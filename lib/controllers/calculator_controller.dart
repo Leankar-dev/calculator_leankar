@@ -7,6 +7,7 @@ import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CalculatorController extends ChangeNotifier {
   final StorageService _storageService;
@@ -339,6 +340,61 @@ class CalculatorController extends ChangeNotifier {
       }
     });
     notifyListeners();
+  }
+
+  /// Copia o valor atual do display para a área de transferência.
+  /// Retorna true se copiou com sucesso, false caso contrário.
+  Future<bool> copyToClipboard() async {
+    // Não copia se estiver em estado de erro
+    if (_isErrorState()) {
+      logger.debug('Tentativa de copiar em estado de erro', tag: 'Clipboard');
+      return false;
+    }
+
+    try {
+      await Clipboard.setData(ClipboardData(text: _displayText));
+      logger.info('Valor copiado: $_displayText', tag: 'Clipboard');
+      return true;
+    } catch (e) {
+      logger.warning('Falha ao copiar: $e', tag: 'Clipboard');
+      return false;
+    }
+  }
+
+  /// Cola um valor da área de transferência no display.
+  /// Retorna true se colou com sucesso, false caso contrário.
+  Future<bool> pasteFromClipboard() async {
+    try {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      if (data?.text == null || data!.text!.isEmpty) {
+        logger.debug('Área de transferência vazia', tag: 'Clipboard');
+        return false;
+      }
+
+      final text = data.text!.trim();
+      final parsed = NumberFormatter.parse(text);
+
+      if (parsed == null) {
+        logger.debug('Valor inválido para colar: $text', tag: 'Clipboard');
+        return false;
+      }
+
+      // Valida se o número está dentro dos limites
+      final validationResult = errorHandler.validateCalculationResult(parsed);
+      if (validationResult.isFailure) {
+        logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
+        return false;
+      }
+
+      _displayText = NumberFormatter.format(parsed);
+      _shouldResetDisplay = true;
+      logger.info('Valor colado: $_displayText', tag: 'Clipboard');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      logger.warning('Falha ao colar: $e', tag: 'Clipboard');
+      return false;
+    }
   }
 
   /// Verifica se o display está mostrando um erro
