@@ -49,4 +49,5 @@ claude.md
 android/key.properties
 *.jks
 *.keystore
+android\app\build.gradle.kts
  

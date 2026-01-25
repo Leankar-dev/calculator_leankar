@@ -1,0 +1,23 @@
+Calculadora LeanKar - v0.7.1
+
+Notas de Lançamento para Teste 
+
+O que há de novo:
+- Calculadora com design neumórfico moderno
+- Operações básicas: soma, subtração, multiplicação e divisão
+- Suporte a entrada via teclado físico
+- Tema claro/escuro
+- Formato numérico brasileiro (vírgula como separador decimal)
+
+Recursos:
+- Interface intuitiva e elegante
+- Atalhos de teclado para todas as operações
+- Histórico de cálculos
+
+Por favor, teste:
+- Todas as operações matemáticas básicas
+- Entrada via teclado e botões na tela
+- Comportamento em diferentes tamanhos de tela
+- Alternância entre temas
+
+Reporte bugs e feedback para a equipe de desenvolvimento.
