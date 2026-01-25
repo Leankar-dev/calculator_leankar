@@ -281,7 +281,8 @@ class CalculatorController extends ChangeNotifier {
       _addToHistory(expression, _displayText);
     }
 
-    _firstOperand = _displayText;
+    // Limpa os operandos para que o resultado não influencie a próxima operação
+    _firstOperand = '';
     _secondOperand = '';
     _currentOperation = null;
     _shouldResetDisplay = true;
