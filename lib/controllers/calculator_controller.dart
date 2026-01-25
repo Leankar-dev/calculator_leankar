@@ -276,12 +276,10 @@ class CalculatorController extends ChangeNotifier {
         '$_firstOperand ${_currentOperation!.symbol} $_displayText';
     _calculatePendingOperation();
 
-    // Só adiciona ao histórico se não houve erro
     if (!_isErrorState()) {
       _addToHistory(expression, _displayText);
     }
 
-    // Limpa os operandos para que o resultado não influencie a próxima operação
     _firstOperand = '';
     _secondOperand = '';
     _currentOperation = null;
