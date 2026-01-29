@@ -58,7 +58,9 @@ class HistoryBottomSheet extends StatelessWidget {
               style: NeumorphicStyle(
                 depth: 2,
                 intensity: 0.6,
-                boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(8),
+                ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               onPressed: () {
@@ -92,7 +94,7 @@ class HistoryBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No calculations yet',
+              'Sem Histórico de cálculos',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
