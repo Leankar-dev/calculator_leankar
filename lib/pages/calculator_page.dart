@@ -187,11 +187,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
               padding: const EdgeInsets.all(6),
               child: Image.asset(
-                'assets/images/logo2.png',
+                'assets/images/logo4.png',
                 height: 40,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 20),
             const Text(
               'Calculator',
               style: TextStyle(
@@ -216,7 +216,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
               color: Colors.grey[700],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 20),
         ],
       ),
       body: SafeArea(
