@@ -171,12 +171,35 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
-        title: const Text(
-          'Calculator',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Neumorphic(
+              style: NeumorphicStyle(
+                shape: NeumorphicShape.convex,
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(10),
+                ),
+                depth: 6,
+                intensity: 0.8,
+                lightSource: LightSource.topLeft,
+                color: NeumorphicTheme.baseColor(context),
+              ),
+              padding: const EdgeInsets.all(6),
+              child: Image.asset(
+                'assets/images/logo2.png',
+                height: 40,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Calculator',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
         actions: [
