@@ -37,8 +37,8 @@ android {
         applicationId = "leankar.dev.calculator_05122025"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 5
-        versionName = "0.7.4+1"
+        versionCode = 6
+        versionName = "0.7.6+1"
     }
 
     signingConfigs {
