@@ -47,10 +47,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-claude.md 
 docs/melhorias/
 docs/
-CLAUDE.md
 
 android/key.properties
 *.jks
