@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 
 class CalculatorController extends ChangeNotifier {
   final StorageService _storageService;
+  final ErrorHandler _errorHandler;
+  final LoggerService _logger;
 
   String _displayText = AppConstants.initialDisplayValue;
   String _firstOperand = '';
@@ -21,8 +23,13 @@ class CalculatorController extends ChangeNotifier {
   bool _isLoading = false;
   bool _hasError = false;
 
-  CalculatorController({StorageService? storageService})
-    : _storageService = storageService ?? StorageService();
+  CalculatorController({
+    StorageService? storageService,
+    ErrorHandler? errorHandler,
+    LoggerService? logger,
+  }) : _storageService = storageService ?? StorageService(),
+       _errorHandler = errorHandler ?? ErrorHandler.instance,
+       _logger = logger ?? LoggerService.instance;
 
   String get displayText => _displayText;
   List<CalculationHistory> get history => List.unmodifiable(_history);
@@ -41,7 +48,7 @@ class CalculatorController extends ChangeNotifier {
         _hasError = false;
       },
       onFailure: (error, details) {
-        logger.warning(
+        _logger.warning(
           'Falha ao carregar histórico: ${error.fullMessage}',
           tag: 'CalculatorController',
         );
@@ -104,7 +111,7 @@ class CalculatorController extends ChangeNotifier {
   void calculatePercentage() {
     if (_isErrorState()) return;
 
-    final parseResult = errorHandler.parseDouble(
+    final parseResult = _errorHandler.parseDouble(
       _displayText,
       decimalSeparator: AppConstants.decimalSeparator,
     );
@@ -117,7 +124,7 @@ class CalculatorController extends ChangeNotifier {
     double value = parseResult.value;
 
     if (_firstOperand.isNotEmpty && _currentOperation != null) {
-      final firstResult = errorHandler.parseDouble(
+      final firstResult = _errorHandler.parseDouble(
         _firstOperand,
         decimalSeparator: AppConstants.decimalSeparator,
       );
@@ -132,7 +139,7 @@ class CalculatorController extends ChangeNotifier {
       value = value / 100;
     }
 
-    final validationResult = errorHandler.validateCalculationResult(value);
+    final validationResult = _errorHandler.validateCalculationResult(value);
     if (validationResult.isFailure) {
       _setErrorDisplay(validationResult.error!);
       return;
@@ -140,7 +147,7 @@ class CalculatorController extends ChangeNotifier {
 
     _displayText = _formatResult(value);
 
-    logger.logCalculation(
+    _logger.logCalculation(
       operation: '%',
       firstOperand: _firstOperand.isEmpty ? _displayText : _firstOperand,
       secondOperand: parseResult.value.toString(),
@@ -159,12 +166,12 @@ class CalculatorController extends ChangeNotifier {
     }
 
     if (!_shouldResetDisplay &&
-        !errorHandler.isValidNumberInput(
+        !_errorHandler.isValidNumberInput(
           _displayText,
           digit,
           decimalSeparator: AppConstants.decimalSeparator,
         )) {
-      logger.debug('Entrada rejeitada: número muito longo', tag: 'Input');
+      _logger.debug('Entrada rejeitada: número muito longo', tag: 'Input');
       return;
     }
 
@@ -204,7 +211,7 @@ class CalculatorController extends ChangeNotifier {
 
     _secondOperand = _displayText;
 
-    final firstResult = errorHandler.parseDouble(
+    final firstResult = _errorHandler.parseDouble(
       _firstOperand,
       decimalSeparator: AppConstants.decimalSeparator,
     );
@@ -214,7 +221,7 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    final secondResult = errorHandler.parseDouble(
+    final secondResult = _errorHandler.parseDouble(
       _secondOperand,
       decimalSeparator: AppConstants.decimalSeparator,
     );
@@ -239,7 +246,7 @@ class CalculatorController extends ChangeNotifier {
         result = first * second;
         break;
       case OperationsType.division:
-        final divResult = errorHandler.safeDivide(first, second);
+        final divResult = _errorHandler.safeDivide(first, second);
         if (divResult.isFailure) {
           _setErrorDisplay(divResult.error!);
           return;
@@ -248,7 +255,7 @@ class CalculatorController extends ChangeNotifier {
         break;
     }
 
-    final validationResult = errorHandler.validateCalculationResult(result);
+    final validationResult = _errorHandler.validateCalculationResult(result);
     if (validationResult.isFailure) {
       _setErrorDisplay(validationResult.error!);
       return;
@@ -256,7 +263,7 @@ class CalculatorController extends ChangeNotifier {
 
     _displayText = _formatResult(result);
 
-    logger.logCalculation(
+    _logger.logCalculation(
       operation: _currentOperation!.symbol,
       firstOperand: _firstOperand,
       secondOperand: _secondOperand,
@@ -299,7 +306,7 @@ class CalculatorController extends ChangeNotifier {
 
     _storageService.saveHistory(_history).then((saveResult) {
       if (saveResult.isFailure) {
-        logger.warning(
+        _logger.warning(
           'Falha ao salvar histórico: ${saveResult.errorFullMessage}',
           tag: 'CalculatorController',
         );
@@ -320,7 +327,7 @@ class CalculatorController extends ChangeNotifier {
     _history.clear();
     _storageService.clearHistory().then((result) {
       if (result.isFailure) {
-        logger.warning(
+        _logger.warning(
           'Falha ao limpar histórico: ${result.errorFullMessage}',
           tag: 'CalculatorController',
         );
@@ -331,16 +338,16 @@ class CalculatorController extends ChangeNotifier {
 
   Future<bool> copyToClipboard() async {
     if (_isErrorState()) {
-      logger.debug('Tentativa de copiar em estado de erro', tag: 'Clipboard');
+      _logger.debug('Tentativa de copiar em estado de erro', tag: 'Clipboard');
       return false;
     }
 
     try {
       await Clipboard.setData(ClipboardData(text: _displayText));
-      logger.info('Valor copiado: $_displayText', tag: 'Clipboard');
+      _logger.info('Valor copiado: $_displayText', tag: 'Clipboard');
       return true;
     } catch (e) {
-      logger.warning('Falha ao copiar: $e', tag: 'Clipboard');
+      _logger.warning('Falha ao copiar: $e', tag: 'Clipboard');
       return false;
     }
   }
@@ -349,7 +356,7 @@ class CalculatorController extends ChangeNotifier {
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       if (data?.text == null || data!.text!.isEmpty) {
-        logger.debug('Área de transferência vazia', tag: 'Clipboard');
+        _logger.debug('Área de transferência vazia', tag: 'Clipboard');
         return false;
       }
 
@@ -357,23 +364,23 @@ class CalculatorController extends ChangeNotifier {
       final parsed = NumberFormatter.parse(text);
 
       if (parsed == null) {
-        logger.debug('Valor inválido para colar: $text', tag: 'Clipboard');
+        _logger.debug('Valor inválido para colar: $text', tag: 'Clipboard');
         return false;
       }
 
-      final validationResult = errorHandler.validateCalculationResult(parsed);
+      final validationResult = _errorHandler.validateCalculationResult(parsed);
       if (validationResult.isFailure) {
-        logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
+        _logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
         return false;
       }
 
       _displayText = NumberFormatter.format(parsed);
       _shouldResetDisplay = true;
-      logger.info('Valor colado: $_displayText', tag: 'Clipboard');
+      _logger.info('Valor colado: $_displayText', tag: 'Clipboard');
       notifyListeners();
       return true;
     } catch (e) {
-      logger.warning('Falha ao colar: $e', tag: 'Clipboard');
+      _logger.warning('Falha ao colar: $e', tag: 'Clipboard');
       return false;
     }
   }

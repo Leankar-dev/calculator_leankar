@@ -1,19 +1,5 @@
-import 'package:flutter/material.dart';
-
-class AppConstants {
-  AppConstants._();
-
-  static const Color clearButtonColor = Color(0xFFE57373);
-
-  static const Color backspaceButtonColor = Color(0xFFFFB74D);
-
-  static const Color operationButtonColor = Color(0xFF64B5F6);
-
-  static const Color equalsButtonColor = Color(0xFF81C784);
-
-  static const Color primaryTextColor = Color(0xDD000000);
-
-  static const Color secondaryTextColor = Color(0xFF757575);
+class AppSizes {
+  AppSizes._();
 
   static const double baseWidth = 375.0;
 
@@ -29,6 +15,8 @@ class AppConstants {
 
   static const double expressionFontSize = 20.0;
 
+  static const double displayPadding = 16.0;
+
   static const double buttonFontSizePortrait = 24.0;
 
   static const double buttonFontSizeLandscape = 20.0;
@@ -38,8 +26,6 @@ class AppConstants {
   static const double buttonPaddingLandscape = 10.0;
 
   static const double buttonSpacing = 6.0;
-
-  static const double displayPadding = 16.0;
 
   static const double displayHeightMin = 120.0;
 
@@ -90,44 +76,6 @@ class AppConstants {
   static const double displayIntensity = 0.8;
 
   static const double buttonSurfaceIntensity = 0.25;
-
-  static const double colorAlpha = 0.15;
-
-  static const int maxDecimalPlaces = 8;
-
-  static const String decimalSeparator = ',';
-
-  static const String divisionByZeroError = 'Erro: Div/0';
-
-  static const String infinityError = 'Erro: Infinito';
-
-  static const String nanError = 'Erro: Inválido';
-
-  static const String overflowError = 'Erro: Overflow';
-
-  static const String genericError = 'Erro';
-
-  static const String initialDisplayValue = '0';
-
-  static const double maxDisplayValue = 1e15;
-
-  static const String thousandsSeparator = '.';
-
-  static const double scientificThresholdSmall = 1e-6;
-
-  static const double scientificThresholdLarge = 1e12;
-
-  static const String backspaceSymbol = '\u{232B}';
-
-  static const String percentSymbol = '\u{0025}';
-
-  static const String additionSymbol = '\u{002B}';
-
-  static const String subtractionSymbol = '\u{002D}';
-
-  static const String multiplicationSymbol = '\u{00D7}';
-
-  static const String divisionSymbol = '\u{00F7}';
 
   static const double tabletBreakpoint = 600.0;
 

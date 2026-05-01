@@ -4,9 +4,9 @@ import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:calculator_05122025/utils/result.dart';
 
 class ErrorHandler {
-  ErrorHandler._();
+  ErrorHandler();
 
-  static final ErrorHandler _instance = ErrorHandler._();
+  static final ErrorHandler _instance = ErrorHandler();
   static ErrorHandler get instance => _instance;
 
   Result<double> validateCalculationResult(double value) {

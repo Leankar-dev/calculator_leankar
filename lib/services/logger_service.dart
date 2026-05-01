@@ -16,9 +16,9 @@ enum LogLevel {
 }
 
 class LoggerService {
-  LoggerService._();
+  LoggerService();
 
-  static final LoggerService _instance = LoggerService._();
+  static final LoggerService _instance = LoggerService();
   static LoggerService get instance => _instance;
 
   LogLevel _minLevel = kDebugMode ? LogLevel.debug : LogLevel.warning;

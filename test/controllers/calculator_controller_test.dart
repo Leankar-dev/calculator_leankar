@@ -3,6 +3,8 @@ import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../mocks/mock_error_handler.dart';
+import '../mocks/mock_logger_service.dart';
 import '../mocks/mock_storage_service.dart';
 
 void main() {
@@ -10,10 +12,18 @@ void main() {
 
   late CalculatorController controller;
   late MockStorageService mockStorageService;
+  late MockErrorHandler mockErrorHandler;
+  late MockLoggerService mockLoggerService;
 
   setUp(() {
     mockStorageService = MockStorageService();
-    controller = CalculatorController(storageService: mockStorageService);
+    mockErrorHandler = MockErrorHandler();
+    mockLoggerService = MockLoggerService();
+    controller = CalculatorController(
+      storageService: mockStorageService,
+      errorHandler: mockErrorHandler,
+      logger: mockLoggerService,
+    );
   });
 
   group('CalculatorController', () {
@@ -659,19 +669,20 @@ void main() {
         clipboardContent = '';
         // Mock do clipboard para testes
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.platform,
-                (MethodCall methodCall) async {
-          if (methodCall.method == 'Clipboard.setData') {
-            final Map<String, dynamic> args =
-                methodCall.arguments as Map<String, dynamic>;
-            clipboardContent = args['text'] as String;
-            return null;
-          }
-          if (methodCall.method == 'Clipboard.getData') {
-            return <String, dynamic>{'text': clipboardContent};
-          }
-          return null;
-        });
+            .setMockMethodCallHandler(SystemChannels.platform, (
+              MethodCall methodCall,
+            ) async {
+              if (methodCall.method == 'Clipboard.setData') {
+                final Map<String, dynamic> args =
+                    methodCall.arguments as Map<String, dynamic>;
+                clipboardContent = args['text'] as String;
+                return null;
+              }
+              if (methodCall.method == 'Clipboard.getData') {
+                return <String, dynamic>{'text': clipboardContent};
+              }
+              return null;
+            });
       });
 
       tearDown(() {
