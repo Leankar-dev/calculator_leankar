@@ -6,6 +6,20 @@ Este arquivo fornece orientações ao Claude Code (claude.ai/code) ao trabalhar 
 
 Um aplicativo de calculadora Flutter com design neumórfico usando o pacote `flutter_neumorphic_plus`. O app suporta operações aritméticas básicas e entrada via teclado.
 
+## Regras OBRIGATÓRIAS de Código
+
+Estas regras se aplicam a TODOS os arquivos Dart gerados ou modificados (lib/ e test/):
+
+1. **Widgets como classes** — Sempre use `StatelessWidget` ou `StatefulWidget`. NUNCA crie widgets como funções que retornam `Widget`.
+
+2. **Sem comentários** — NÃO coloque nenhum tipo de comentário no código: nem `//`, nem `/* */`, nem `///` (dartdoc).
+
+3. **Sem Dart Dot Shorthand Notation** — NÃO use a notação de ponto abreviada do Dart (ex.: `.addition` no lugar de `OperationsType.addition`).
+
+4. **Testes unitários desacoplados** — Testes devem injetar mocks das dependências; nunca instanciar serviços reais no corpo do teste.
+
+5. **Sem Dartdoc** — NÃO use `///` em nenhum lugar do código.
+
 ## Comandos Comuns
 
 ```bash

@@ -275,7 +275,7 @@ class CalculatorController extends ChangeNotifier {
     return NumberFormatter.format(value);
   }
 
-  void calculateResult() {
+  Future<void> calculateResult() async {
     if (_currentOperation == null || _firstOperand.isEmpty) return;
     if (_isErrorState()) return;
 
@@ -292,6 +292,8 @@ class CalculatorController extends ChangeNotifier {
     _currentOperation = null;
     _shouldResetDisplay = true;
     notifyListeners();
+
+    await _persistHistory();
   }
 
   void _addToHistory(String expression, String result) {
@@ -300,18 +302,21 @@ class CalculatorController extends ChangeNotifier {
       CalculationHistory(
         expression: expression,
         result: result,
-        timestamp: DateTime.now(),
+        timestamp: DateTime.now().toUtc(),
       ),
     );
+  }
 
-    _storageService.saveHistory(_history).then((saveResult) {
-      if (saveResult.isFailure) {
-        _logger.warning(
-          'Falha ao salvar histórico: ${saveResult.errorFullMessage}',
-          tag: 'CalculatorController',
-        );
-      }
-    });
+  Future<void> _persistHistory() async {
+    final saveResult = await _storageService.saveHistory(_history);
+    saveResult.fold(
+      onSuccess: (_) =>
+          _logger.debug('Histórico salvo', tag: 'CalculatorController'),
+      onFailure: (e, d) => _logger.warning(
+        'Falha ao salvar histórico: ${e.fullMessage}',
+        tag: 'CalculatorController',
+      ),
+    );
   }
 
   void useHistoryResult(CalculationHistory item) {
@@ -323,17 +328,17 @@ class CalculatorController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearHistory() {
+  Future<void> clearHistory() async {
     _history.clear();
-    _storageService.clearHistory().then((result) {
-      if (result.isFailure) {
-        _logger.warning(
-          'Falha ao limpar histórico: ${result.errorFullMessage}',
-          tag: 'CalculatorController',
-        );
-      }
-    });
     notifyListeners();
+
+    final result = await _storageService.clearHistory();
+    if (result.isFailure) {
+      _logger.warning(
+        'Falha ao limpar histórico: ${result.errorFullMessage}',
+        tag: 'CalculatorController',
+      );
+    }
   }
 
   Future<bool> copyToClipboard() async {

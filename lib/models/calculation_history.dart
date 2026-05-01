@@ -39,7 +39,7 @@ class CalculationHistory {
 
     DateTime parsedTimestamp;
     try {
-      parsedTimestamp = DateTime.parse(timestamp);
+      parsedTimestamp = DateTime.parse(timestamp).toUtc();
     } catch (e) {
       throw FormatException('Formato de timestamp inválido: $timestamp');
     }

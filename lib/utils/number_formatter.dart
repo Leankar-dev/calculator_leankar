@@ -47,7 +47,7 @@ class NumberFormatter {
     if (value == 0) return '0';
 
     final exponent = (math.log(value.abs()) / math.ln10).floor();
-    final mantissa = value / _pow10(exponent);
+    final mantissa = value / math.pow(10, exponent).toDouble();
 
     String mantissaStr = mantissa.toStringAsFixed(4);
     mantissaStr = mantissaStr.replaceAll('.', AppConstants.decimalSeparator);
@@ -70,22 +70,6 @@ class NumberFormatter {
     }
 
     return formatted;
-  }
-
-  static double _pow10(int exponent) {
-    if (exponent >= 0) {
-      double result = 1;
-      for (int i = 0; i < exponent; i++) {
-        result *= 10;
-      }
-      return result;
-    } else {
-      double result = 1;
-      for (int i = 0; i < -exponent; i++) {
-        result /= 10;
-      }
-      return result;
-    }
   }
 
   static double? parse(String text) {

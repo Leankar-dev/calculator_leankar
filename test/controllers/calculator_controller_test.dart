@@ -227,17 +227,11 @@ void main() {
       });
     });
 
-    // ============================================
-    // TESTES DE EDGE CASES
-    // ============================================
-
     group('Limites de entrada', () {
       test('deve limitar número de dígitos (máximo 15)', () {
-        // Tenta adicionar 20 dígitos
         for (int i = 0; i < 20; i++) {
           controller.appendNumber('9');
         }
-        // Remove separadores de milhares para contar dígitos
         final digitsOnly = controller.displayText.replaceAll('.', '');
         expect(digitsOnly.length, lessThanOrEqualTo(15));
       });
@@ -245,13 +239,11 @@ void main() {
       test('deve limitar casas decimais', () {
         controller.appendNumber('1');
         controller.appendDecimal();
-        // Tenta adicionar 15 dígitos após a vírgula
         for (int i = 0; i < 15; i++) {
           controller.appendNumber('3');
         }
         final parts = controller.displayText.split(',');
         expect(parts.length, 2);
-        // O limite é de 15 dígitos no total (não apenas decimais)
         final totalDigits =
             parts[0].replaceAll('.', '').length + parts[1].length;
         expect(totalDigits, lessThanOrEqualTo(15));
@@ -275,69 +267,58 @@ void main() {
 
     group('Comportamento após erro', () {
       test('deve limpar erro ao digitar novo número', () {
-        // Causa erro de divisão por zero
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
         expect(controller.displayText, 'Erro: Div/0');
 
-        // Digita novo número
         controller.appendNumber('7');
         expect(controller.displayText, '7');
       });
 
       test('deve limpar erro ao adicionar decimal', () {
-        // Causa erro
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
         expect(controller.displayText, 'Erro: Div/0');
 
-        // Adiciona decimal
         controller.appendDecimal();
         expect(controller.displayText, '0,');
       });
 
       test('deve limpar erro ao definir operação', () {
-        // Causa erro
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
         expect(controller.displayText, 'Erro: Div/0');
 
-        // Define nova operação - limpa o erro e inicia nova operação com 0
         controller.setOperationType(OperationsType.addition);
         expect(controller.displayText, '0');
-        // Após limpar erro e definir operação, a expressão mostra "0 +"
         expect(controller.expressionDisplay, '0 +');
       });
 
       test('deve limpar erro ao pressionar backspace', () {
-        // Causa erro
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
         expect(controller.displayText, 'Erro: Div/0');
 
-        // Pressiona backspace
         controller.backspace();
         expect(controller.displayText, '0');
         expect(controller.expressionDisplay, '');
       });
 
       test('não deve calcular porcentagem em estado de erro', () {
-        // Causa erro
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
         expect(controller.displayText, 'Erro: Div/0');
 
-        // Tenta calcular porcentagem
         controller.calculatePercentage();
         expect(controller.displayText, 'Erro: Div/0');
       });
@@ -357,7 +338,6 @@ void main() {
         controller.calculateResult();
         expect(controller.displayText, '8');
 
-        // Pressiona = novamente (não deve mudar, pois operação foi limpa)
         controller.calculateResult();
         expect(controller.displayText, '8');
       });
@@ -408,8 +388,6 @@ void main() {
         controller.setOperationType(OperationsType.subtraction);
         controller.appendNumber('1');
         controller.setOperationType(OperationsType.division);
-        // Agora display é 0, então 0 / 0 deveria dar erro? Não, 5 / 0 dá erro
-        // Vamos fazer: 5 + 5 = 10, depois / 0
         controller.clearDisplay();
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.addition);
@@ -459,7 +437,6 @@ void main() {
         controller.calculateResult();
         expect(controller.displayText, '8');
 
-        // Digita novo número
         controller.appendNumber('2');
         expect(controller.displayText, '2');
       });
@@ -471,7 +448,6 @@ void main() {
         controller.calculateResult();
         expect(controller.displayText, '8');
 
-        // Continua com nova operação
         controller.setOperationType(OperationsType.multiplication);
         controller.appendNumber('2');
         controller.calculateResult();
@@ -493,7 +469,6 @@ void main() {
         controller.appendNumber('3');
         controller.calculateResult();
 
-        // Aguarda o save assíncrono
         await Future.delayed(const Duration(milliseconds: 100));
 
         expect(controller.history, hasLength(1));
@@ -502,7 +477,6 @@ void main() {
       });
 
       test('deve limpar histórico', () async {
-        // Adiciona item ao histórico
         controller.appendNumber('2');
         controller.setOperationType(OperationsType.multiplication);
         controller.appendNumber('3');
@@ -516,7 +490,6 @@ void main() {
       });
 
       test('deve usar resultado do histórico', () async {
-        // Adiciona item ao histórico
         controller.appendNumber('1');
         controller.appendNumber('0');
         controller.setOperationType(OperationsType.addition);
@@ -526,7 +499,6 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         expect(controller.history, hasLength(1));
 
-        // Limpa e usa o histórico
         controller.clearDisplay();
         controller.useHistoryResult(controller.history.first);
 
@@ -557,7 +529,6 @@ void main() {
 
     group('Overflow e validação', () {
       test('deve mostrar erro de overflow para números muito grandes', () {
-        // 1e15 * 100 > limite (precisa exceder 1e15)
         controller.appendNumber('1');
         for (int i = 0; i < 14; i++) {
           controller.appendNumber('0');
@@ -572,17 +543,14 @@ void main() {
       });
 
       test('deve usar notação científica para números grandes permitidos', () {
-        // Número >= 1e12 usa notação científica (scientificThresholdLarge)
         controller.appendNumber('1');
         for (int i = 0; i < 12; i++) {
           controller.appendNumber('0');
         }
-        // 1e12 * 1 = 1e12
         controller.setOperationType(OperationsType.multiplication);
         controller.appendNumber('1');
         controller.calculateResult();
 
-        // Deve usar notação científica
         expect(controller.displayText.contains('e'), isTrue);
       });
     });
@@ -603,7 +571,6 @@ void main() {
       });
 
       test('porcentagem em operação de subtração', () {
-        // 200 - 50% = 200 - 100 = 100
         controller.appendNumber('2');
         controller.appendNumber('0');
         controller.appendNumber('0');
@@ -631,7 +598,6 @@ void main() {
         controller.appendNumber('3');
         controller.calculateResult();
 
-        // Deve ter vírgula e casas decimais limitadas
         expect(controller.displayText.contains(','), isTrue);
         final parts = controller.displayText.split(',');
         expect(parts[1].length, lessThanOrEqualTo(8));
@@ -667,7 +633,6 @@ void main() {
 
       setUp(() {
         clipboardContent = '';
-        // Mock do clipboard para testes
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(SystemChannels.platform, (
               MethodCall methodCall,
@@ -701,7 +666,6 @@ void main() {
       });
 
       test('não deve copiar quando em estado de erro', () async {
-        // Causa erro
         controller.appendNumber('5');
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
@@ -713,7 +677,6 @@ void main() {
       });
 
       test('deve colar número válido do clipboard', () async {
-        // Configura clipboard com número válido
         clipboardContent = '456';
 
         final success = await controller.pasteFromClipboard();
@@ -730,12 +693,10 @@ void main() {
       });
 
       test('deve colar número com ponto como separador de milhares', () async {
-        // No formato brasileiro, ponto é separador de milhares
         clipboardContent = '1.234';
 
         final success = await controller.pasteFromClipboard();
         expect(success, isTrue);
-        // 1.234 é interpretado como 1234 (mil duzentos e trinta e quatro)
         expect(controller.displayText, '1.234');
       });
 
@@ -767,7 +728,6 @@ void main() {
       });
 
       test('deve rejeitar número fora dos limites ao colar', () async {
-        // Número maior que 1e15
         clipboardContent = '9999999999999999';
 
         final success = await controller.pasteFromClipboard();
@@ -775,7 +735,6 @@ void main() {
       });
 
       test('deve copiar número formatado com separador de milhares', () async {
-        // Simula um resultado grande
         controller.appendNumber('1');
         controller.appendNumber('2');
         controller.appendNumber('3');
@@ -786,7 +745,6 @@ void main() {
 
         final success = await controller.copyToClipboard();
         expect(success, isTrue);
-        // O display mostra com separador de milhares
         expect(clipboardContent, controller.displayText);
       });
     });

@@ -2,8 +2,7 @@ enum OperationsType {
   addition(symbol: '+'),
   subtraction(symbol: '-'),
   multiplication(symbol: '×'),
-  division(symbol: '÷')
-  ;
+  division(symbol: '÷');
 
   final String symbol;
 

@@ -7,8 +7,7 @@ enum LogLevel {
   debug(0, 'DEBUG'),
   info(1, 'INFO'),
   warning(2, 'WARN'),
-  error(3, 'ERROR')
-  ;
+  error(3, 'ERROR');
 
   const LogLevel(this.priority, this.label);
   final int priority;
@@ -109,7 +108,7 @@ class LoggerService {
   }) {
     if (level.priority < _minLevel.priority) return;
 
-    final timestamp = DateTime.now().toIso8601String();
+    final timestamp = DateTime.now().toUtc().toIso8601String();
     final tagPrefix = tag != null ? '[$tag] ' : '';
     final formattedMessage = '${level.label} $timestamp $tagPrefix$message';
 

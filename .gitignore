@@ -47,6 +47,7 @@ app.*.map.json
 claude.md 
 docs/melhorias/
 docs/
+CLAUDE.md
 
 android/key.properties
 *.jks
