@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return NeumorphicApp(
       debugShowCheckedModeBanner: false,
       title: 'Calculator App',
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       theme: const NeumorphicThemeData(
         baseColor: Color(0xFFE0E5EC),
         lightSource: LightSource.topLeft,
