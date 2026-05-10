@@ -49,7 +49,8 @@ class NumberFormatter {
     final exponent = (math.log(value.abs()) / math.ln10).floor();
     final mantissa = value / math.pow(10, exponent).toDouble();
 
-    String mantissaStr = mantissa.toStringAsFixed(4);
+    final int decimalPlaces = mantissa == mantissa.roundToDouble() ? 0 : 4;
+    String mantissaStr = mantissa.toStringAsFixed(decimalPlaces);
     mantissaStr = mantissaStr.replaceAll('.', AppConstants.decimalSeparator);
     mantissaStr = _removeTrailingZeros(mantissaStr);
 
