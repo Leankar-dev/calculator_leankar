@@ -485,7 +485,7 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         expect(controller.history, hasLength(1));
 
-        controller.clearHistory();
+        await controller.clearHistory();
         expect(controller.history, isEmpty);
       });
 
