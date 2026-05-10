@@ -47,23 +47,20 @@ class StorageService {
 
       final result = CalculationHistory.decodeList(jsonString);
 
-      return result.fold(
-        onSuccess: (history) {
-          logger.logStorage(
-            'Histórico carregado',
-            details: '${history.length} itens',
-          );
-          return Result.success(history);
-        },
-        onFailure: (error, details) {
-          logger.warning(
-            'Dados corrompidos detectados, limpando histórico',
-            tag: 'StorageService',
-          );
-          _clearCorruptedData(prefs);
-          return Result.failure(error, details);
-        },
-      );
+      if (result.isSuccess) {
+        logger.logStorage(
+          'Histórico carregado',
+          details: '${result.value.length} itens',
+        );
+        return Result.success(result.value);
+      } else {
+        logger.warning(
+          'Dados corrompidos detectados, limpando histórico',
+          tag: 'StorageService',
+        );
+        await _clearCorruptedData(prefs);
+        return Result.failure(result.error!, result.errorDetails);
+      }
     } catch (e, stackTrace) {
       logger.logError(
         ErrorType.historyLoadError,
@@ -100,9 +97,15 @@ class StorageService {
     }
   }
 
-  void _clearCorruptedData(SharedPreferences prefs) {
+  Future<void> _clearCorruptedData(SharedPreferences prefs) async {
     try {
-      prefs.remove(_historyKey);
-    } catch (_) {}
+      await prefs.remove(_historyKey);
+      logger.debug('Dados corrompidos removidos', tag: 'StorageService');
+    } catch (e) {
+      logger.warning(
+        'Falha ao remover dados corrompidos: $e',
+        tag: 'StorageService',
+      );
+    }
   }
 }
