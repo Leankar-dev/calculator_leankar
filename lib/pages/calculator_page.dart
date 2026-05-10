@@ -5,6 +5,7 @@ import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
+import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
@@ -59,6 +60,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
     _focusNode.dispose();
     super.dispose();
   }
+
+  void _navigateToImc() {}
+
+  void _navigateToSettings() {}
 
   void _showHistory() {
     showModalBottomSheet(
@@ -229,21 +234,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
         ),
         centerTitle: true,
         actions: [
-          NeumorphicButton(
-            style: const NeumorphicStyle(
-              depth: 2,
-              intensity: 0.6,
-              boxShape: NeumorphicBoxShape.circle(),
-            ),
-            padding: const EdgeInsets.all(12),
-            onPressed: _showHistory,
-            child: Icon(
-              Icons.history,
-              color: Colors.grey[700],
+          Builder(
+            builder: (context) => NeumorphicButton(
+              style: const NeumorphicStyle(
+                depth: 2,
+                intensity: 0.6,
+                boxShape: NeumorphicBoxShape.circle(),
+              ),
+              padding: const EdgeInsets.all(12),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              child: Icon(Icons.menu, color: Colors.grey[700]),
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 8),
         ],
+      ),
+      endDrawer: AppDrawerWidget(
+        onHistoryTap: _showHistory,
+        onImcTap: _navigateToImc,
+        onSettingsTap: _navigateToSettings,
       ),
       body: SafeArea(
         child: KeyboardListener(
