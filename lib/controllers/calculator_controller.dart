@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/services/error_handler.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
@@ -23,6 +25,8 @@ class CalculatorController extends ChangeNotifier {
   List<CalculationHistory> _history = [];
   bool _isLoading = false;
   bool _hasError = false;
+  final StreamController<void> _inputRejectedController =
+      StreamController<void>.broadcast();
 
   CalculatorController({
     StorageService? storageService,
@@ -36,6 +40,7 @@ class CalculatorController extends ChangeNotifier {
   List<CalculationHistory> get history => List.unmodifiable(_history);
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
+  Stream<void> get inputRejected => _inputRejectedController.stream;
 
   Future<void> loadHistory() async {
     _isLoading = true;
@@ -175,6 +180,7 @@ class CalculatorController extends ChangeNotifier {
           decimalSeparator: AppConstants.decimalSeparator,
         )) {
       _logger.debug('Entrada rejeitada: número muito longo', tag: 'Input');
+      _inputRejectedController.add(null);
       return;
     }
 
@@ -399,6 +405,12 @@ class CalculatorController extends ChangeNotifier {
       _logger.warning('Falha ao colar: $e', tag: 'Clipboard');
       return PasteResult.invalidFormat;
     }
+  }
+
+  @override
+  void dispose() {
+    _inputRejectedController.close();
+    super.dispose();
   }
 
   bool _isErrorState() => _hasError;

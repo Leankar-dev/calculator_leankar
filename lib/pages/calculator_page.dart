@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
@@ -22,12 +24,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late final CalculatorController _controller;
   late final bool _ownsController;
   final FocusNode _focusNode = FocusNode();
+  StreamSubscription<void>? _inputRejectedSubscription;
 
   @override
   void initState() {
     super.initState();
     _ownsController = widget.controller == null;
     _controller = widget.controller ?? CalculatorController();
+    _inputRejectedSubscription = _controller.inputRejected.listen((_) {
+      HapticFeedback.heavyImpact();
+    });
     _initializeController();
   }
 
@@ -46,6 +52,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   @override
   void dispose() {
+    _inputRejectedSubscription?.cancel();
     if (_ownsController) {
       _controller.dispose();
     }
