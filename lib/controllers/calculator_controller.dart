@@ -86,6 +86,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void clearDisplay() {
+    _hasError = false;
     _displayText = AppConstants.initialDisplayValue;
     _firstOperand = '';
     _secondOperand = '';
@@ -159,6 +160,7 @@ class CalculatorController extends ChangeNotifier {
 
   void appendNumber(String digit) {
     if (_isErrorState()) {
+      _hasError = false;
       _displayText = digit;
       _shouldResetDisplay = false;
       notifyListeners();
@@ -189,6 +191,7 @@ class CalculatorController extends ChangeNotifier {
 
   void appendDecimal() {
     if (_isErrorState()) {
+      _hasError = false;
       _displayText =
           '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
       _shouldResetDisplay = false;
@@ -390,15 +393,10 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  bool _isErrorState() {
-    return _displayText == AppConstants.divisionByZeroError ||
-        _displayText == AppConstants.infinityError ||
-        _displayText == AppConstants.nanError ||
-        _displayText == AppConstants.overflowError ||
-        _displayText == AppConstants.genericError;
-  }
+  bool _isErrorState() => _hasError;
 
   void _setErrorDisplay(ErrorType errorType) {
+    _hasError = true;
     switch (errorType) {
       case ErrorType.divisionByZero:
         _displayText = AppConstants.divisionByZeroError;
