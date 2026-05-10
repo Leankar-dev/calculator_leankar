@@ -308,6 +308,10 @@ class CalculatorController extends ChangeNotifier {
         timestamp: DateTime.now().toUtc(),
       ),
     );
+
+    if (_history.length > AppConstants.maxHistoryItems) {
+      _history.removeLast();
+    }
   }
 
   Future<void> _persistHistory() async {

@@ -134,4 +134,6 @@ class AppConstants {
   static const int displayFlexLandscape = 2;
 
   static const int keypadFlexLandscape = 3;
+
+  static const int maxHistoryItems = 50;
 }

@@ -42,4 +42,5 @@ class AppSizes {
   static const double tabletBreakpoint = 600.0;
   static const int displayFlexLandscape = 2;
   static const int keypadFlexLandscape = 3;
+  static const int maxHistoryItems = 50;
 }

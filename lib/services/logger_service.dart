@@ -121,16 +121,6 @@ class LoggerService {
         stackTrace: stackTrace,
       );
     }
-
-    if (kDebugMode) {
-      print(formattedMessage);
-      if (data != null) {
-        print('  Data: $data');
-      }
-      if (stackTrace != null) {
-        print('  StackTrace: $stackTrace');
-      }
-    }
   }
 
   int _levelToInt(LogLevel level) {
