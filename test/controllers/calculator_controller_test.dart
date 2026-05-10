@@ -2,6 +2,7 @@ import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -744,40 +745,40 @@ void main() {
       test('deve colar número válido do clipboard', () async {
         clipboardContent = '456';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isTrue);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
         expect(controller.displayText, '456');
       });
 
       test('deve colar número com vírgula decimal', () async {
         clipboardContent = '3,14';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isTrue);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
         expect(controller.displayText, '3,14');
       });
 
       test('deve colar número com ponto como separador de milhares', () async {
         clipboardContent = '1.234';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isTrue);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
         expect(controller.displayText, '1.234');
       });
 
       test('deve rejeitar texto não numérico ao colar', () async {
         clipboardContent = 'abc';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isFalse);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.invalidFormat);
         expect(controller.displayText, '0');
       });
 
       test('deve rejeitar clipboard vazio', () async {
         clipboardContent = '';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isFalse);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.emptyClipboard);
       });
 
       test('deve atualizar display após colar valor válido', () async {
@@ -786,17 +787,17 @@ void main() {
         expect(controller.displayText, '99');
 
         clipboardContent = '42';
-        final success = await controller.pasteFromClipboard();
+        final result = await controller.pasteFromClipboard();
 
-        expect(success, isTrue);
+        expect(result, PasteResult.success);
         expect(controller.displayText, '42');
       });
 
       test('deve rejeitar número fora dos limites ao colar', () async {
         clipboardContent = '9999999999999999';
 
-        final success = await controller.pasteFromClipboard();
-        expect(success, isFalse);
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.outOfRange);
       });
 
       test('deve copiar número formatado com separador de milhares', () async {

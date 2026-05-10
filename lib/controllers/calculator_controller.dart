@@ -5,6 +5,7 @@ import 'package:calculator_05122025/services/storage_service.dart';
 import 'package:calculator_05122025/utils/constants.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -367,12 +368,12 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  Future<bool> pasteFromClipboard() async {
+  Future<PasteResult> pasteFromClipboard() async {
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       if (data?.text == null || data!.text!.isEmpty) {
         _logger.debug('Área de transferência vazia', tag: 'Clipboard');
-        return false;
+        return PasteResult.emptyClipboard;
       }
 
       final text = data.text!.trim();
@@ -380,23 +381,23 @@ class CalculatorController extends ChangeNotifier {
 
       if (parsed == null) {
         _logger.debug('Valor inválido para colar: $text', tag: 'Clipboard');
-        return false;
+        return PasteResult.invalidFormat;
       }
 
       final validationResult = _errorHandler.validateCalculationResult(parsed);
       if (validationResult.isFailure) {
         _logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
-        return false;
+        return PasteResult.outOfRange;
       }
 
       _displayText = NumberFormatter.format(parsed);
       _shouldResetDisplay = true;
       _logger.info('Valor colado: $_displayText', tag: 'Clipboard');
       notifyListeners();
-      return true;
+      return PasteResult.success;
     } catch (e) {
       _logger.warning('Falha ao colar: $e', tag: 'Clipboard');
-      return false;
+      return PasteResult.invalidFormat;
     }
   }
 

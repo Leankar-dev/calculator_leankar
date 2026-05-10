@@ -1,6 +1,7 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
@@ -96,9 +97,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
           return;
         }
         if (logicalKey == LogicalKeyboardKey.keyV) {
-          _controller.pasteFromClipboard().then((success) {
-            if (!success && mounted) {
-              _showSnackBar('Valor inválido para colar');
+          _controller.pasteFromClipboard().then((result) {
+            if (result == PasteResult.success || !mounted) return;
+            switch (result) {
+              case PasteResult.emptyClipboard:
+                _showSnackBar('Área de transferência vazia');
+                break;
+              case PasteResult.invalidFormat:
+                _showSnackBar('Valor inválido para colar');
+                break;
+              case PasteResult.outOfRange:
+                _showSnackBar('Valor fora dos limites permitidos');
+                break;
+              case PasteResult.success:
+                break;
             }
           });
           return;
