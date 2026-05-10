@@ -9,19 +9,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class CalculatorPage extends StatefulWidget {
-  const CalculatorPage({super.key});
+  final CalculatorController? controller;
+
+  const CalculatorPage({super.key, this.controller});
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-  final CalculatorController _controller = CalculatorController();
+  late final CalculatorController _controller;
+  late final bool _ownsController;
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _ownsController = widget.controller == null;
+    _controller = widget.controller ?? CalculatorController();
     _initializeController();
   }
 
@@ -40,7 +45,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_ownsController) {
+      _controller.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }
