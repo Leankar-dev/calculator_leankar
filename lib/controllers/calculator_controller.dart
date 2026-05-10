@@ -323,7 +323,10 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void useHistoryResult(CalculationHistory item) {
-    _displayText = item.result;
+    final parsed = NumberFormatter.parse(item.result);
+    _hasError = false;
+    _displayText =
+        parsed != null ? NumberFormatter.format(parsed) : item.result;
     _firstOperand = '';
     _secondOperand = '';
     _currentOperation = null;

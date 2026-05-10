@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
+import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -504,6 +505,36 @@ void main() {
 
         expect(controller.displayText, '15');
         expect(controller.expressionDisplay, '');
+      });
+
+      test('deve normalizar resultado em notação científica do histórico', () {
+        final item = CalculationHistory(
+          expression: '234500 × 1',
+          result: '2,345e5',
+          timestamp: DateTime.now().toUtc(),
+        );
+        controller.useHistoryResult(item);
+        expect(controller.displayText, '234.500');
+        expect(controller.hasError, false);
+        expect(controller.expressionDisplay, '');
+      });
+
+      test('deve limpar estado de erro ao usar resultado do histórico', () {
+        controller.appendNumber('5');
+        controller.setOperationType(OperationsType.division);
+        controller.appendNumber('0');
+        controller.calculateResult();
+        expect(controller.hasError, true);
+
+        final item = CalculationHistory(
+          expression: '10 + 5',
+          result: '15',
+          timestamp: DateTime.now().toUtc(),
+        );
+        controller.useHistoryResult(item);
+
+        expect(controller.displayText, '15');
+        expect(controller.hasError, false);
       });
 
       test('deve tratar erro ao carregar histórico', () async {
