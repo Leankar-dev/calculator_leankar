@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class HistoryEmptyStateWidget extends StatelessWidget {
@@ -18,7 +19,7 @@ class HistoryEmptyStateWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Sem Histórico de cálculos',
+              AppStrings.historyEmptyMessage,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],

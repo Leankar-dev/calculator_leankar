@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -39,7 +40,7 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'SOBRE O APP',
+            AppStrings.settingsAboutSection,
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey,
@@ -49,15 +50,24 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
           ),
           const SizedBox(height: 12),
           _InfoRow(
-            label: 'Versão',
+            label: AppStrings.settingsVersionLabel,
             value: _version.isEmpty ? '—' : 'v$_version',
           ),
           const _InfoDivider(),
-          const _InfoRow(label: 'Programador', value: 'Leankar.dev'),
+          const _InfoRow(
+            label: AppStrings.settingsDeveloperLabel,
+            value: AppStrings.settingsDeveloperName,
+          ),
           const _InfoDivider(),
-          const _InfoRow(label: 'E-mail', value: 'leankar.dev@gmail.com'),
+          const _InfoRow(
+            label: AppStrings.settingsEmailLabel,
+            value: AppStrings.settingsEmail,
+          ),
           const _InfoDivider(),
-          const _InfoRow(label: 'Website', value: 'leankar.dev'),
+          const _InfoRow(
+            label: AppStrings.settingsWebsiteLabel,
+            value: AppStrings.settingsWebsite,
+          ),
         ],
       ),
     );

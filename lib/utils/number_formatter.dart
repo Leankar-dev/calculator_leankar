@@ -1,26 +1,25 @@
 import 'dart:math' as math;
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:intl/intl.dart';
 
 class NumberFormatter {
   NumberFormatter._();
 
-  static const String _locale = 'pt_BR';
-
   static final NumberFormat _thousandsFormatter = NumberFormat(
     '#,##0.########',
-    _locale,
+    AppStrings.locale,
   );
 
-  static final NumberFormat _integerFormatter = NumberFormat('#,##0', _locale);
+  static final NumberFormat _integerFormatter =
+      NumberFormat('#,##0', AppStrings.locale);
 
   static const double _scientificThresholdSmall = 1e-6;
 
   static const double _scientificThresholdLarge = 1e12;
 
   static String format(double value) {
-    if (value.isNaN) return AppConstants.nanError;
-    if (value.isInfinite) return AppConstants.infinityError;
+    if (value.isNaN) return AppStrings.nanError;
+    if (value.isInfinite) return AppStrings.infinityError;
 
     final absValue = value.abs();
 
@@ -51,14 +50,14 @@ class NumberFormatter {
 
     final int decimalPlaces = mantissa == mantissa.roundToDouble() ? 0 : 4;
     String mantissaStr = mantissa.toStringAsFixed(decimalPlaces);
-    mantissaStr = mantissaStr.replaceAll('.', AppConstants.decimalSeparator);
+    mantissaStr = mantissaStr.replaceAll('.', AppStrings.decimalSeparator);
     mantissaStr = _removeTrailingZeros(mantissaStr);
 
     return '${mantissaStr}e$exponent';
   }
 
   static String _removeTrailingZeros(String formatted) {
-    if (!formatted.contains(AppConstants.decimalSeparator)) {
+    if (!formatted.contains(AppStrings.decimalSeparator)) {
       return formatted;
     }
 
@@ -66,7 +65,7 @@ class NumberFormatter {
       formatted = formatted.substring(0, formatted.length - 1);
     }
 
-    if (formatted.endsWith(AppConstants.decimalSeparator)) {
+    if (formatted.endsWith(AppStrings.decimalSeparator)) {
       formatted = formatted.substring(0, formatted.length - 1);
     }
 
@@ -84,7 +83,7 @@ class NumberFormatter {
       }
 
       cleaned = cleaned.replaceAll('.', '');
-      cleaned = cleaned.replaceAll(AppConstants.decimalSeparator, '.');
+      cleaned = cleaned.replaceAll(AppStrings.decimalSeparator, '.');
 
       return double.tryParse(cleaned);
     } catch (_) {
@@ -94,7 +93,7 @@ class NumberFormatter {
 
   static double? _parseScientific(String text) {
     try {
-      final normalized = text.replaceAll(AppConstants.decimalSeparator, '.');
+      final normalized = text.replaceAll(AppStrings.decimalSeparator, '.');
       return double.tryParse(normalized);
     } catch (_) {
       return null;

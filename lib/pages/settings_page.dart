@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/settings/app_info_card_widget.dart';
 import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -14,7 +15,7 @@ class SettingsPage extends StatelessWidget {
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
         title: const Text(
-          'Configurações',
+          AppStrings.settingsPageTitle,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
       ),
@@ -54,7 +55,7 @@ class _AppLogoSection extends StatelessWidget {
           color: NeumorphicTheme.baseColor(context),
         ),
         padding: const EdgeInsets.all(20),
-        child: Image.asset('assets/images/logo4.png', height: 80),
+        child: Image.asset(AppStrings.logoAssetPath, height: 80),
       ),
     );
   }

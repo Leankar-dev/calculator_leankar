@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class HistoryHeaderWidget extends StatelessWidget {
@@ -18,7 +19,7 @@ class HistoryHeaderWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'History',
+            AppStrings.historyTitle,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -40,7 +41,7 @@ class HistoryHeaderWidget extends StatelessWidget {
                 onClearHistory();
               },
               child: Text(
-                'Clear',
+                AppStrings.historyClearButton,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.red[400],

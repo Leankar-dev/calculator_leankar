@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ThemeSelectorWidget extends StatelessWidget {
@@ -21,7 +22,7 @@ class ThemeSelectorWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'APARÊNCIA',
+            AppStrings.settingsAppearanceSection,
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey,
@@ -37,17 +38,17 @@ class ThemeSelectorWidget extends StatelessWidget {
                 segments: const [
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.system,
-                    label: Text('Sistema'),
+                    label: Text(AppStrings.themeOptionSystem),
                     icon: Icon(Icons.brightness_auto_outlined),
                   ),
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.light,
-                    label: Text('Claro'),
+                    label: Text(AppStrings.themeOptionLight),
                     icon: Icon(Icons.light_mode_outlined),
                   ),
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.dark,
-                    label: Text('Escuro'),
+                    label: Text(AppStrings.themeOptionDark),
                     icon: Icon(Icons.dark_mode_outlined),
                   ),
                 ],

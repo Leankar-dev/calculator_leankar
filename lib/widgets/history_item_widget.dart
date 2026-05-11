@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +15,7 @@ class HistoryItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('dd/MM HH:mm');
+    final dateFormat = DateFormat(AppStrings.historyDateFormat);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),

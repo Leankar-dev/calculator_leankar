@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -5,7 +6,7 @@ class SettingsController extends ChangeNotifier {
   static final SettingsController instance = SettingsController._();
   SettingsController._();
 
-  static const String _themeModeKey = 'theme_mode';
+  static const String _themeModeKey = AppStrings.prefThemeModeKey;
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
@@ -26,9 +27,9 @@ class SettingsController extends ChangeNotifier {
 
   ThemeMode _parseThemeMode(String? value) {
     switch (value) {
-      case 'light':
+      case AppStrings.themeModeSerialLight:
         return ThemeMode.light;
-      case 'dark':
+      case AppStrings.themeModeSerialDark:
         return ThemeMode.dark;
       default:
         return ThemeMode.system;
@@ -38,11 +39,11 @@ class SettingsController extends ChangeNotifier {
   String _serializeThemeMode(ThemeMode mode) {
     switch (mode) {
       case ThemeMode.light:
-        return 'light';
+        return AppStrings.themeModeSerialLight;
       case ThemeMode.dark:
-        return 'dark';
+        return AppStrings.themeModeSerialDark;
       case ThemeMode.system:
-        return 'system';
+        return AppStrings.themeModeSerialSystem;
     }
   }
 }

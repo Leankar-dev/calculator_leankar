@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class AppDrawerWidget extends StatelessWidget {
@@ -23,7 +24,7 @@ class AppDrawerWidget extends StatelessWidget {
             const Divider(),
             _DrawerItem(
               icon: Icons.history,
-              label: 'Histórico',
+              label: AppStrings.drawerItemHistory,
               onTap: () {
                 Navigator.of(context).pop();
                 onHistoryTap();
@@ -31,7 +32,7 @@ class AppDrawerWidget extends StatelessWidget {
             ),
             _DrawerItem(
               icon: Icons.monitor_weight_outlined,
-              label: 'Calculadora IMC',
+              label: AppStrings.imcPageTitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onImcTap();
@@ -39,7 +40,7 @@ class AppDrawerWidget extends StatelessWidget {
             ),
             _DrawerItem(
               icon: Icons.settings_outlined,
-              label: 'Configurações',
+              label: AppStrings.settingsPageTitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onSettingsTap();
@@ -67,11 +68,11 @@ class _DrawerHeader extends StatelessWidget {
               intensity: 0.8,
             ),
             padding: const EdgeInsets.all(8),
-            child: Image.asset('assets/images/logo4.png', height: 36),
+            child: Image.asset(AppStrings.logoAssetPath, height: 36),
           ),
           const SizedBox(width: 16),
           const Text(
-            'Leankar Calc',
+            AppStrings.appName,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],

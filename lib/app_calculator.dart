@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/pages/calculator_page.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
       listenable: SettingsController.instance,
       builder: (context, child) => NeumorphicApp(
         debugShowCheckedModeBanner: false,
-        title: 'Calculator App',
+        title: AppStrings.appTitle,
         themeMode: SettingsController.instance.themeMode,
         theme: const NeumorphicThemeData(
           baseColor: Color(0xFFE0E5EC),

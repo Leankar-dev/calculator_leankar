@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ImcCalculatorPage extends StatelessWidget {
@@ -9,7 +10,7 @@ class ImcCalculatorPage extends StatelessWidget {
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
         title: const Text(
-          'Calculadora IMC',
+          AppStrings.imcPageTitle,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
       ),
@@ -47,7 +48,7 @@ class _UnderConstructionBody extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             const Text(
-              'Em desenvolvimento',
+              AppStrings.imcUnderConstructionTitle,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -56,7 +57,7 @@ class _UnderConstructionBody extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'A Calculadora IMC estará disponível em breve.',
+              AppStrings.imcUnderConstructionDescription,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 15, color: Colors.grey[600]),
             ),

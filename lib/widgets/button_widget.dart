@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -19,24 +20,24 @@ class ButtonWidget extends StatelessWidget {
 
   String _getSemanticLabel(String text) {
     switch (text) {
-      case '\u{00F7}':
-        return 'Dividir';
-      case '\u{00D7}':
-        return 'Multiplicar';
-      case '\u{002D}':
-        return 'Subtrair';
-      case '\u{002B}':
-        return 'Adicionar';
-      case '\u{232B}':
-        return 'Apagar último dígito';
-      case '\u{0025}':
-        return 'Porcentagem';
+      case AppStrings.divisionSymbol:
+        return AppStrings.semanticDivide;
+      case AppStrings.multiplicationSymbol:
+        return AppStrings.semanticMultiply;
+      case AppStrings.subtractionSymbol:
+        return AppStrings.semanticSubtract;
+      case AppStrings.additionSymbol:
+        return AppStrings.semanticAdd;
+      case AppStrings.backspaceSymbol:
+        return AppStrings.semanticBackspace;
+      case AppStrings.percentSymbol:
+        return AppStrings.semanticPercent;
       case '=':
-        return 'Calcular resultado';
+        return AppStrings.semanticEquals;
       case 'C':
-        return 'Limpar tudo';
-      case ',':
-        return 'Vírgula decimal';
+        return AppStrings.semanticClear;
+      case AppStrings.decimalSeparator:
+        return AppStrings.semanticDecimalSeparator;
       default:
         return text;
     }

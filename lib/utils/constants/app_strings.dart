@@ -19,4 +19,62 @@ class AppStrings {
   static const String subtractionSymbol = '\u{002D}';
   static const String multiplicationSymbol = '\u{00D7}';
   static const String divisionSymbol = '\u{00F7}';
+
+  static const String appTitle = 'Calculator App';
+  static const String appName = 'Leankar Calc';
+  static const String logoAssetPath = 'assets/images/logo4.png';
+
+  static const String calculatorPageTitle = 'Calculator';
+  static const String imcPageTitle = 'Calculadora IMC';
+  static const String settingsPageTitle = 'Configurações';
+
+  static const String drawerItemHistory = 'Histórico';
+
+  static const String snackbarValueCopied = 'Valor copiado';
+  static const String snackbarEmptyClipboard = 'Área de transferência vazia';
+  static const String snackbarInvalidPaste = 'Valor inválido para colar';
+  static const String snackbarOutOfRange = 'Valor fora dos limites permitidos';
+
+  static const String historyTitle = 'History';
+  static const String historyClearButton = 'Clear';
+  static const String historyEmptyMessage = 'Sem Histórico de cálculos';
+  static const String historyDateFormat = 'dd/MM HH:mm';
+
+  static const String semanticDivide = 'Dividir';
+  static const String semanticMultiply = 'Multiplicar';
+  static const String semanticSubtract = 'Subtrair';
+  static const String semanticAdd = 'Adicionar';
+  static const String semanticBackspace = 'Apagar último dígito';
+  static const String semanticPercent = 'Porcentagem';
+  static const String semanticEquals = 'Calcular resultado';
+  static const String semanticClear = 'Limpar tudo';
+  static const String semanticDecimalSeparator = 'Vírgula decimal';
+
+  static const String settingsAppearanceSection = 'APARÊNCIA';
+  static const String themeOptionSystem = 'Sistema';
+  static const String themeOptionLight = 'Claro';
+  static const String themeOptionDark = 'Escuro';
+
+  static const String settingsAboutSection = 'SOBRE O APP';
+  static const String settingsVersionLabel = 'Versão';
+  static const String settingsDeveloperLabel = 'Programador';
+  static const String settingsDeveloperName = 'Leankar.dev';
+  static const String settingsEmailLabel = 'E-mail';
+  static const String settingsEmail = 'leankar.dev@gmail.com';
+  static const String settingsWebsiteLabel = 'Website';
+  static const String settingsWebsite = 'leankar.dev';
+  static const String settingsWebsiteUrl = 'https://leankar.dev';
+
+  static const String imcUnderConstructionTitle = 'Em desenvolvimento';
+  static const String imcUnderConstructionDescription =
+      'A Calculadora IMC estará disponível em breve.';
+
+  static const String prefThemeModeKey = 'theme_mode';
+  static const String prefHistoryKey = 'calculation_history';
+
+  static const String themeModeSerialLight = 'light';
+  static const String themeModeSerialDark = 'dark';
+  static const String themeModeSerialSystem = 'system';
+
+  static const String locale = 'pt_BR';
 }

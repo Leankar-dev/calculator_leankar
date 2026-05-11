@@ -1,11 +1,12 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
-  static const String _historyKey = 'calculation_history';
+  static const String _historyKey = AppStrings.prefHistoryKey;
 
   Future<Result<bool>> saveHistory(List<CalculationHistory> history) async {
     try {

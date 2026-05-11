@@ -4,6 +4,7 @@ import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
@@ -119,7 +120,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         if (logicalKey == LogicalKeyboardKey.keyC) {
           _controller.copyToClipboard().then((success) {
             if (success && mounted) {
-              _showSnackBar('Valor copiado');
+              _showSnackBar(AppStrings.snackbarValueCopied);
             }
           });
           return;
@@ -129,13 +130,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
             if (result == PasteResult.success || !mounted) return;
             switch (result) {
               case PasteResult.emptyClipboard:
-                _showSnackBar('Área de transferência vazia');
+                _showSnackBar(AppStrings.snackbarEmptyClipboard);
                 break;
               case PasteResult.invalidFormat:
-                _showSnackBar('Valor inválido para colar');
+                _showSnackBar(AppStrings.snackbarInvalidPaste);
                 break;
               case PasteResult.outOfRange:
-                _showSnackBar('Valor fora dos limites permitidos');
+                _showSnackBar(AppStrings.snackbarOutOfRange);
                 break;
               case PasteResult.success:
                 break;
@@ -234,13 +235,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
               padding: const EdgeInsets.all(6),
               child: Image.asset(
-                'assets/images/logo4.png',
+                AppStrings.logoAssetPath,
                 height: 40,
               ),
             ),
             const SizedBox(width: 20),
             const Text(
-              'Calculator',
+              AppStrings.calculatorPageTitle,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
