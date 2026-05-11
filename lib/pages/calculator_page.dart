@@ -221,6 +221,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
+        leading: const SizedBox.shrink(),
         title: Row(
           children: [
             Neumorphic(
