@@ -11,6 +11,16 @@ class ImcCalculatorPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
+        leading: NeumorphicButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: const NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+            depth: AppSizes.appBarMenuButtonDepth,
+            intensity: AppSizes.appBarMenuButtonIntensity,
+          ),
+          padding: const EdgeInsets.all(AppSizes.appBarMenuButtonPadding),
+          child: const Icon(Icons.arrow_back_ios_new, color: AppColors.primaryText),
+        ),
         title: const Text(
           AppStrings.imcPageTitle,
           style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryText),
