@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -44,7 +45,7 @@ class CalculatorDisplayWidget extends StatelessWidget {
             children: [
               if (expressionDisplay.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: AppSizes.displayExpressionSpacing),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,

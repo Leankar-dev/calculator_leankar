@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/settings/app_info_card_widget.dart';
 import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart';
@@ -22,16 +23,16 @@ class SettingsPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSizes.settingsBodyPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const _AppLogoSection(),
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSizes.settingsLogoToSectionSpacing),
               ThemeSelectorWidget(controller: controller),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSizes.settingsSectionSpacing),
               const AppInfoCardWidget(),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSizes.settingsBottomSpacing),
             ],
           ),
         ),
@@ -49,14 +50,14 @@ class _AppLogoSection extends StatelessWidget {
       child: Neumorphic(
         style: NeumorphicStyle(
           shape: NeumorphicShape.convex,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(24)),
-          depth: 8,
-          intensity: 0.8,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(AppSizes.settingsLogoBorderRadius)),
+          depth: AppSizes.settingsLogoDepth,
+          intensity: AppSizes.settingsLogoIntensity,
           lightSource: LightSource.topLeft,
           color: NeumorphicTheme.baseColor(context),
         ),
-        padding: const EdgeInsets.all(20),
-        child: Image.asset(AppStrings.logoAssetPath, height: 80),
+        padding: const EdgeInsets.all(AppSizes.settingsLogoPadding),
+        child: Image.asset(AppStrings.logoAssetPath, height: AppSizes.settingsLogoHeight),
       ),
     );
   }

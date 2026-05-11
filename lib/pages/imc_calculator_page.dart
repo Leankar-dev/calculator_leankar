@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -29,38 +30,38 @@ class _UnderConstructionBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSizes.imcPlaceholderPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Neumorphic(
               style: const NeumorphicStyle(
-                depth: 4,
-                intensity: 0.6,
+                depth: AppSizes.imcPlaceholderIconDepth,
+                intensity: AppSizes.imcPlaceholderIconIntensity,
                 shape: NeumorphicShape.concave,
                 boxShape: NeumorphicBoxShape.circle(),
               ),
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(AppSizes.imcPlaceholderIconContainerPadding),
               child: const Icon(
                 Icons.construction_outlined,
-                size: 64,
+                size: AppSizes.imcPlaceholderIconSize,
                 color: AppColors.textMuted,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSizes.imcPlaceholderIconSpacing),
             const Text(
               AppStrings.imcUnderConstructionTitle,
               style: TextStyle(
-                fontSize: 22,
+                fontSize: AppSizes.imcPlaceholderTitleFontSize,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primaryText,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSizes.imcPlaceholderTitleSpacing),
             Text(
               AppStrings.imcUnderConstructionDescription,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 15, color: AppColors.secondaryText),
+              style: const TextStyle(fontSize: AppSizes.imcPlaceholderDescriptionFontSize, color: AppColors.secondaryText),
             ),
           ],
         ),

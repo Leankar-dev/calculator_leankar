@@ -5,6 +5,7 @@ import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
@@ -227,20 +228,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
               style: NeumorphicStyle(
                 shape: NeumorphicShape.convex,
                 boxShape: NeumorphicBoxShape.roundRect(
-                  BorderRadius.circular(10),
+                  BorderRadius.circular(AppSizes.appBarLogoBorderRadius),
                 ),
-                depth: 6,
-                intensity: 0.8,
+                depth: AppSizes.appBarLogoDepth,
+                intensity: AppSizes.appBarLogoIntensity,
                 lightSource: LightSource.topLeft,
                 color: NeumorphicTheme.baseColor(context),
               ),
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(AppSizes.appBarLogoPadding),
               child: Image.asset(
                 AppStrings.logoAssetPath,
-                height: 40,
+                height: AppSizes.appBarLogoHeight,
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: AppSizes.appBarLogoTitleSpacing),
             const Text(
               AppStrings.calculatorPageTitle,
               style: TextStyle(
@@ -255,16 +256,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
           Builder(
             builder: (context) => NeumorphicButton(
               style: const NeumorphicStyle(
-                depth: 2,
-                intensity: 0.6,
+                depth: AppSizes.appBarMenuButtonDepth,
+                intensity: AppSizes.appBarMenuButtonIntensity,
                 boxShape: NeumorphicBoxShape.circle(),
               ),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSizes.appBarMenuButtonPadding),
               onPressed: () => Scaffold.of(context).openEndDrawer(),
               child: const Icon(Icons.menu, color: AppColors.iconMuted),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSizes.appBarActionsSpacing),
         ],
       ),
       endDrawer: AppDrawerWidget(

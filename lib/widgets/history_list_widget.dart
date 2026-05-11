@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/widgets/history_item_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -16,7 +17,7 @@ class HistoryListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AppSizes.historyListPaddingV),
       itemCount: history.length,
       itemBuilder: (context, index) {
         final item = history[index];

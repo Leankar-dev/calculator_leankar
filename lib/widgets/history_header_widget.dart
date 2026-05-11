@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -15,14 +16,14 @@ class HistoryHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.historyHeaderPaddingH, vertical: AppSizes.historyHeaderPaddingV),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             AppStrings.historyTitle,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: AppSizes.historyTitleFontSize,
               fontWeight: FontWeight.bold,
               color: NeumorphicTheme.defaultTextColor(context),
             ),
@@ -30,13 +31,13 @@ class HistoryHeaderWidget extends StatelessWidget {
           if (hasHistory)
             NeumorphicButton(
               style: NeumorphicStyle(
-                depth: 2,
-                intensity: 0.6,
+                depth: AppSizes.historyClearButtonDepth,
+                intensity: AppSizes.historyClearButtonIntensity,
                 boxShape: NeumorphicBoxShape.roundRect(
-                  BorderRadius.circular(8),
+                  BorderRadius.circular(AppSizes.historyClearButtonBorderRadius),
                 ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.historyClearButtonPaddingH, vertical: AppSizes.historyClearButtonPaddingV),
               onPressed: () {
                 Navigator.pop(context);
                 onClearHistory();
@@ -44,7 +45,7 @@ class HistoryHeaderWidget extends StatelessWidget {
               child: const Text(
                 AppStrings.historyClearButton,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppSizes.historyClearButtonFontSize,
                   color: AppColors.clearHistoryText,
                 ),
               ),

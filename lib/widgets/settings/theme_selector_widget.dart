@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -12,26 +13,26 @@ class ThemeSelectorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Neumorphic(
       style: NeumorphicStyle(
-        depth: 4,
-        intensity: 0.6,
+        depth: AppSizes.settingsCardDepth,
+        intensity: AppSizes.settingsCardIntensity,
         boxShape: NeumorphicBoxShape.roundRect(
-          const BorderRadius.all(Radius.circular(16)),
+          const BorderRadius.all(Radius.circular(AppSizes.settingsCardBorderRadius)),
         ),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSizes.settingsCardPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             AppStrings.settingsAppearanceSection,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: AppSizes.settingsSectionLabelFontSize,
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              letterSpacing: AppSizes.settingsSectionLabelLetterSpacing,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSizes.settingsSectionToThemeSpacing),
           ListenableBuilder(
             listenable: controller,
             builder: (context, child) {

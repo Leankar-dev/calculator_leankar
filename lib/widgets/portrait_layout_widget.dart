@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
@@ -32,7 +33,7 @@ class PortraitLayoutWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.layoutOuterPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -40,7 +41,7 @@ class PortraitLayoutWidget extends StatelessWidget {
               displayText: displayText,
               expressionDisplay: expressionDisplay,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSizes.portraitSectionSpacing),
             CalculatorKeypadWidget(
               onClear: onClear,
               onBackspace: onBackspace,
@@ -50,7 +51,7 @@ class PortraitLayoutWidget extends StatelessWidget {
               onNumberPressed: onNumberPressed,
               onOperationPressed: onOperationPressed,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSizes.portraitSectionSpacing),
             const CalculatorFooterWidget(),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -30,26 +31,26 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
   Widget build(BuildContext context) {
     return Neumorphic(
       style: NeumorphicStyle(
-        depth: 4,
-        intensity: 0.6,
+        depth: AppSizes.settingsCardDepth,
+        intensity: AppSizes.settingsCardIntensity,
         boxShape: NeumorphicBoxShape.roundRect(
-          const BorderRadius.all(Radius.circular(16)),
+          const BorderRadius.all(Radius.circular(AppSizes.settingsCardBorderRadius)),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.settingsInfoCardPaddingH, vertical: AppSizes.settingsInfoCardPaddingV),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             AppStrings.settingsAboutSection,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: AppSizes.settingsSectionLabelFontSize,
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              letterSpacing: AppSizes.settingsSectionLabelLetterSpacing,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSizes.settingsSectionToInfoSpacing),
           _InfoRow(
             label: AppStrings.settingsVersionLabel,
             value: _version.isEmpty ? '—' : 'v$_version',
@@ -84,20 +85,20 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: AppSizes.settingsInfoRowPaddingV),
       child: Row(
         children: [
           SizedBox(
-            width: 110,
+            width: AppSizes.settingsInfoLabelWidth,
             child: Text(
               label,
-              style: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: AppSizes.settingsInfoFontSize),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: AppSizes.settingsInfoFontSize, fontWeight: FontWeight.w500),
               textAlign: TextAlign.end,
             ),
           ),
@@ -112,6 +113,6 @@ class _InfoDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(height: 1, thickness: 0.5);
+    return const Divider(height: AppSizes.settingsDividerHeight, thickness: AppSizes.settingsDividerThickness);
   }
 }

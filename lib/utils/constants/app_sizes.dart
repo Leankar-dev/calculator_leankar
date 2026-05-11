@@ -43,4 +43,105 @@ class AppSizes {
   static const int displayFlexLandscape = 2;
   static const int keypadFlexLandscape = 3;
   static const int maxHistoryItems = 50;
+
+  static const double appThemeDepthLight = 10.0;
+  static const double appThemeIntensityLight = 0.5;
+  static const double appThemeDepthDark = 6.0;
+  static const double appThemeIntensityDark = 0.3;
+
+  static const double appBarLogoHeight = 40.0;
+  static const double appBarLogoBorderRadius = 10.0;
+  static const double appBarLogoDepth = 6.0;
+  static const double appBarLogoIntensity = 0.8;
+  static const double appBarLogoPadding = 6.0;
+  static const double appBarLogoTitleSpacing = 20.0;
+  static const double appBarMenuButtonPadding = 12.0;
+  static const double appBarMenuButtonDepth = 2.0;
+  static const double appBarMenuButtonIntensity = 0.6;
+  static const double appBarActionsSpacing = 8.0;
+
+  static const double layoutOuterPadding = 8.0;
+  static const double portraitSectionSpacing = 8.0;
+  static const double displayExpressionSpacing = 8.0;
+
+  static const double footerBottomPadding = 8.0;
+  static const double footerFontSize = 13.0;
+
+  static const double drawerHeaderPadding = 24.0;
+  static const double drawerLogoHeight = 36.0;
+  static const double drawerLogoBorderRadius = 10.0;
+  static const double drawerLogoDepth = 6.0;
+  static const double drawerLogoIntensity = 0.8;
+  static const double drawerLogoPadding = 8.0;
+  static const double drawerLogoTitleSpacing = 16.0;
+  static const double drawerTitleFontSize = 18.0;
+  static const double drawerItemMarginH = 16.0;
+  static const double drawerItemMarginV = 6.0;
+  static const double drawerItemDepth = 2.0;
+  static const double drawerItemIntensity = 0.6;
+  static const double drawerItemIconSpacing = 16.0;
+  static const double drawerItemFontSize = 15.0;
+
+  static const double historySheetMaxHeightRatio = 0.6;
+  static const double historySheetBorderRadius = 20.0;
+  static const double historyHeaderPaddingH = 16.0;
+  static const double historyHeaderPaddingV = 12.0;
+  static const double historyTitleFontSize = 18.0;
+  static const double historyClearButtonDepth = 2.0;
+  static const double historyClearButtonIntensity = 0.6;
+  static const double historyClearButtonBorderRadius = 8.0;
+  static const double historyClearButtonPaddingH = 12.0;
+  static const double historyClearButtonPaddingV = 8.0;
+  static const double historyClearButtonFontSize = 14.0;
+  static const double historyListPaddingV = 8.0;
+  static const double historyItemMarginH = 12.0;
+  static const double historyItemMarginV = 4.0;
+  static const double historyItemDepth = 2.0;
+  static const double historyItemIntensity = 0.5;
+  static const double historyItemBorderRadius = 12.0;
+  static const double historyItemPadding = 12.0;
+  static const double historyItemExpressionFontSize = 14.0;
+  static const double historyItemInnerSpacing = 4.0;
+  static const double historyItemResultFontSize = 20.0;
+  static const double historyItemTimestampFontSize = 12.0;
+  static const double historyEmptyPadding = 32.0;
+  static const double historyEmptyIconSize = 48.0;
+  static const double historyEmptyIconSpacing = 16.0;
+  static const double historyEmptyFontSize = 16.0;
+
+  static const double settingsBodyPadding = 24.0;
+  static const double settingsLogoToSectionSpacing = 40.0;
+  static const double settingsSectionSpacing = 24.0;
+  static const double settingsBottomSpacing = 16.0;
+  static const double settingsLogoHeight = 80.0;
+  static const double settingsLogoBorderRadius = 24.0;
+  static const double settingsLogoDepth = 8.0;
+  static const double settingsLogoIntensity = 0.8;
+  static const double settingsLogoPadding = 20.0;
+
+  static const double settingsCardDepth = 4.0;
+  static const double settingsCardIntensity = 0.6;
+  static const double settingsCardBorderRadius = 16.0;
+  static const double settingsCardPadding = 20.0;
+  static const double settingsInfoCardPaddingH = 20.0;
+  static const double settingsInfoCardPaddingV = 16.0;
+  static const double settingsSectionLabelFontSize = 11.0;
+  static const double settingsSectionLabelLetterSpacing = 1.2;
+  static const double settingsSectionToThemeSpacing = 16.0;
+  static const double settingsSectionToInfoSpacing = 12.0;
+  static const double settingsInfoRowPaddingV = 10.0;
+  static const double settingsInfoLabelWidth = 110.0;
+  static const double settingsInfoFontSize = 14.0;
+  static const double settingsDividerHeight = 1.0;
+  static const double settingsDividerThickness = 0.5;
+
+  static const double imcPlaceholderPadding = 32.0;
+  static const double imcPlaceholderIconDepth = 4.0;
+  static const double imcPlaceholderIconIntensity = 0.6;
+  static const double imcPlaceholderIconContainerPadding = 32.0;
+  static const double imcPlaceholderIconSize = 64.0;
+  static const double imcPlaceholderIconSpacing = 32.0;
+  static const double imcPlaceholderTitleFontSize = 22.0;
+  static const double imcPlaceholderTitleSpacing = 12.0;
+  static const double imcPlaceholderDescriptionFontSize = 15.0;
 }

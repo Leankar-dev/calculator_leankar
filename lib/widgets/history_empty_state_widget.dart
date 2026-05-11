@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -9,20 +10,20 @@ class HistoryEmptyStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSizes.historyEmptyPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
               Icons.history,
-              size: 48,
+              size: AppSizes.historyEmptyIconSize,
               color: AppColors.iconDisabled,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSizes.historyEmptyIconSpacing),
             Text(
               AppStrings.historyEmptyMessage,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: AppSizes.historyEmptyFontSize,
                 color: AppColors.secondaryText,
               ),
             ),

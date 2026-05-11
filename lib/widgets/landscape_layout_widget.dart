@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
@@ -30,7 +31,7 @@ class LandscapeLayoutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(AppSizes.layoutOuterPadding),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

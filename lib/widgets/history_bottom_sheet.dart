@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/widgets/history_empty_state_widget.dart';
 import 'package:calculator_05122025/widgets/history_header_widget.dart';
 import 'package:calculator_05122025/widgets/history_list_widget.dart';
@@ -20,11 +21,11 @@ class HistoryBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
+        maxHeight: MediaQuery.of(context).size.height * AppSizes.historySheetMaxHeightRatio,
       ),
       decoration: BoxDecoration(
         color: NeumorphicTheme.baseColor(context),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppSizes.historySheetBorderRadius)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

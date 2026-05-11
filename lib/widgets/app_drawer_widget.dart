@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -58,23 +59,23 @@ class _DrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(AppSizes.drawerHeaderPadding),
       child: Row(
         children: [
           Neumorphic(
             style: NeumorphicStyle(
               shape: NeumorphicShape.convex,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(10)),
-              depth: 6,
-              intensity: 0.8,
+              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(AppSizes.drawerLogoBorderRadius)),
+              depth: AppSizes.drawerLogoDepth,
+              intensity: AppSizes.drawerLogoIntensity,
             ),
-            padding: const EdgeInsets.all(8),
-            child: Image.asset(AppStrings.logoAssetPath, height: 36),
+            padding: const EdgeInsets.all(AppSizes.drawerLogoPadding),
+            child: Image.asset(AppStrings.logoAssetPath, height: AppSizes.drawerLogoHeight),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSizes.drawerLogoTitleSpacing),
           const Text(
             AppStrings.appName,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: AppSizes.drawerTitleFontSize, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -96,14 +97,14 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeumorphicButton(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      style: const NeumorphicStyle(depth: 2, intensity: 0.6),
+      margin: const EdgeInsets.symmetric(horizontal: AppSizes.drawerItemMarginH, vertical: AppSizes.drawerItemMarginV),
+      style: const NeumorphicStyle(depth: AppSizes.drawerItemDepth, intensity: AppSizes.drawerItemIntensity),
       onPressed: onTap,
       child: Row(
         children: [
           Icon(icon, color: AppColors.iconMuted),
-          const SizedBox(width: 16),
-          Text(label, style: const TextStyle(fontSize: 15)),
+          const SizedBox(width: AppSizes.drawerItemIconSpacing),
+          Text(label, style: const TextStyle(fontSize: AppSizes.drawerItemFontSize)),
         ],
       ),
     );
