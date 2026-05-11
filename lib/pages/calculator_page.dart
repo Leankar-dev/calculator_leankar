@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
+import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/pages/imc_calculator_page.dart';
+import 'package:calculator_05122025/pages/settings_page.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
@@ -63,7 +66,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   void _navigateToImc() {}
 
-  void _navigateToSettings() {}
+  void _navigateToSettings() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            SettingsPage(controller: SettingsController.instance),
+      ),
+    );
+  }
 
   void _showHistory() {
     showModalBottomSheet(
