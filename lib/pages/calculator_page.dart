@@ -222,7 +222,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
         title: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Neumorphic(
               style: NeumorphicStyle(
@@ -242,11 +241,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
             ),
             const SizedBox(width: AppSizes.appBarLogoTitleSpacing),
-            const Text(
-              AppStrings.calculatorPageTitle,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryText,
+            const Flexible(
+              child: Text(
+                AppStrings.calculatorPageTitle,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryText,
+                ),
               ),
             ),
           ],
