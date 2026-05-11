@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -100,7 +101,7 @@ class _DrawerItem extends StatelessWidget {
       onPressed: onTap,
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey[700]),
+          Icon(icon, color: AppColors.iconMuted),
           const SizedBox(width: 16),
           Text(label, style: const TextStyle(fontSize: 15)),
         ],

@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -37,7 +38,7 @@ class _CalculatorFooterWidgetState extends State<CalculatorFooterWidget> {
             : 'v$_version • ${AppStrings.settingsWebsiteUrl}',
         style: const TextStyle(
           fontSize: 13,
-          color: Colors.blue,
+          color: AppColors.link,
         ),
       ),
     );

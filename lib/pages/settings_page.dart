@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/settings/app_info_card_widget.dart';
 import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart';
@@ -16,7 +17,7 @@ class SettingsPage extends StatelessWidget {
       appBar: NeumorphicAppBar(
         title: const Text(
           AppStrings.settingsPageTitle,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryText),
         ),
       ),
       body: SafeArea(

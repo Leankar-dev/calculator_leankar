@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
@@ -38,9 +39,9 @@ class HistoryItemWidget extends StatelessWidget {
                 children: [
                   Text(
                     item.expression,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.secondaryText,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -57,9 +58,9 @@ class HistoryItemWidget extends StatelessWidget {
             ),
             Text(
               dateFormat.format(item.timestamp),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.grey[500],
+                color: AppColors.textMuted,
               ),
             ),
           ],

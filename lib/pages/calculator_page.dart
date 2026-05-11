@@ -4,6 +4,7 @@ import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
@@ -244,7 +245,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
               AppStrings.calculatorPageTitle,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.primaryText,
               ),
             ),
           ],
@@ -260,7 +261,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
               padding: const EdgeInsets.all(12),
               onPressed: () => Scaffold.of(context).openEndDrawer(),
-              child: Icon(Icons.menu, color: Colors.grey[700]),
+              child: const Icon(Icons.menu, color: AppColors.iconMuted),
             ),
           ),
           const SizedBox(width: 8),

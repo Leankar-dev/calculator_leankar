@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -43,7 +44,7 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
             AppStrings.settingsAboutSection,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.grey,
+              color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
@@ -90,7 +91,7 @@ class _InfoRow extends StatelessWidget {
             width: 110,
             child: Text(
               label,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 14),
             ),
           ),
           Expanded(

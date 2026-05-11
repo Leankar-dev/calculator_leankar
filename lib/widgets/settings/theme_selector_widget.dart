@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -25,7 +26,7 @@ class ThemeSelectorWidget extends StatelessWidget {
             AppStrings.settingsAppearanceSection,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.grey,
+              color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),

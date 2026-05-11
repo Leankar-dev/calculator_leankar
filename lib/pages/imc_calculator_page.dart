@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -11,7 +12,7 @@ class ImcCalculatorPage extends StatelessWidget {
       appBar: NeumorphicAppBar(
         title: const Text(
           AppStrings.imcPageTitle,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryText),
         ),
       ),
       body: const SafeArea(
@@ -40,10 +41,10 @@ class _UnderConstructionBody extends StatelessWidget {
                 boxShape: NeumorphicBoxShape.circle(),
               ),
               padding: const EdgeInsets.all(32),
-              child: Icon(
+              child: const Icon(
                 Icons.construction_outlined,
                 size: 64,
-                color: Colors.grey[500],
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 32),
@@ -52,14 +53,14 @@ class _UnderConstructionBody extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.primaryText,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               AppStrings.imcUnderConstructionDescription,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+              style: const TextStyle(fontSize: 15, color: AppColors.secondaryText),
             ),
           ],
         ),

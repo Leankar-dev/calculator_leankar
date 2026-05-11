@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -40,11 +41,11 @@ class HistoryHeaderWidget extends StatelessWidget {
                 Navigator.pop(context);
                 onClearHistory();
               },
-              child: Text(
+              child: const Text(
                 AppStrings.historyClearButton,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.red[400],
+                  color: AppColors.clearHistoryText,
                 ),
               ),
             ),

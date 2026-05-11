@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -12,17 +13,17 @@ class HistoryEmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.history,
               size: 48,
-              color: Colors.grey[400],
+              color: AppColors.iconDisabled,
             ),
             const SizedBox(height: 16),
             Text(
               AppStrings.historyEmptyMessage,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.secondaryText,
               ),
             ),
           ],
