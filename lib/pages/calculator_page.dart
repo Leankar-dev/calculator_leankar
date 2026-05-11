@@ -64,7 +64,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
     super.dispose();
   }
 
-  void _navigateToImc() {}
+  void _navigateToImc() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const ImcCalculatorPage(),
+      ),
+    );
+  }
 
   void _navigateToSettings() {
     Navigator.of(context).push(
