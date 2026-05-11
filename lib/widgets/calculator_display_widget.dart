@@ -19,6 +19,40 @@ class CalculatorDisplayWidget extends StatelessWidget {
     final displayFontSize = ResponsiveUtils.getDisplayFontSize(context);
     final expressionFontSize = ResponsiveUtils.getExpressionFontSize(context);
 
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth == 0) {
+          return SizedBox(height: displayHeight);
+        }
+        return _DisplayContent(
+          displayHeight: displayHeight,
+          displayFontSize: displayFontSize,
+          expressionFontSize: expressionFontSize,
+          displayText: displayText,
+          expressionDisplay: expressionDisplay,
+        );
+      },
+    );
+  }
+}
+
+class _DisplayContent extends StatelessWidget {
+  final double displayHeight;
+  final double displayFontSize;
+  final double expressionFontSize;
+  final String displayText;
+  final String expressionDisplay;
+
+  const _DisplayContent({
+    required this.displayHeight,
+    required this.displayFontSize,
+    required this.expressionFontSize,
+    required this.displayText,
+    required this.expressionDisplay,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(AppConstants.displayPadding),
       child: Neumorphic(
