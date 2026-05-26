@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:calculator_05122025/controllers/calculator_state.dart';
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/services/error_handler.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
@@ -18,14 +19,7 @@ class CalculatorController extends ChangeNotifier {
   final ErrorHandler _errorHandler;
   final LoggerService _logger;
 
-  String _displayText = AppStrings.initialDisplayValue;
-  String _firstOperand = '';
-  String _secondOperand = '';
-  OperationsType? _currentOperation;
-  bool _shouldResetDisplay = false;
-  List<CalculationHistory> _history = [];
-  bool _isLoading = false;
-  bool _hasError = false;
+  CalculatorState _state = CalculatorState.initial();
   final StreamController<void> _inputRejectedController =
       StreamController<void>.broadcast();
 
@@ -37,42 +31,48 @@ class CalculatorController extends ChangeNotifier {
        _errorHandler = errorHandler ?? ErrorHandler.instance,
        _logger = logger ?? LoggerService.instance;
 
-  String get displayText => _displayText;
-  List<CalculationHistory> get history => List.unmodifiable(_history);
-  bool get isLoading => _isLoading;
-  bool get hasError => _hasError;
+  CalculatorState get state => _state;
+  String get displayText => _state.displayText;
+  List<CalculationHistory> get history => List.unmodifiable(_state.history);
+  bool get isLoading => _state.isLoading;
+  bool get hasError => _state.hasError;
   Stream<void> get inputRejected => _inputRejectedController.stream;
 
+  String get expressionDisplay {
+    if (_state.firstOperand.isEmpty || _state.currentOperation == null) {
+      return '';
+    }
+    return '${_state.firstOperand} ${_state.currentOperation!.symbol}';
+  }
+
   Future<void> loadHistory() async {
-    _isLoading = true;
+    _state = _state.copyWith(isLoading: true);
     notifyListeners();
 
     final result = await _storageService.loadHistory();
 
     result.fold(
       onSuccess: (loadedHistory) {
-        _history = loadedHistory;
-        _hasError = false;
+        _state = _state.copyWith(
+          history: loadedHistory,
+          hasError: false,
+          isLoading: false,
+        );
       },
       onFailure: (error, details) {
         _logger.warning(
           'Falha ao carregar histórico: ${error.fullMessage}',
           tag: 'CalculatorController',
         );
-        _history = [];
-        _hasError = true;
+        _state = _state.copyWith(
+          history: [],
+          hasError: true,
+          isLoading: false,
+        );
       },
     );
 
-    _isLoading = false;
     notifyListeners();
-  }
-
-  String get expressionDisplay {
-    if (_firstOperand.isEmpty || _currentOperation == null) {
-      return '';
-    }
-    return '$_firstOperand ${_currentOperation!.symbol}';
   }
 
   void setOperationType(OperationsType operation) {
@@ -80,25 +80,30 @@ class CalculatorController extends ChangeNotifier {
       clearDisplay();
     }
 
-    if (_firstOperand.isEmpty) {
-      _firstOperand = _displayText;
-    } else if (!_shouldResetDisplay && _currentOperation != null) {
+    if (_state.firstOperand.isEmpty) {
+      _state = _state.copyWith(firstOperand: _state.displayText);
+    } else if (!_state.shouldResetDisplay && _state.currentOperation != null) {
       _calculatePendingOperation();
       if (_isErrorState()) return;
-      _firstOperand = _displayText;
+      _state = _state.copyWith(firstOperand: _state.displayText);
     }
-    _currentOperation = operation;
-    _shouldResetDisplay = true;
+
+    _state = _state.copyWith(
+      currentOperation: operation,
+      shouldResetDisplay: true,
+    );
     notifyListeners();
   }
 
   void clearDisplay() {
-    _hasError = false;
-    _displayText = AppStrings.initialDisplayValue;
-    _firstOperand = '';
-    _secondOperand = '';
-    _currentOperation = null;
-    _shouldResetDisplay = false;
+    _state = _state.copyWith(
+      hasError: false,
+      displayText: AppStrings.initialDisplayValue,
+      firstOperand: '',
+      secondOperand: '',
+      clearOperation: true,
+      shouldResetDisplay: false,
+    );
     notifyListeners();
   }
 
@@ -108,10 +113,15 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    if (_displayText.length > 1) {
-      _displayText = _displayText.substring(0, _displayText.length - 1);
+    if (_state.displayText.length > 1) {
+      _state = _state.copyWith(
+        displayText: _state.displayText.substring(
+          0,
+          _state.displayText.length - 1,
+        ),
+      );
     } else {
-      _displayText = AppStrings.initialDisplayValue;
+      _state = _state.copyWith(displayText: AppStrings.initialDisplayValue);
     }
     notifyListeners();
   }
@@ -120,7 +130,7 @@ class CalculatorController extends ChangeNotifier {
     if (_isErrorState()) return;
 
     final parseResult = _errorHandler.parseDouble(
-      _displayText,
+      _state.displayText,
       decimalSeparator: AppStrings.decimalSeparator,
     );
 
@@ -131,9 +141,9 @@ class CalculatorController extends ChangeNotifier {
 
     double value = parseResult.value;
 
-    if (_firstOperand.isNotEmpty && _currentOperation != null) {
+    if (_state.firstOperand.isNotEmpty && _state.currentOperation != null) {
       final firstResult = _errorHandler.parseDouble(
-        _firstOperand,
+        _state.firstOperand,
         decimalSeparator: AppStrings.decimalSeparator,
       );
 
@@ -153,13 +163,14 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    _displayText = _formatResult(value);
+    _state = _state.copyWith(displayText: _formatResult(value));
 
     _logger.logCalculation(
       operation: '%',
-      firstOperand: _firstOperand.isEmpty ? _displayText : _firstOperand,
+      firstOperand:
+          _state.firstOperand.isEmpty ? _state.displayText : _state.firstOperand,
       secondOperand: parseResult.value.toString(),
-      result: _displayText,
+      result: _state.displayText,
     );
 
     notifyListeners();
@@ -167,16 +178,18 @@ class CalculatorController extends ChangeNotifier {
 
   void appendNumber(String digit) {
     if (_isErrorState()) {
-      _hasError = false;
-      _displayText = digit;
-      _shouldResetDisplay = false;
+      _state = _state.copyWith(
+        hasError: false,
+        displayText: digit,
+        shouldResetDisplay: false,
+      );
       notifyListeners();
       return;
     }
 
-    if (!_shouldResetDisplay &&
+    if (!_state.shouldResetDisplay &&
         !_errorHandler.isValidNumberInput(
-          _displayText,
+          _state.displayText,
           digit,
           decimalSeparator: AppStrings.decimalSeparator,
         )) {
@@ -185,45 +198,51 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    if (_shouldResetDisplay) {
-      _displayText = digit;
-      _shouldResetDisplay = false;
-    } else if (_displayText == AppStrings.initialDisplayValue &&
+    if (_state.shouldResetDisplay) {
+      _state = _state.copyWith(displayText: digit, shouldResetDisplay: false);
+    } else if (_state.displayText == AppStrings.initialDisplayValue &&
         digit != AppStrings.decimalSeparator) {
-      _displayText = digit;
+      _state = _state.copyWith(displayText: digit);
     } else {
-      _displayText += digit;
+      _state = _state.copyWith(displayText: _state.displayText + digit);
     }
     notifyListeners();
   }
 
   void appendDecimal() {
     if (_isErrorState()) {
-      _hasError = false;
-      _displayText =
-          '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}';
-      _shouldResetDisplay = false;
+      _state = _state.copyWith(
+        hasError: false,
+        displayText:
+            '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}',
+        shouldResetDisplay: false,
+      );
       notifyListeners();
       return;
     }
 
-    if (_shouldResetDisplay) {
-      _displayText =
-          '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}';
-      _shouldResetDisplay = false;
-    } else if (!_displayText.contains(AppStrings.decimalSeparator)) {
-      _displayText += AppStrings.decimalSeparator;
+    if (_state.shouldResetDisplay) {
+      _state = _state.copyWith(
+        displayText:
+            '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}',
+        shouldResetDisplay: false,
+      );
+    } else if (!_state.displayText.contains(AppStrings.decimalSeparator)) {
+      _state = _state.copyWith(
+        displayText: _state.displayText + AppStrings.decimalSeparator,
+      );
     }
     notifyListeners();
   }
 
   void _calculatePendingOperation() {
-    if (_currentOperation == null || _firstOperand.isEmpty) return;
+    if (_state.currentOperation == null || _state.firstOperand.isEmpty) return;
 
-    _secondOperand = _displayText;
+    final secondOperand = _state.displayText;
+    _state = _state.copyWith(secondOperand: secondOperand);
 
     final firstResult = _errorHandler.parseDouble(
-      _firstOperand,
+      _state.firstOperand,
       decimalSeparator: AppStrings.decimalSeparator,
     );
 
@@ -233,7 +252,7 @@ class CalculatorController extends ChangeNotifier {
     }
 
     final secondResult = _errorHandler.parseDouble(
-      _secondOperand,
+      secondOperand,
       decimalSeparator: AppStrings.decimalSeparator,
     );
 
@@ -246,7 +265,7 @@ class CalculatorController extends ChangeNotifier {
     final second = secondResult.value;
     double result = 0;
 
-    switch (_currentOperation!) {
+    switch (_state.currentOperation!) {
       case OperationsType.addition:
         result = first + second;
         break;
@@ -272,13 +291,14 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
-    _displayText = _formatResult(result);
+    final formatted = _formatResult(result);
+    _state = _state.copyWith(displayText: formatted);
 
     _logger.logCalculation(
-      operation: _currentOperation!.symbol,
-      firstOperand: _firstOperand,
-      secondOperand: _secondOperand,
-      result: _displayText,
+      operation: _state.currentOperation!.symbol,
+      firstOperand: _state.firstOperand,
+      secondOperand: secondOperand,
+      result: formatted,
     );
   }
 
@@ -287,43 +307,43 @@ class CalculatorController extends ChangeNotifier {
   }
 
   Future<void> calculateResult() async {
-    if (_currentOperation == null || _firstOperand.isEmpty) return;
+    if (_state.currentOperation == null || _state.firstOperand.isEmpty) return;
     if (_isErrorState()) return;
 
     final expression =
-        '$_firstOperand ${_currentOperation!.symbol} $_displayText';
+        '${_state.firstOperand} ${_state.currentOperation!.symbol} ${_state.displayText}';
     _calculatePendingOperation();
 
     if (!_isErrorState()) {
-      _addToHistory(expression, _displayText);
+      _addToHistory(expression, _state.displayText);
     }
 
-    _firstOperand = '';
-    _secondOperand = '';
-    _currentOperation = null;
-    _shouldResetDisplay = true;
+    _state = _state.copyWith(
+      firstOperand: '',
+      secondOperand: '',
+      clearOperation: true,
+      shouldResetDisplay: true,
+    );
     notifyListeners();
 
     await _persistHistory();
   }
 
   void _addToHistory(String expression, String result) {
-    _history.insert(
-      0,
-      CalculationHistory(
-        expression: expression,
-        result: result,
-        timestamp: DateTime.now().toUtc(),
-      ),
+    final newEntry = CalculationHistory(
+      expression: expression,
+      result: result,
+      timestamp: DateTime.now().toUtc(),
     );
-
-    if (_history.length > AppSizes.maxHistoryItems) {
-      _history.removeLast();
-    }
+    final updated = [newEntry, ..._state.history];
+    final trimmed = updated.length > AppSizes.maxHistoryItems
+        ? updated.sublist(0, AppSizes.maxHistoryItems)
+        : updated;
+    _state = _state.copyWith(history: trimmed);
   }
 
   Future<void> _persistHistory() async {
-    final saveResult = await _storageService.saveHistory(_history);
+    final saveResult = await _storageService.saveHistory(_state.history);
     saveResult.fold(
       onSuccess: (_) =>
           _logger.debug('Histórico salvo', tag: 'CalculatorController'),
@@ -336,18 +356,19 @@ class CalculatorController extends ChangeNotifier {
 
   void useHistoryResult(CalculationHistory item) {
     final parsed = NumberFormatter.parse(item.result);
-    _hasError = false;
-    _displayText =
-        parsed != null ? NumberFormatter.format(parsed) : item.result;
-    _firstOperand = '';
-    _secondOperand = '';
-    _currentOperation = null;
-    _shouldResetDisplay = true;
+    _state = _state.copyWith(
+      hasError: false,
+      displayText: parsed != null ? NumberFormatter.format(parsed) : item.result,
+      firstOperand: '',
+      secondOperand: '',
+      clearOperation: true,
+      shouldResetDisplay: true,
+    );
     notifyListeners();
   }
 
   Future<void> clearHistory() async {
-    _history.clear();
+    _state = _state.copyWith(history: []);
     notifyListeners();
 
     final result = await _storageService.clearHistory();
@@ -366,8 +387,8 @@ class CalculatorController extends ChangeNotifier {
     }
 
     try {
-      await Clipboard.setData(ClipboardData(text: _displayText));
-      _logger.info('Valor copiado: $_displayText', tag: 'Clipboard');
+      await Clipboard.setData(ClipboardData(text: _state.displayText));
+      _logger.info('Valor copiado: ${_state.displayText}', tag: 'Clipboard');
       return true;
     } catch (e) {
       _logger.warning('Falha ao copiar: $e', tag: 'Clipboard');
@@ -397,9 +418,11 @@ class CalculatorController extends ChangeNotifier {
         return PasteResult.outOfRange;
       }
 
-      _displayText = NumberFormatter.format(parsed);
-      _shouldResetDisplay = true;
-      _logger.info('Valor colado: $_displayText', tag: 'Clipboard');
+      _state = _state.copyWith(
+        displayText: NumberFormatter.format(parsed),
+        shouldResetDisplay: true,
+      );
+      _logger.info('Valor colado: ${_state.displayText}', tag: 'Clipboard');
       notifyListeners();
       return PasteResult.success;
     } catch (e) {
@@ -414,30 +437,34 @@ class CalculatorController extends ChangeNotifier {
     super.dispose();
   }
 
-  bool _isErrorState() => _hasError;
+  bool _isErrorState() => _state.hasError;
 
   void _setErrorDisplay(ErrorType errorType) {
-    _hasError = true;
+    final String message;
     switch (errorType) {
       case ErrorType.divisionByZero:
-        _displayText = AppStrings.divisionByZeroError;
+        message = AppStrings.divisionByZeroError;
         break;
       case ErrorType.infinity:
-        _displayText = AppStrings.infinityError;
+        message = AppStrings.infinityError;
         break;
       case ErrorType.notANumber:
-        _displayText = AppStrings.nanError;
+        message = AppStrings.nanError;
         break;
       case ErrorType.overflow:
-        _displayText = AppStrings.overflowError;
+        message = AppStrings.overflowError;
         break;
       default:
-        _displayText = AppStrings.genericError;
+        message = AppStrings.genericError;
     }
 
-    _firstOperand = '';
-    _secondOperand = '';
-    _currentOperation = null;
-    _shouldResetDisplay = true;
+    _state = _state.copyWith(
+      hasError: true,
+      displayText: message,
+      firstOperand: '',
+      secondOperand: '',
+      clearOperation: true,
+      shouldResetDisplay: true,
+    );
   }
 }
