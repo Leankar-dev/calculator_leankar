@@ -3,7 +3,7 @@
 ## Visão Geral
 
 Aplicativo de calculadora Flutter com design neumórfico, seguindo o padrão MVC simplificado.
-Versão atual: **0.7.6+1** | SDK Dart: `^3.10.1`
+Versão atual: **0.7.7+1** | SDK Dart: `^3.10.1`
 
 ## Árvore de Diretórios
 
