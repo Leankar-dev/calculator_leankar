@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -54,24 +54,24 @@ class _DisplayContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.displayPadding),
+      padding: const EdgeInsets.all(AppSizes.displayPadding),
       child: Neumorphic(
         style: NeumorphicStyle(
           shape: NeumorphicShape.concave,
           boxShape: NeumorphicBoxShape.roundRect(
-            BorderRadius.circular(AppConstants.displayBorderRadius),
+            BorderRadius.circular(AppSizes.displayBorderRadius),
           ),
-          depth: AppConstants.displayDepth,
-          intensity: AppConstants.displayIntensity,
+          depth: AppSizes.displayDepth,
+          intensity: AppSizes.displayIntensity,
           lightSource: LightSource.topLeft,
-          color: AppConstants.operationButtonColor.withValues(
-            alpha: AppConstants.colorAlpha,
+          color: AppColors.operationButton.withValues(
+            alpha: AppColors.colorAlpha,
           ),
         ),
         child: Container(
           constraints: BoxConstraints(minHeight: displayHeight),
           width: double.infinity,
-          padding: const EdgeInsets.all(AppConstants.displayPadding),
+          padding: const EdgeInsets.all(AppSizes.displayPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -79,7 +79,9 @@ class _DisplayContent extends StatelessWidget {
             children: [
               if (expressionDisplay.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSizes.displayExpressionSpacing),
+                  padding: const EdgeInsets.only(
+                    bottom: AppSizes.displayExpressionSpacing,
+                  ),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
@@ -87,7 +89,7 @@ class _DisplayContent extends StatelessWidget {
                       expressionDisplay,
                       style: TextStyle(
                         fontSize: expressionFontSize,
-                        color: AppConstants.secondaryTextColor,
+                        color: AppColors.secondaryText,
                       ),
                     ),
                   ),
@@ -100,7 +102,7 @@ class _DisplayContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: displayFontSize,
                     fontWeight: FontWeight.bold,
-                    color: AppConstants.primaryTextColor,
+                    color: AppColors.primaryText,
                   ),
                   maxLines: 1,
                 ),

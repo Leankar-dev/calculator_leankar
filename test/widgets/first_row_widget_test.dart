@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/first_row_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,13 +36,13 @@ void main() {
     testWidgets('deve exibir botão backspace', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text(AppConstants.backspaceSymbol), findsOneWidget);
+      expect(find.text(AppStrings.backspaceSymbol), findsOneWidget);
     });
 
     testWidgets('deve exibir botão de porcentagem', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text(AppConstants.percentSymbol), findsOneWidget);
+      expect(find.text(AppStrings.percentSymbol), findsOneWidget);
     });
 
     testWidgets('deve chamar onClear ao pressionar C', (tester) async {
@@ -64,7 +64,7 @@ void main() {
         createTestWidget(onBackspace: () => called = true),
       );
 
-      await tester.tap(find.text(AppConstants.backspaceSymbol));
+      await tester.tap(find.text(AppStrings.backspaceSymbol));
       await tester.pumpAndSettle();
 
       expect(called, isTrue);
@@ -77,7 +77,7 @@ void main() {
         createTestWidget(onPercentage: () => called = true),
       );
 
-      await tester.tap(find.text(AppConstants.percentSymbol));
+      await tester.tap(find.text(AppStrings.percentSymbol));
       await tester.pumpAndSettle();
 
       expect(called, isTrue);

@@ -1,14 +1,14 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:flutter/widgets.dart';
 
 class ResponsiveUtils {
   static double _getScaleFactor(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final clampedWidth = width.clamp(
-      AppConstants.minWidth,
-      AppConstants.maxCalculatorWidth,
+      AppSizes.minWidth,
+      AppSizes.maxCalculatorWidth,
     );
-    return clampedWidth / AppConstants.baseWidth;
+    return clampedWidth / AppSizes.baseWidth;
   }
 
   static double getDisplayHeight(BuildContext context) {
@@ -16,30 +16,30 @@ class ResponsiveUtils {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     if (isLandscape) {
-      return (AppConstants.displayHeightLandscape * scale).clamp(
-        AppConstants.displayHeightLandscapeMin,
-        AppConstants.displayHeightLandscapeMax,
+      return (AppSizes.displayHeightLandscape * scale).clamp(
+        AppSizes.displayHeightLandscapeMin,
+        AppSizes.displayHeightLandscapeMax,
       );
     }
-    return (AppConstants.displayHeightPortrait * scale).clamp(
-      AppConstants.displayHeightMin,
-      AppConstants.displayHeightMax,
+    return (AppSizes.displayHeightPortrait * scale).clamp(
+      AppSizes.displayHeightMin,
+      AppSizes.displayHeightMax,
     );
   }
 
   static double getDisplayFontSize(BuildContext context) {
     final scale = _getScaleFactor(context);
-    return (AppConstants.displayFontSize * scale).clamp(
-      AppConstants.displayFontSizeMin,
-      AppConstants.displayFontSizeMax,
+    return (AppSizes.displayFontSize * scale).clamp(
+      AppSizes.displayFontSizeMin,
+      AppSizes.displayFontSizeMax,
     );
   }
 
   static double getExpressionFontSize(BuildContext context) {
     final scale = _getScaleFactor(context);
-    return (AppConstants.expressionFontSize * scale).clamp(
-      AppConstants.expressionFontSizeMin,
-      AppConstants.expressionFontSizeMax,
+    return (AppSizes.expressionFontSize * scale).clamp(
+      AppSizes.expressionFontSizeMin,
+      AppSizes.expressionFontSizeMax,
     );
   }
 
@@ -48,14 +48,14 @@ class ResponsiveUtils {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     if (isLandscape) {
-      return (AppConstants.buttonFontSizeLandscape * scale).clamp(
-        AppConstants.buttonFontSizeLandscapeMin,
-        AppConstants.buttonFontSizeLandscapeMax,
+      return (AppSizes.buttonFontSizeLandscape * scale).clamp(
+        AppSizes.buttonFontSizeLandscapeMin,
+        AppSizes.buttonFontSizeLandscapeMax,
       );
     }
-    return (AppConstants.buttonFontSizePortrait * scale).clamp(
-      AppConstants.buttonFontSizeMin,
-      AppConstants.buttonFontSizeMax,
+    return (AppSizes.buttonFontSizePortrait * scale).clamp(
+      AppSizes.buttonFontSizeMin,
+      AppSizes.buttonFontSizeMax,
     );
   }
 
@@ -64,27 +64,27 @@ class ResponsiveUtils {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     if (isLandscape) {
-      return (AppConstants.buttonPaddingLandscape * scale).clamp(
-        AppConstants.buttonPaddingLandscapeMin,
-        AppConstants.buttonPaddingLandscapeMax,
+      return (AppSizes.buttonPaddingLandscape * scale).clamp(
+        AppSizes.buttonPaddingLandscapeMin,
+        AppSizes.buttonPaddingLandscapeMax,
       );
     }
-    return (AppConstants.buttonPaddingPortrait * scale).clamp(
-      AppConstants.buttonPaddingMin,
-      AppConstants.buttonPaddingMax,
+    return (AppSizes.buttonPaddingPortrait * scale).clamp(
+      AppSizes.buttonPaddingMin,
+      AppSizes.buttonPaddingMax,
     );
   }
 
   static double getButtonSpacing(BuildContext context) {
     final scale = _getScaleFactor(context);
-    return (AppConstants.buttonSpacing * scale).clamp(
-      AppConstants.buttonSpacingMin,
-      AppConstants.buttonSpacingMax,
+    return (AppSizes.buttonSpacing * scale).clamp(
+      AppSizes.buttonSpacingMin,
+      AppSizes.buttonSpacingMax,
     );
   }
 
   static double getMaxCalculatorWidth() {
-    return AppConstants.maxCalculatorWidth;
+    return AppSizes.maxCalculatorWidth;
   }
 
   static bool isLandscape(BuildContext context) {
@@ -93,6 +93,6 @@ class ResponsiveUtils {
 
   static bool isTablet(BuildContext context) {
     final shortestSide = MediaQuery.of(context).size.shortestSide;
-    return shortestSide >= AppConstants.tabletBreakpoint;
+    return shortestSide >= AppSizes.tabletBreakpoint;
   }
 }

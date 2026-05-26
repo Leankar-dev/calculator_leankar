@@ -4,7 +4,8 @@ import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/services/error_handler.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/services/storage_service.dart';
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
@@ -17,7 +18,7 @@ class CalculatorController extends ChangeNotifier {
   final ErrorHandler _errorHandler;
   final LoggerService _logger;
 
-  String _displayText = AppConstants.initialDisplayValue;
+  String _displayText = AppStrings.initialDisplayValue;
   String _firstOperand = '';
   String _secondOperand = '';
   OperationsType? _currentOperation;
@@ -93,7 +94,7 @@ class CalculatorController extends ChangeNotifier {
 
   void clearDisplay() {
     _hasError = false;
-    _displayText = AppConstants.initialDisplayValue;
+    _displayText = AppStrings.initialDisplayValue;
     _firstOperand = '';
     _secondOperand = '';
     _currentOperation = null;
@@ -110,7 +111,7 @@ class CalculatorController extends ChangeNotifier {
     if (_displayText.length > 1) {
       _displayText = _displayText.substring(0, _displayText.length - 1);
     } else {
-      _displayText = AppConstants.initialDisplayValue;
+      _displayText = AppStrings.initialDisplayValue;
     }
     notifyListeners();
   }
@@ -120,7 +121,7 @@ class CalculatorController extends ChangeNotifier {
 
     final parseResult = _errorHandler.parseDouble(
       _displayText,
-      decimalSeparator: AppConstants.decimalSeparator,
+      decimalSeparator: AppStrings.decimalSeparator,
     );
 
     if (parseResult.isFailure) {
@@ -133,7 +134,7 @@ class CalculatorController extends ChangeNotifier {
     if (_firstOperand.isNotEmpty && _currentOperation != null) {
       final firstResult = _errorHandler.parseDouble(
         _firstOperand,
-        decimalSeparator: AppConstants.decimalSeparator,
+        decimalSeparator: AppStrings.decimalSeparator,
       );
 
       if (firstResult.isFailure) {
@@ -177,7 +178,7 @@ class CalculatorController extends ChangeNotifier {
         !_errorHandler.isValidNumberInput(
           _displayText,
           digit,
-          decimalSeparator: AppConstants.decimalSeparator,
+          decimalSeparator: AppStrings.decimalSeparator,
         )) {
       _logger.debug('Entrada rejeitada: número muito longo', tag: 'Input');
       _inputRejectedController.add(null);
@@ -187,8 +188,8 @@ class CalculatorController extends ChangeNotifier {
     if (_shouldResetDisplay) {
       _displayText = digit;
       _shouldResetDisplay = false;
-    } else if (_displayText == AppConstants.initialDisplayValue &&
-        digit != AppConstants.decimalSeparator) {
+    } else if (_displayText == AppStrings.initialDisplayValue &&
+        digit != AppStrings.decimalSeparator) {
       _displayText = digit;
     } else {
       _displayText += digit;
@@ -200,7 +201,7 @@ class CalculatorController extends ChangeNotifier {
     if (_isErrorState()) {
       _hasError = false;
       _displayText =
-          '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
+          '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}';
       _shouldResetDisplay = false;
       notifyListeners();
       return;
@@ -208,10 +209,10 @@ class CalculatorController extends ChangeNotifier {
 
     if (_shouldResetDisplay) {
       _displayText =
-          '${AppConstants.initialDisplayValue}${AppConstants.decimalSeparator}';
+          '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}';
       _shouldResetDisplay = false;
-    } else if (!_displayText.contains(AppConstants.decimalSeparator)) {
-      _displayText += AppConstants.decimalSeparator;
+    } else if (!_displayText.contains(AppStrings.decimalSeparator)) {
+      _displayText += AppStrings.decimalSeparator;
     }
     notifyListeners();
   }
@@ -223,7 +224,7 @@ class CalculatorController extends ChangeNotifier {
 
     final firstResult = _errorHandler.parseDouble(
       _firstOperand,
-      decimalSeparator: AppConstants.decimalSeparator,
+      decimalSeparator: AppStrings.decimalSeparator,
     );
 
     if (firstResult.isFailure) {
@@ -233,7 +234,7 @@ class CalculatorController extends ChangeNotifier {
 
     final secondResult = _errorHandler.parseDouble(
       _secondOperand,
-      decimalSeparator: AppConstants.decimalSeparator,
+      decimalSeparator: AppStrings.decimalSeparator,
     );
 
     if (secondResult.isFailure) {
@@ -316,7 +317,7 @@ class CalculatorController extends ChangeNotifier {
       ),
     );
 
-    if (_history.length > AppConstants.maxHistoryItems) {
+    if (_history.length > AppSizes.maxHistoryItems) {
       _history.removeLast();
     }
   }
@@ -419,19 +420,19 @@ class CalculatorController extends ChangeNotifier {
     _hasError = true;
     switch (errorType) {
       case ErrorType.divisionByZero:
-        _displayText = AppConstants.divisionByZeroError;
+        _displayText = AppStrings.divisionByZeroError;
         break;
       case ErrorType.infinity:
-        _displayText = AppConstants.infinityError;
+        _displayText = AppStrings.infinityError;
         break;
       case ErrorType.notANumber:
-        _displayText = AppConstants.nanError;
+        _displayText = AppStrings.nanError;
         break;
       case ErrorType.overflow:
-        _displayText = AppConstants.overflowError;
+        _displayText = AppStrings.overflowError;
         break;
       default:
-        _displayText = AppConstants.genericError;
+        _displayText = AppStrings.genericError;
     }
 
     _firstOperand = '';

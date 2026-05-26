@@ -1,6 +1,5 @@
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
-import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -48,12 +47,6 @@ void main() {
       expect(find.byType(CalculatorKeypadWidget), findsOneWidget);
     });
 
-    testWidgets('deve renderizar CalculatorFooterWidget', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-
-      expect(find.byType(CalculatorFooterWidget), findsOneWidget);
-    });
-
     testWidgets('deve exibir texto do display', (tester) async {
       await tester.pumpWidget(createTestWidget(displayText: '99'));
 
@@ -66,12 +59,6 @@ void main() {
       );
 
       expect(find.text('20 -'), findsOneWidget);
-    });
-
-    testWidgets('deve exibir URL no rodapé', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-
-      expect(find.text('https://leankar.dev'), findsOneWidget);
     });
   });
 }

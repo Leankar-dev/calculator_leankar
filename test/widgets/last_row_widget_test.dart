@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/last_row_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -39,7 +39,7 @@ void main() {
     testWidgets('deve exibir botão de decimal', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text(AppConstants.decimalSeparator), findsOneWidget);
+      expect(find.text(AppStrings.decimalSeparator), findsOneWidget);
     });
 
     testWidgets('deve exibir botão de igual', (tester) async {
@@ -51,7 +51,7 @@ void main() {
     testWidgets('deve exibir botão de adição', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text(AppConstants.additionSymbol), findsOneWidget);
+      expect(find.text(AppStrings.additionSymbol), findsOneWidget);
     });
 
     testWidgets('deve chamar onNumberPressed com "0" ao pressionar 0',
@@ -73,7 +73,7 @@ void main() {
 
       await tester.pumpWidget(createTestWidget(onDecimal: () => called = true));
 
-      await tester.tap(find.text(AppConstants.decimalSeparator));
+      await tester.tap(find.text(AppStrings.decimalSeparator));
       await tester.pumpAndSettle();
 
       expect(called, isTrue);
@@ -100,7 +100,7 @@ void main() {
         createTestWidget(onOperationPressed: (op) => pressed = op),
       );
 
-      await tester.tap(find.text(AppConstants.additionSymbol));
+      await tester.tap(find.text(AppStrings.additionSymbol));
       await tester.pumpAndSettle();
 
       expect(pressed, OperationsType.addition);

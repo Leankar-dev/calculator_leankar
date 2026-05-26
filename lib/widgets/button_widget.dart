@@ -1,4 +1,5 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:flutter/services.dart';
@@ -65,13 +66,13 @@ class ButtonWidget extends StatelessWidget {
             style: NeumorphicStyle(
               shape: NeumorphicShape.concave,
               boxShape: NeumorphicBoxShape.roundRect(
-                BorderRadius.circular(AppConstants.buttonBorderRadius),
+                BorderRadius.circular(AppSizes.buttonBorderRadius),
               ),
-              depth: AppConstants.buttonDepth,
-              intensity: AppConstants.buttonIntensity,
-              surfaceIntensity: AppConstants.buttonSurfaceIntensity,
+              depth: AppSizes.buttonDepth,
+              intensity: AppSizes.buttonIntensity,
+              surfaceIntensity: AppSizes.buttonSurfaceIntensity,
               color: hasCustomColor
-                  ? color!.withValues(alpha: AppConstants.colorAlpha)
+                  ? color!.withValues(alpha: AppColors.colorAlpha)
                   : baseColor,
               lightSource: LightSource.topLeft,
             ),
@@ -82,7 +83,7 @@ class ButtonWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: buttonFontSize,
                   fontWeight: FontWeight.bold,
-                  color: hasCustomColor ? color : AppConstants.primaryTextColor,
+                  color: hasCustomColor ? color : AppColors.primaryText,
                 ),
               ),
             ),

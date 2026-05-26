@@ -1,6 +1,6 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/models/calculation_history.dart';
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:flutter/services.dart';
@@ -560,14 +560,14 @@ void main() {
       });
 
       test('deve limitar histórico a maxHistoryItems itens', () async {
-        for (int i = 0; i < AppConstants.maxHistoryItems + 5; i++) {
+        for (int i = 0; i < AppSizes.maxHistoryItems + 5; i++) {
           controller.appendNumber('1');
           controller.setOperationType(OperationsType.addition);
           controller.appendNumber('1');
           await controller.calculateResult();
         }
 
-        expect(controller.history.length, AppConstants.maxHistoryItems);
+        expect(controller.history.length, AppSizes.maxHistoryItems);
       });
 
       test('deve remover o item mais antigo quando limite é excedido', () async {
@@ -578,14 +578,14 @@ void main() {
 
         final firstExpression = controller.history.last.expression;
 
-        for (int i = 0; i < AppConstants.maxHistoryItems; i++) {
+        for (int i = 0; i < AppSizes.maxHistoryItems; i++) {
           controller.appendNumber('2');
           controller.setOperationType(OperationsType.addition);
           controller.appendNumber('2');
           await controller.calculateResult();
         }
 
-        expect(controller.history.length, AppConstants.maxHistoryItems);
+        expect(controller.history.length, AppSizes.maxHistoryItems);
         expect(
           controller.history.any((h) => h.expression == firstExpression),
           false,

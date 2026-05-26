@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/utils/constants.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/number_row_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -21,7 +21,7 @@ void main() {
                 numbers: numbers,
                 operation: operation,
                 operationSymbol:
-                    operationSymbol ?? AppConstants.multiplicationSymbol,
+                    operationSymbol ?? AppStrings.multiplicationSymbol,
                 onNumberPressed: onNumberPressed ?? (_) {},
                 onOperationPressed: onOperationPressed ?? (_) {},
               ),
@@ -47,11 +47,11 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           operation: OperationsType.division,
-          operationSymbol: AppConstants.divisionSymbol,
+          operationSymbol: AppStrings.divisionSymbol,
         ),
       );
 
-      expect(find.text(AppConstants.divisionSymbol), findsOneWidget);
+      expect(find.text(AppStrings.divisionSymbol), findsOneWidget);
     });
 
     testWidgets('deve chamar onNumberPressed com número correto',
@@ -78,12 +78,12 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           operation: OperationsType.subtraction,
-          operationSymbol: AppConstants.subtractionSymbol,
+          operationSymbol: AppStrings.subtractionSymbol,
           onOperationPressed: (op) => pressed = op,
         ),
       );
 
-      await tester.tap(find.text(AppConstants.subtractionSymbol));
+      await tester.tap(find.text(AppStrings.subtractionSymbol));
       await tester.pumpAndSettle();
 
       expect(pressed, OperationsType.subtraction);
@@ -95,14 +95,14 @@ void main() {
         createTestWidget(
           numbers: ['1', '2', '3'],
           operation: OperationsType.addition,
-          operationSymbol: AppConstants.additionSymbol,
+          operationSymbol: AppStrings.additionSymbol,
         ),
       );
 
       expect(find.text('1'), findsOneWidget);
       expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
-      expect(find.text(AppConstants.additionSymbol), findsOneWidget);
+      expect(find.text(AppStrings.additionSymbol), findsOneWidget);
     });
   });
 }
