@@ -54,11 +54,9 @@ class AppSizes {
   static const double appBarLogoDepth = 6.0;
   static const double appBarLogoIntensity = 0.8;
   static const double appBarLogoPadding = 6.0;
-  static const double appBarLogoTitleSpacing = 20.0;
   static const double appBarMenuButtonPadding = 12.0;
   static const double appBarMenuButtonDepth = 2.0;
   static const double appBarMenuButtonIntensity = 0.6;
-  static const double appBarActionsSpacing = 8.0;
 
   static const double layoutOuterPadding = 8.0;
   static const double portraitSectionSpacing = 8.0;

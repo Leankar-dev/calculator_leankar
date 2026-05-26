@@ -12,6 +12,7 @@ import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
+import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
@@ -221,38 +222,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
-        leading: const SizedBox.shrink(),
-        title: Row(
-          children: [
-            Neumorphic(
-              style: NeumorphicStyle(
-                shape: NeumorphicShape.convex,
-                boxShape: NeumorphicBoxShape.roundRect(
-                  BorderRadius.circular(AppSizes.appBarLogoBorderRadius),
-                ),
-                depth: AppSizes.appBarLogoDepth,
-                intensity: AppSizes.appBarLogoIntensity,
-                lightSource: LightSource.topLeft,
-                color: NeumorphicTheme.baseColor(context),
+        leading: Center(
+          child: Neumorphic(
+            style: NeumorphicStyle(
+              shape: NeumorphicShape.convex,
+              boxShape: NeumorphicBoxShape.roundRect(
+                BorderRadius.circular(AppSizes.appBarLogoBorderRadius),
               ),
-              padding: const EdgeInsets.all(AppSizes.appBarLogoPadding),
-              child: Image.asset(
-                AppStrings.logoAssetPath,
-                height: AppSizes.appBarLogoHeight,
-              ),
+              depth: AppSizes.appBarLogoDepth,
+              intensity: AppSizes.appBarLogoIntensity,
+              lightSource: LightSource.topLeft,
+              color: NeumorphicTheme.baseColor(context),
             ),
-            const SizedBox(width: AppSizes.appBarLogoTitleSpacing),
-            const Flexible(
-              child: Text(
-                AppStrings.calculatorPageTitle,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryText,
-                ),
-              ),
+            padding: const EdgeInsets.all(AppSizes.appBarLogoPadding),
+            child: Image.asset(
+              AppStrings.logoAssetPath,
+              height: AppSizes.appBarLogoHeight,
             ),
-          ],
+          ),
+        ),
+        title: const Text(
+          AppStrings.calculatorPageTitle,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.primaryText,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -268,7 +262,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
               child: const Icon(Icons.menu, color: AppColors.iconMuted),
             ),
           ),
-          const SizedBox(width: AppSizes.appBarActionsSpacing),
         ],
       ),
       endDrawer: AppDrawerWidget(
@@ -277,48 +270,59 @@ class _CalculatorPageState extends State<CalculatorPage> {
         onSettingsTap: _navigateToSettings,
       ),
       body: SafeArea(
-        child: KeyboardListener(
-          focusNode: _focusNode,
-          autofocus: true,
-          onKeyEvent: _handleKeyEvent,
-          child: ListenableBuilder(
-            listenable: _controller,
-            builder: (context, child) {
-              final isLandscape = ResponsiveUtils.isLandscape(context);
-              final maxWidth = ResponsiveUtils.getMaxCalculatorWidth();
+        child: Column(
+          children: [
+            const CalculatorFooterWidget(),
+            Expanded(
+              child: KeyboardListener(
+                focusNode: _focusNode,
+                autofocus: true,
+                onKeyEvent: _handleKeyEvent,
+                child: ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, child) {
+                    final isLandscape = ResponsiveUtils.isLandscape(context);
+                    final maxWidth = ResponsiveUtils.getMaxCalculatorWidth();
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: isLandscape ? double.infinity : maxWidth,
-                  ),
-                  child: isLandscape
-                      ? LandscapeLayoutWidget(
-                          displayText: _controller.displayText,
-                          expressionDisplay: _controller.expressionDisplay,
-                          onClear: _controller.clearDisplay,
-                          onBackspace: _controller.backspace,
-                          onPercentage: _controller.calculatePercentage,
-                          onDecimal: _controller.appendDecimal,
-                          onCalculate: _controller.calculateResult,
-                          onNumberPressed: _controller.appendNumber,
-                          onOperationPressed: _controller.setOperationType,
-                        )
-                      : PortraitLayoutWidget(
-                          displayText: _controller.displayText,
-                          expressionDisplay: _controller.expressionDisplay,
-                          onClear: _controller.clearDisplay,
-                          onBackspace: _controller.backspace,
-                          onPercentage: _controller.calculatePercentage,
-                          onDecimal: _controller.appendDecimal,
-                          onCalculate: _controller.calculateResult,
-                          onNumberPressed: _controller.appendNumber,
-                          onOperationPressed: _controller.setOperationType,
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: isLandscape ? double.infinity : maxWidth,
                         ),
+                        child: isLandscape
+                            ? LandscapeLayoutWidget(
+                                displayText: _controller.displayText,
+                                expressionDisplay:
+                                    _controller.expressionDisplay,
+                                onClear: _controller.clearDisplay,
+                                onBackspace: _controller.backspace,
+                                onPercentage: _controller.calculatePercentage,
+                                onDecimal: _controller.appendDecimal,
+                                onCalculate: _controller.calculateResult,
+                                onNumberPressed: _controller.appendNumber,
+                                onOperationPressed:
+                                    _controller.setOperationType,
+                              )
+                            : PortraitLayoutWidget(
+                                displayText: _controller.displayText,
+                                expressionDisplay:
+                                    _controller.expressionDisplay,
+                                onClear: _controller.clearDisplay,
+                                onBackspace: _controller.backspace,
+                                onPercentage: _controller.calculatePercentage,
+                                onDecimal: _controller.appendDecimal,
+                                onCalculate: _controller.calculateResult,
+                                onNumberPressed: _controller.appendNumber,
+                                onOperationPressed:
+                                    _controller.setOperationType,
+                              ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );

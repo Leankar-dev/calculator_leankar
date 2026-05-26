@@ -1,7 +1,6 @@
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
-import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -51,8 +50,6 @@ class PortraitLayoutWidget extends StatelessWidget {
               onNumberPressed: onNumberPressed,
               onOperationPressed: onOperationPressed,
             ),
-            const SizedBox(height: AppSizes.portraitSectionSpacing),
-            const CalculatorFooterWidget(),
           ],
         ),
       ),
