@@ -69,6 +69,20 @@ class AppStrings {
   static const String imcUnderConstructionDescription =
       'A Calculadora IMC estará disponível em breve.';
 
+  static const String imcWeightLabel = 'Peso';
+  static const String imcHeightLabel = 'Altura';
+  static const String imcWeightUnit = 'kg';
+  static const String imcHeightUnit = 'cm';
+  static const String imcWeightHint = '70,0';
+  static const String imcHeightHint = '170';
+  static const String imcCalculateButtonLabel = 'Calcular IMC';
+  static const String imcInvalidWeightError =
+      'Peso inválido. Informe entre 1 e 500 kg.';
+  static const String imcInvalidHeightError =
+      'Altura inválida. Informe entre 50 e 250 cm.';
+  static const String imcCalculationError =
+      'Erro ao calcular. Verifique os valores.';
+
   static const String prefThemeModeKey = 'theme_mode';
   static const String prefHistoryKey = 'calculation_history';
 

@@ -21,4 +21,11 @@ class AppColors {
   static const Color link = Color(0xFF2196F3);
 
   static const double colorAlpha = 0.15;
+
+  static const Color imcUnderweight = Color(0xFF64B5F6);
+  static const Color imcNormal = Color(0xFF81C784);
+  static const Color imcOverweight = Color(0xFFFFD54F);
+  static const Color imcObesityI = Color(0xFFFF8A65);
+  static const Color imcObesityII = Color(0xFFE57373);
+  static const Color imcObesityIII = Color(0xFFC62828);
 }
