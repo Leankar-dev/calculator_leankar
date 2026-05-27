@@ -3,8 +3,6 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // O plugin do Flutter deve vir após o Android e Kotlin
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -12,7 +10,6 @@ val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 
 if (keystorePropertiesFile.exists()) {
-    // FileInputStream agora será reconhecido por causa do import no topo
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
@@ -26,7 +23,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // Forma atualizada para evitar o aviso de 'deprecated'
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
