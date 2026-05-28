@@ -44,12 +44,12 @@ void main() {
       });
 
       test('deve tratar NaN', () {
-        expect(NumberFormatter.format(double.nan), 'Erro: Inválido');
+        expect(NumberFormatter.format(double.nan), 'NaN');
       });
 
       test('deve tratar Infinity', () {
-        expect(NumberFormatter.format(double.infinity), 'Erro: Infinito');
-        expect(NumberFormatter.format(double.negativeInfinity), 'Erro: Infinito');
+        expect(NumberFormatter.format(double.infinity), '∞');
+        expect(NumberFormatter.format(double.negativeInfinity), '-∞');
       });
 
       test('deve formatar números negativos com milhares', () {

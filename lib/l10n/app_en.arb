@@ -1,0 +1,171 @@
+{
+  "@@locale": "en",
+
+  "calculatorPageTitle": "CALCULATOR",
+  "@calculatorPageTitle": { "description": "Home screen title — always CALCULATOR in all locales" },
+
+  "imcPageTitle": "BMI Calculator",
+  "@imcPageTitle": { "description": "AppBar title on BMI calculator page" },
+
+  "settingsPageTitle": "Settings",
+  "@settingsPageTitle": { "description": "AppBar title on settings page" },
+
+  "drawerItemHistory": "History",
+  "@drawerItemHistory": { "description": "End drawer menu item for calculation history" },
+
+  "drawerItemImc": "BMI Calculator",
+  "@drawerItemImc": { "description": "End drawer menu item for BMI calculator" },
+
+  "drawerItemSettings": "Settings",
+  "@drawerItemSettings": { "description": "End drawer menu item for settings" },
+
+  "historyTitle": "History",
+  "@historyTitle": { "description": "Title of the history bottom sheet" },
+
+  "historyClearButton": "Clear",
+  "@historyClearButton": { "description": "Button to clear calculation history" },
+
+  "historyEmptyMessage": "No calculation history",
+  "@historyEmptyMessage": { "description": "Shown when history list is empty" },
+
+  "snackbarValueCopied": "Value copied",
+  "@snackbarValueCopied": { "description": "Snackbar after copying display value" },
+
+  "snackbarEmptyClipboard": "Empty clipboard",
+  "@snackbarEmptyClipboard": { "description": "Snackbar when clipboard has no content" },
+
+  "snackbarInvalidPaste": "Invalid value to paste",
+  "@snackbarInvalidPaste": { "description": "Snackbar when pasted value cannot be parsed" },
+
+  "snackbarOutOfRange": "Value out of allowed range",
+  "@snackbarOutOfRange": { "description": "Snackbar when pasted value exceeds display limits" },
+
+  "errorDivisionByZero": "Err: Div/0",
+  "@errorDivisionByZero": { "description": "Calculator display error — division by zero" },
+
+  "errorInfinity": "Err: Infinity",
+  "@errorInfinity": { "description": "Calculator display error — infinite result" },
+
+  "errorNan": "Err: Invalid",
+  "@errorNan": { "description": "Calculator display error — not a number" },
+
+  "errorOverflow": "Err: Overflow",
+  "@errorOverflow": { "description": "Calculator display error — number too large" },
+
+  "errorGeneric": "Error",
+  "@errorGeneric": { "description": "Generic calculator error label" },
+
+  "settingsAppearanceSection": "APPEARANCE",
+  "@settingsAppearanceSection": { "description": "Section header in settings for theme selection" },
+
+  "themeOptionSystem": "System",
+  "@themeOptionSystem": { "description": "Theme option following system setting" },
+
+  "themeOptionLight": "Light",
+  "@themeOptionLight": { "description": "Light theme option" },
+
+  "themeOptionDark": "Dark",
+  "@themeOptionDark": { "description": "Dark theme option" },
+
+  "settingsLanguageSection": "LANGUAGE",
+  "@settingsLanguageSection": { "description": "Section header in settings for language selection" },
+
+  "settingsAboutSection": "ABOUT",
+  "@settingsAboutSection": { "description": "Section header in settings for app info" },
+
+  "settingsVersionLabel": "Version",
+  "@settingsVersionLabel": { "description": "Label for app version row in about card" },
+
+  "settingsDeveloperLabel": "Developer",
+  "@settingsDeveloperLabel": { "description": "Label for developer row in about card" },
+
+  "settingsEmailLabel": "E-mail",
+  "@settingsEmailLabel": { "description": "Label for e-mail row in about card" },
+
+  "settingsWebsiteLabel": "Website",
+  "@settingsWebsiteLabel": { "description": "Label for website row in about card" },
+
+  "imcWeightLabel": "Weight",
+  "@imcWeightLabel": { "description": "Input field label for weight in BMI calculator" },
+
+  "imcHeightLabel": "Height",
+  "@imcHeightLabel": { "description": "Input field label for height in BMI calculator" },
+
+  "imcCalculateButton": "Calculate BMI",
+  "@imcCalculateButton": { "description": "Button label to trigger BMI calculation" },
+
+  "imcInvalidWeightError": "Invalid weight. Enter between 1 and 500 kg.",
+  "@imcInvalidWeightError": { "description": "Validation error for out-of-range weight" },
+
+  "imcInvalidHeightError": "Invalid height. Enter between 50 and 250 cm.",
+  "@imcInvalidHeightError": { "description": "Validation error for out-of-range height" },
+
+  "imcCalculationError": "Calculation error. Check the values.",
+  "@imcCalculationError": { "description": "Generic error during BMI calculation" },
+
+  "imcIdealWeightTitle": "IDEAL WEIGHT",
+  "@imcIdealWeightTitle": { "description": "Section title for ideal weight in BMI result card" },
+
+  "imcIdealWeightRangeLabel": "Healthy range",
+  "@imcIdealWeightRangeLabel": { "description": "Label for ideal weight range row" },
+
+  "imcIdealWeightStatusLabel": "Status",
+  "@imcIdealWeightStatusLabel": { "description": "Label for weight status row" },
+
+  "imcIdealWeightDiffLabel": "Difference",
+  "@imcIdealWeightDiffLabel": { "description": "Label for weight difference row" },
+
+  "imcIdealWeightOnRange": "Within ideal range",
+  "@imcIdealWeightOnRange": { "description": "Status when weight is within healthy BMI range" },
+
+  "imcIdealWeightAbove": "Above ideal",
+  "@imcIdealWeightAbove": { "description": "Status when weight is above healthy BMI range" },
+
+  "imcIdealWeightBelow": "Below ideal",
+  "@imcIdealWeightBelow": { "description": "Status when weight is below healthy BMI range" },
+
+  "imcClassificationUnderweight": "Underweight",
+  "@imcClassificationUnderweight": { "description": "BMI classification label" },
+
+  "imcClassificationNormal": "Normal weight",
+  "@imcClassificationNormal": { "description": "BMI classification label" },
+
+  "imcClassificationOverweight": "Overweight",
+  "@imcClassificationOverweight": { "description": "BMI classification label" },
+
+  "imcClassificationObesityI": "Obesity Grade I",
+  "@imcClassificationObesityI": { "description": "BMI classification label" },
+
+  "imcClassificationObesityII": "Obesity Grade II",
+  "@imcClassificationObesityII": { "description": "BMI classification label" },
+
+  "imcClassificationObesityIII": "Obesity Grade III",
+  "@imcClassificationObesityIII": { "description": "BMI classification label" },
+
+  "semanticDivide": "Divide",
+  "@semanticDivide": { "description": "Accessibility label for divide button" },
+
+  "semanticMultiply": "Multiply",
+  "@semanticMultiply": { "description": "Accessibility label for multiply button" },
+
+  "semanticSubtract": "Subtract",
+  "@semanticSubtract": { "description": "Accessibility label for subtract button" },
+
+  "semanticAdd": "Add",
+  "@semanticAdd": { "description": "Accessibility label for add button" },
+
+  "semanticBackspace": "Delete last digit",
+  "@semanticBackspace": { "description": "Accessibility label for backspace button" },
+
+  "semanticPercent": "Percentage",
+  "@semanticPercent": { "description": "Accessibility label for percent button" },
+
+  "semanticEquals": "Calculate result",
+  "@semanticEquals": { "description": "Accessibility label for equals button" },
+
+  "semanticClear": "Clear all",
+  "@semanticClear": { "description": "Accessibility label for clear button" },
+
+  "semanticDecimalSeparator": "Decimal separator",
+  "@semanticDecimalSeparator": { "description": "Accessibility label for decimal separator button" }
+}

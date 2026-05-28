@@ -2,8 +2,9 @@ import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget({
@@ -17,8 +18,8 @@ void main() {
     void Function(String)? onNumberPressed,
     void Function(OperationsType)? onOperationPressed,
   }) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: PortraitLayoutWidget(
           displayText: displayText,
           expressionDisplay: expressionDisplay,

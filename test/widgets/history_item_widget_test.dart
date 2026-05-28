@@ -88,8 +88,9 @@ void main() {
       expect(find.byType(NeumorphicButton), findsOneWidget);
     });
 
-    testWidgets('deve chamar onItemTap com o item correto ao pressionar',
-        (tester) async {
+    testWidgets('deve chamar onItemTap com o item correto ao pressionar', (
+      tester,
+    ) async {
       final item = createItem(expression: '7 + 3', result: '10');
       CalculationHistory? tapped;
 

@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
@@ -29,6 +30,7 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Neumorphic(
       style: NeumorphicStyle(
         depth: AppSizes.settingsCardDepth,
@@ -46,9 +48,9 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            AppStrings.settingsAboutSection,
-            style: TextStyle(
+          Text(
+            l10n.settingsAboutSection,
+            style: const TextStyle(
               fontSize: AppSizes.settingsSectionLabelFontSize,
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
@@ -57,24 +59,24 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
           ),
           const SizedBox(height: AppSizes.settingsSectionToInfoSpacing),
           _InfoRow(
-            label: AppStrings.settingsVersionLabel,
+            label: l10n.settingsVersionLabel,
             value: _version.isEmpty
                 ? AppStrings.versionPlaceholder
                 : '${AppStrings.versionPrefix}$_version',
           ),
           const _InfoDivider(),
-          const _InfoRow(
-            label: AppStrings.settingsDeveloperLabel,
+          _InfoRow(
+            label: l10n.settingsDeveloperLabel,
             value: AppStrings.settingsDeveloperName,
           ),
           const _InfoDivider(),
-          const _InfoRow(
-            label: AppStrings.settingsEmailLabel,
+          _InfoRow(
+            label: l10n.settingsEmailLabel,
             value: AppStrings.settingsEmail,
           ),
           const _InfoDivider(),
-          const _InfoRow(
-            label: AppStrings.settingsWebsiteLabel,
+          _InfoRow(
+            label: l10n.settingsWebsiteLabel,
             value: AppStrings.settingsWebsite,
           ),
         ],

@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
@@ -79,8 +81,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   void _navigateToSettings() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            SettingsPage(controller: SettingsController.instance),
+        builder: (_) => SettingsPage(controller: SettingsController.instance),
       ),
     );
   }
@@ -108,6 +109,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
     );
   }
 
+  String _resolveDisplayText(AppLocalizations l10n) {
+    final errorType = _controller.state.errorType;
+    if (errorType == null) return _controller.displayText;
+    switch (errorType) {
+      case ErrorType.divisionByZero:
+        return l10n.errorDivisionByZero;
+      case ErrorType.infinity:
+        return l10n.errorInfinity;
+      case ErrorType.notANumber:
+        return l10n.errorNan;
+      case ErrorType.overflow:
+        return l10n.errorOverflow;
+      default:
+        return l10n.errorGeneric;
+    }
+  }
+
   void _handleKeyEvent(KeyEvent event) {
     try {
       if (event is! KeyDownEvent) return;
@@ -123,7 +141,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         if (logicalKey == LogicalKeyboardKey.keyC) {
           _controller.copyToClipboard().then((success) {
             if (success && mounted) {
-              _showSnackBar(AppStrings.snackbarValueCopied);
+              _showSnackBar(AppLocalizations.of(context).snackbarValueCopied);
             }
           });
           return;
@@ -131,15 +149,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
         if (logicalKey == LogicalKeyboardKey.keyV) {
           _controller.pasteFromClipboard().then((result) {
             if (result == PasteResult.success || !mounted) return;
+            final l10n = AppLocalizations.of(context);
             switch (result) {
               case PasteResult.emptyClipboard:
-                _showSnackBar(AppStrings.snackbarEmptyClipboard);
+                _showSnackBar(l10n.snackbarEmptyClipboard);
                 break;
               case PasteResult.invalidFormat:
-                _showSnackBar(AppStrings.snackbarInvalidPaste);
+                _showSnackBar(l10n.snackbarInvalidPaste);
                 break;
               case PasteResult.outOfRange:
-                _showSnackBar(AppStrings.snackbarOutOfRange);
+                _showSnackBar(l10n.snackbarOutOfRange);
                 break;
               case PasteResult.success:
                 break;
@@ -219,6 +238,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
@@ -241,9 +261,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
             ),
           ),
         ),
-        title: const Text(
-          AppStrings.calculatorPageTitle,
-          style: TextStyle(
+        title: Text(
+          l10n.calculatorPageTitle,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.primaryText,
           ),
@@ -283,6 +303,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   builder: (context, child) {
                     final isLandscape = ResponsiveUtils.isLandscape(context);
                     final maxWidth = ResponsiveUtils.getMaxCalculatorWidth();
+                    final resolvedDisplayText = _resolveDisplayText(l10n);
 
                     return Center(
                       child: ConstrainedBox(
@@ -291,7 +312,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                         child: isLandscape
                             ? LandscapeLayoutWidget(
-                                displayText: _controller.displayText,
+                                displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
                                 onClear: _controller.clearDisplay,
@@ -304,7 +325,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     _controller.setOperationType,
                               )
                             : PortraitLayoutWidget(
-                                displayText: _controller.displayText,
+                                displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
                                 onClear: _controller.clearDisplay,

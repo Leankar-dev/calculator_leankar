@@ -1,11 +1,12 @@
 import 'package:calculator_05122025/widgets/history_empty_state_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget() {
-    return const NeumorphicApp(
-      home: Scaffold(
+    return const L10nTestApp(
+      child: Scaffold(
         body: HistoryEmptyStateWidget(),
       ),
     );

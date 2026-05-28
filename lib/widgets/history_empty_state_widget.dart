@@ -1,6 +1,6 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class HistoryEmptyStateWidget extends StatelessWidget {
@@ -8,6 +8,7 @@ class HistoryEmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.historyEmptyPadding),
@@ -21,7 +22,7 @@ class HistoryEmptyStateWidget extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.historyEmptyIconSpacing),
             Text(
-              AppStrings.historyEmptyMessage,
+              l10n.historyEmptyMessage,
               style: const TextStyle(
                 fontSize: AppSizes.historyEmptyFontSize,
                 color: AppColors.secondaryText,

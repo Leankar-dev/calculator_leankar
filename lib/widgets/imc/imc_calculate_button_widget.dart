@@ -1,6 +1,6 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ImcCalculateButtonWidget extends StatelessWidget {
@@ -10,6 +10,7 @@ class ImcCalculateButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return NeumorphicButton(
       style: const NeumorphicStyle(
         depth: AppSizes.imcCalculateButtonDepth,
@@ -22,9 +23,9 @@ class ImcCalculateButtonWidget extends StatelessWidget {
         vertical: AppSizes.imcCalculateButtonPaddingV,
       ),
       onPressed: onPressed,
-      child: const Text(
-        AppStrings.imcCalculateButtonLabel,
-        style: TextStyle(
+      child: Text(
+        l10n.imcCalculateButton,
+        style: const TextStyle(
           fontSize: AppSizes.imcCalculateButtonFontSize,
           fontWeight: FontWeight.bold,
           color: Colors.white,

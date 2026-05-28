@@ -1,8 +1,9 @@
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   late List<String> pressedNumbers;
@@ -24,8 +25,8 @@ void main() {
   });
 
   Widget createTestWidget() {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: CalculatorKeypadWidget(
           onClear: () => clearPressed = true,
           onBackspace: () => backspacePressed = true,

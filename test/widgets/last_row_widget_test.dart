@@ -1,8 +1,9 @@
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/last_row_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget({
@@ -11,8 +12,8 @@ void main() {
     VoidCallback? onCalculate,
     void Function(OperationsType)? onOperationPressed,
   }) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: Row(
           children: [
             Expanded(
@@ -54,8 +55,9 @@ void main() {
       expect(find.text(AppStrings.additionSymbol), findsOneWidget);
     });
 
-    testWidgets('deve chamar onNumberPressed com "0" ao pressionar 0',
-        (tester) async {
+    testWidgets('deve chamar onNumberPressed com "0" ao pressionar 0', (
+      tester,
+    ) async {
       String? pressed;
 
       await tester.pumpWidget(
@@ -92,8 +94,9 @@ void main() {
       expect(called, isTrue);
     });
 
-    testWidgets('deve chamar onOperationPressed com addition ao pressionar +',
-        (tester) async {
+    testWidgets('deve chamar onOperationPressed com addition ao pressionar +', (
+      tester,
+    ) async {
       OperationsType? pressed;
 
       await tester.pumpWidget(

@@ -10,16 +10,18 @@ class NumberFormatter {
     AppStrings.locale,
   );
 
-  static final NumberFormat _integerFormatter =
-      NumberFormat('#,##0', AppStrings.locale);
+  static final NumberFormat _integerFormatter = NumberFormat(
+    '#,##0',
+    AppStrings.locale,
+  );
 
   static const double _scientificThresholdSmall = 1e-6;
 
   static const double _scientificThresholdLarge = 1e12;
 
   static String format(double value) {
-    if (value.isNaN) return AppStrings.nanError;
-    if (value.isInfinite) return AppStrings.infinityError;
+    if (value.isNaN) return 'NaN';
+    if (value.isInfinite) return value > 0 ? '∞' : '-∞';
 
     final absValue = value.abs();
 

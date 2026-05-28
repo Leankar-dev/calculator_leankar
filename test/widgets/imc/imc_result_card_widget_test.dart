@@ -3,8 +3,9 @@ import 'package:calculator_05122025/utils/enums/imc_classification.dart';
 import 'package:calculator_05122025/widgets/imc/imc_classification_badge_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_gauge_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_result_card_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/l10n_test_app.dart';
 
 void main() {
   ImcResult buildResult({
@@ -23,8 +24,8 @@ void main() {
   }
 
   Widget buildTestWidget(ImcResult result) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: SingleChildScrollView(
           child: ImcResultCardWidget(result: result),
         ),

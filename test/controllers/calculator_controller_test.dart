@@ -1,6 +1,7 @@
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:flutter/services.dart';
@@ -148,7 +149,8 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
+        expect(controller.state.errorType, ErrorType.divisionByZero);
       });
 
       test('deve mostrar expressão durante operação', () {
@@ -274,7 +276,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         controller.appendNumber('7');
         expect(controller.displayText, '7');
@@ -285,7 +287,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         controller.appendDecimal();
         expect(controller.displayText, '0,');
@@ -296,7 +298,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         controller.setOperationType(OperationsType.addition);
         expect(controller.displayText, '0');
@@ -308,7 +310,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         controller.backspace();
         expect(controller.displayText, '0');
@@ -320,10 +322,10 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         controller.calculatePercentage();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
       });
     });
 
@@ -399,7 +401,7 @@ void main() {
         expect(controller.displayText, '10');
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
       });
     });
 
@@ -570,27 +572,30 @@ void main() {
         expect(controller.history.length, AppSizes.maxHistoryItems);
       });
 
-      test('deve remover o item mais antigo quando limite é excedido', () async {
-        controller.appendNumber('1');
-        controller.setOperationType(OperationsType.addition);
-        controller.appendNumber('1');
-        await controller.calculateResult();
-
-        final firstExpression = controller.history.last.expression;
-
-        for (int i = 0; i < AppSizes.maxHistoryItems; i++) {
-          controller.appendNumber('2');
+      test(
+        'deve remover o item mais antigo quando limite é excedido',
+        () async {
+          controller.appendNumber('1');
           controller.setOperationType(OperationsType.addition);
-          controller.appendNumber('2');
+          controller.appendNumber('1');
           await controller.calculateResult();
-        }
 
-        expect(controller.history.length, AppSizes.maxHistoryItems);
-        expect(
-          controller.history.any((h) => h.expression == firstExpression),
-          false,
-        );
-      });
+          final firstExpression = controller.history.last.expression;
+
+          for (int i = 0; i < AppSizes.maxHistoryItems; i++) {
+            controller.appendNumber('2');
+            controller.setOperationType(OperationsType.addition);
+            controller.appendNumber('2');
+            await controller.calculateResult();
+          }
+
+          expect(controller.history.length, AppSizes.maxHistoryItems);
+          expect(
+            controller.history.any((h) => h.expression == firstExpression),
+            false,
+          );
+        },
+      );
     });
 
     group('Overflow e validação', () {
@@ -605,7 +610,7 @@ void main() {
         controller.appendNumber('0');
         controller.calculateResult();
 
-        expect(controller.displayText, 'Erro: Overflow');
+        expect(controller.hasError, isTrue);
       });
 
       test('deve usar notação científica para números grandes permitidos', () {
@@ -736,7 +741,7 @@ void main() {
         controller.setOperationType(OperationsType.division);
         controller.appendNumber('0');
         controller.calculateResult();
-        expect(controller.displayText, 'Erro: Div/0');
+        expect(controller.hasError, isTrue);
 
         final success = await controller.copyToClipboard();
         expect(success, isFalse);

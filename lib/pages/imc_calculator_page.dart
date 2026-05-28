@@ -1,7 +1,8 @@
 import 'package:calculator_05122025/controllers/imc_controller.dart';
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/utils/enums/imc_error_type.dart';
 import 'package:calculator_05122025/widgets/imc/imc_calculate_button_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_input_field_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_result_card_widget.dart';
@@ -33,8 +34,22 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
     _heightTextController.clear();
   }
 
+  String _resolveErrorMessage(AppLocalizations l10n) {
+    switch (_controller.errorType) {
+      case ImcErrorType.invalidWeight:
+        return l10n.imcInvalidWeightError;
+      case ImcErrorType.invalidHeight:
+        return l10n.imcInvalidHeightError;
+      case ImcErrorType.calculationError:
+        return l10n.imcCalculationError;
+      case null:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
@@ -51,9 +66,9 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
             color: AppColors.primaryText,
           ),
         ),
-        title: const Text(
-          AppStrings.imcPageTitle,
-          style: TextStyle(
+        title: Text(
+          l10n.imcPageTitle,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.primaryText,
           ),
@@ -82,17 +97,17 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ImcInputFieldWidget(
-                    label: AppStrings.imcWeightLabel,
-                    unit: AppStrings.imcWeightUnit,
-                    hint: AppStrings.imcWeightHint,
+                    label: l10n.imcWeightLabel,
+                    unit: 'kg',
+                    hint: '70,0',
                     controller: _weightTextController,
                     onChanged: _controller.setWeight,
                   ),
                   const SizedBox(height: AppSizes.imcInputSpacing),
                   ImcInputFieldWidget(
-                    label: AppStrings.imcHeightLabel,
-                    unit: AppStrings.imcHeightUnit,
-                    hint: AppStrings.imcHeightHint,
+                    label: l10n.imcHeightLabel,
+                    unit: 'cm',
+                    hint: '170',
                     controller: _heightTextController,
                     onChanged: _controller.setHeight,
                   ),
@@ -103,7 +118,7 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
                         bottom: AppSizes.imcErrorBottomSpacing,
                       ),
                       child: Text(
-                        _controller.errorMessage!,
+                        _resolveErrorMessage(l10n),
                         style: const TextStyle(
                           color: AppColors.clearButton,
                           fontSize: AppSizes.imcErrorFontSize,

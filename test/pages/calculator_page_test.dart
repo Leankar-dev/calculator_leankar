@@ -1,14 +1,15 @@
 import 'package:calculator_05122025/pages/calculator_page.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget() {
-    return const NeumorphicApp(
-      home: CalculatorPage(),
+    return const L10nTestApp(
+      child: CalculatorPage(),
     );
   }
 
@@ -32,10 +33,10 @@ void main() {
       expect(find.byType(CalculatorKeypadWidget), findsOneWidget);
     });
 
-    testWidgets('deve exibir título "Calculator"', (tester) async {
+    testWidgets('deve exibir título "CALCULATOR"', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.text('Calculator'), findsOneWidget);
+      expect(find.text('CALCULATOR'), findsOneWidget);
     });
 
     testWidgets('deve exibir "0" inicialmente no display', (tester) async {
@@ -169,7 +170,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('3'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('\u{232B}')); // backspace
+      await tester.tap(find.text('\u{232B}'));
       await tester.pumpAndSettle();
 
       expect(findInDisplay('12'), findsOneWidget);
@@ -234,7 +235,7 @@ void main() {
       await tester.tap(zeroButton);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('\u{0025}')); // %
+      await tester.tap(find.text('\u{0025}'));
       await tester.pumpAndSettle();
 
       expect(findInDisplay('0,5'), findsOneWidget);
@@ -256,7 +257,9 @@ void main() {
     });
 
     group('Entrada por teclado', () {
-      testWidgets('deve aceitar entrada de números pelo teclado', (tester) async {
+      testWidgets('deve aceitar entrada de números pelo teclado', (
+        tester,
+      ) async {
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
 

@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
@@ -17,6 +18,7 @@ class AppDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Drawer(
       backgroundColor: NeumorphicTheme.baseColor(context),
       child: SafeArea(
@@ -26,7 +28,7 @@ class AppDrawerWidget extends StatelessWidget {
             const Divider(),
             _DrawerItem(
               icon: Icons.history,
-              label: AppStrings.drawerItemHistory,
+              label: l10n.drawerItemHistory,
               onTap: () {
                 Navigator.of(context).pop();
                 onHistoryTap();
@@ -34,7 +36,7 @@ class AppDrawerWidget extends StatelessWidget {
             ),
             _DrawerItem(
               icon: Icons.monitor_weight_outlined,
-              label: AppStrings.imcPageTitle,
+              label: l10n.drawerItemImc,
               onTap: () {
                 Navigator.of(context).pop();
                 onImcTap();
@@ -42,7 +44,7 @@ class AppDrawerWidget extends StatelessWidget {
             ),
             _DrawerItem(
               icon: Icons.settings_outlined,
-              label: AppStrings.settingsPageTitle,
+              label: l10n.drawerItemSettings,
               onTap: () {
                 Navigator.of(context).pop();
                 onSettingsTap();
@@ -65,17 +67,25 @@ class _DrawerHeader extends StatelessWidget {
           Neumorphic(
             style: NeumorphicStyle(
               shape: NeumorphicShape.convex,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(AppSizes.drawerLogoBorderRadius)),
+              boxShape: NeumorphicBoxShape.roundRect(
+                BorderRadius.circular(AppSizes.drawerLogoBorderRadius),
+              ),
               depth: AppSizes.drawerLogoDepth,
               intensity: AppSizes.drawerLogoIntensity,
             ),
             padding: const EdgeInsets.all(AppSizes.drawerLogoPadding),
-            child: Image.asset(AppStrings.logoAssetPath, height: AppSizes.drawerLogoHeight),
+            child: Image.asset(
+              AppStrings.logoAssetPath,
+              height: AppSizes.drawerLogoHeight,
+            ),
           ),
           const SizedBox(width: AppSizes.drawerLogoTitleSpacing),
           const Text(
             AppStrings.appName,
-            style: TextStyle(fontSize: AppSizes.drawerTitleFontSize, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: AppSizes.drawerTitleFontSize,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -97,14 +107,23 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeumorphicButton(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.drawerItemMarginH, vertical: AppSizes.drawerItemMarginV),
-      style: const NeumorphicStyle(depth: AppSizes.drawerItemDepth, intensity: AppSizes.drawerItemIntensity),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSizes.drawerItemMarginH,
+        vertical: AppSizes.drawerItemMarginV,
+      ),
+      style: const NeumorphicStyle(
+        depth: AppSizes.drawerItemDepth,
+        intensity: AppSizes.drawerItemIntensity,
+      ),
       onPressed: onTap,
       child: Row(
         children: [
           Icon(icon, color: AppColors.iconMuted),
           const SizedBox(width: AppSizes.drawerItemIconSpacing),
-          Text(label, style: const TextStyle(fontSize: AppSizes.drawerItemFontSize)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: AppSizes.drawerItemFontSize),
+          ),
         ],
       ),
     );

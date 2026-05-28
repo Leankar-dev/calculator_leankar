@@ -1,7 +1,8 @@
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/first_row_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget({
@@ -9,8 +10,8 @@ void main() {
     VoidCallback? onBackspace,
     VoidCallback? onPercentage,
   }) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: Row(
           children: [
             Expanded(
@@ -56,8 +57,9 @@ void main() {
       expect(called, isTrue);
     });
 
-    testWidgets('deve chamar onBackspace ao pressionar backspace',
-        (tester) async {
+    testWidgets('deve chamar onBackspace ao pressionar backspace', (
+      tester,
+    ) async {
       bool called = false;
 
       await tester.pumpWidget(

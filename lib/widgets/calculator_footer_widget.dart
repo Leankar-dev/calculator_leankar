@@ -9,7 +9,9 @@ class CalculatorFooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.footerBottomPadding),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSizes.footerBottomPadding,
+      ),
       child: Text(
         AppStrings.settingsWebsiteUrl,
         style: const TextStyle(

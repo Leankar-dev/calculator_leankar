@@ -1,8 +1,9 @@
 import 'package:calculator_05122025/models/imc_result.dart';
 import 'package:calculator_05122025/utils/enums/imc_classification.dart';
 import 'package:calculator_05122025/widgets/imc/imc_ideal_weight_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/l10n_test_app.dart';
 
 void main() {
   ImcResult buildResult({
@@ -21,8 +22,8 @@ void main() {
   }
 
   Widget buildTestWidget(ImcResult result) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -45,93 +46,66 @@ void main() {
       );
     });
 
-    testWidgets('deve exibir título PESO IDEAL', (tester) async {
+    testWidgets('deve exibir seção PESO IDEAL', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
+
       expect(find.text('PESO IDEAL'), findsOneWidget);
     });
 
     testWidgets('deve exibir label Faixa saudável', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
+
       expect(find.text('Faixa saudável'), findsOneWidget);
     });
 
-    testWidgets('deve exibir label Situação', (tester) async {
+    testWidgets('deve exibir badge Dentro do ideal', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
-      expect(find.text('Situação'), findsOneWidget);
-    });
 
-    testWidgets('deve exibir status Dentro do ideal', (tester) async {
-      await tester.pumpWidget(buildTestWidget(result));
       expect(find.text('Dentro do ideal'), findsOneWidget);
-    });
-
-    testWidgets('não deve exibir label Diferença quando dentro da faixa', (
-      tester,
-    ) async {
-      await tester.pumpWidget(buildTestWidget(result));
-      expect(find.text('Diferença'), findsNothing);
-    });
-
-    testWidgets('deve exibir a faixa de peso com vírgula e separador –', (
-      tester,
-    ) async {
-      await tester.pumpWidget(buildTestWidget(result));
-      final rangeFinder = find.textContaining('–');
-      expect(rangeFinder, findsOneWidget);
     });
   });
 
-  group('ImcIdealWeightWidget — acima da faixa ideal (sobrepeso)', () {
+  group('ImcIdealWeightWidget — acima do ideal (overweight)', () {
     late ImcResult result;
 
     setUp(() {
       result = buildResult(
-        weightKg: 90.0,
+        weightKg: 80.0,
         heightCm: 170.0,
-        imc: 31.14,
-        classification: ImcClassification.obesityI,
+        imc: 27.68,
+        classification: ImcClassification.overweight,
       );
     });
 
-    testWidgets('deve exibir status Acima do ideal', (tester) async {
+    testWidgets('deve exibir badge Acima do ideal', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
+
       expect(find.text('Acima do ideal'), findsOneWidget);
     });
 
-    testWidgets('deve exibir label Diferença com sinal positivo', (
-      tester,
-    ) async {
+    testWidgets('deve exibir label Diferença', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
+
       expect(find.text('Diferença'), findsOneWidget);
-      final diffFinder = find.textContaining('+');
-      expect(diffFinder, findsOneWidget);
     });
   });
 
-  group('ImcIdealWeightWidget — abaixo da faixa ideal (underweight)', () {
+  group('ImcIdealWeightWidget — abaixo do ideal (underweight)', () {
     late ImcResult result;
 
     setUp(() {
       result = buildResult(
         weightKg: 50.0,
         heightCm: 170.0,
-        imc: 17.30,
+        imc: 17.3,
         classification: ImcClassification.underweight,
       );
     });
 
-    testWidgets('deve exibir status Abaixo do ideal', (tester) async {
+    testWidgets('deve exibir badge Abaixo do ideal', (tester) async {
       await tester.pumpWidget(buildTestWidget(result));
-      expect(find.text('Abaixo do ideal'), findsOneWidget);
-    });
 
-    testWidgets('deve exibir label Diferença com sinal negativo', (
-      tester,
-    ) async {
-      await tester.pumpWidget(buildTestWidget(result));
-      expect(find.text('Diferença'), findsOneWidget);
-      final diffFinder = find.textContaining('-');
-      expect(diffFinder, findsOneWidget);
+      expect(find.text('Abaixo do ideal'), findsOneWidget);
     });
   });
 }

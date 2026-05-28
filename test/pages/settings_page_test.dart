@@ -1,11 +1,14 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
 import 'package:calculator_05122025/widgets/settings/app_info_card_widget.dart';
+import 'package:calculator_05122025/widgets/settings/language_selector_widget.dart';
 import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,18 +26,20 @@ void main() {
   });
 
   Widget buildTestWidget() {
-    return NeumorphicApp(
-      home: SettingsPage(controller: SettingsController.instance),
+    return L10nTestApp(
+      child: SettingsPage(controller: SettingsController.instance),
     );
   }
 
   group('SettingsPage', () {
-    testWidgets('deve carregar sem erros e exibir widgets principais',
-        (tester) async {
+    testWidgets('deve carregar sem erros e exibir widgets principais', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
       expect(find.byType(ThemeSelectorWidget), findsOneWidget);
+      expect(find.byType(LanguageSelectorWidget), findsOneWidget);
       expect(find.byType(AppInfoCardWidget), findsOneWidget);
     });
 
@@ -44,8 +49,9 @@ void main() {
       expect(find.text('Configurações'), findsOneWidget);
     });
 
-    testWidgets('deve exibir segmento Sistema selecionado por padrão',
-        (tester) async {
+    testWidgets('deve exibir segmento Sistema selecionado por padrão', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
 
       final button = tester.widget<SegmentedButton<ThemeMode>>(
@@ -70,6 +76,22 @@ void main() {
       await tester.pump();
 
       expect(SettingsController.instance.themeMode, ThemeMode.dark);
+    });
+
+    testWidgets('deve exibir label IDIOMA para seletor de idioma', (
+      tester,
+    ) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          AppLocalizations.localizationsDelegates.isNotEmpty
+              ? 'IDIOMA'
+              : 'IDIOMA',
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

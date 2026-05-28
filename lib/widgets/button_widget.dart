@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
@@ -19,26 +20,26 @@ class ButtonWidget extends StatelessWidget {
     this.isAccent = false,
   });
 
-  String _getSemanticLabel(String text) {
+  String _getSemanticLabel(String text, AppLocalizations l10n) {
     switch (text) {
       case AppStrings.divisionSymbol:
-        return AppStrings.semanticDivide;
+        return l10n.semanticDivide;
       case AppStrings.multiplicationSymbol:
-        return AppStrings.semanticMultiply;
+        return l10n.semanticMultiply;
       case AppStrings.subtractionSymbol:
-        return AppStrings.semanticSubtract;
+        return l10n.semanticSubtract;
       case AppStrings.additionSymbol:
-        return AppStrings.semanticAdd;
+        return l10n.semanticAdd;
       case AppStrings.backspaceSymbol:
-        return AppStrings.semanticBackspace;
+        return l10n.semanticBackspace;
       case AppStrings.percentSymbol:
-        return AppStrings.semanticPercent;
+        return l10n.semanticPercent;
       case '=':
-        return AppStrings.semanticEquals;
+        return l10n.semanticEquals;
       case 'C':
-        return AppStrings.semanticClear;
+        return l10n.semanticClear;
       case AppStrings.decimalSeparator:
-        return AppStrings.semanticDecimalSeparator;
+        return l10n.semanticDecimalSeparator;
       default:
         return text;
     }
@@ -46,6 +47,7 @@ class ButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final baseColor = NeumorphicTheme.baseColor(context);
     final bool hasCustomColor = color != null;
     final buttonFontSize = ResponsiveUtils.getButtonFontSize(context);
@@ -57,7 +59,7 @@ class ButtonWidget extends StatelessWidget {
         padding: EdgeInsets.all(buttonSpacing),
         child: Semantics(
           button: true,
-          label: _getSemanticLabel(text),
+          label: _getSemanticLabel(text, l10n),
           child: NeumorphicButton(
             onPressed: () {
               HapticFeedback.lightImpact();

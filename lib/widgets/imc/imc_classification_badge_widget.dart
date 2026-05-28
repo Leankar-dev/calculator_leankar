@@ -1,5 +1,7 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/imc_classification.dart';
+import 'package:calculator_05122025/utils/extensions/imc_classification_l10n_extension.dart';
 import 'package:flutter/material.dart';
 
 class ImcClassificationBadgeWidget extends StatelessWidget {
@@ -12,6 +14,7 @@ class ImcClassificationBadgeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSizes.imcBadgePaddingH,
@@ -26,7 +29,7 @@ class ImcClassificationBadgeWidget extends StatelessWidget {
         ),
       ),
       child: Text(
-        classification.label,
+        classification.localizedLabel(l10n),
         style: TextStyle(
           color: classification.color,
           fontWeight: FontWeight.bold,

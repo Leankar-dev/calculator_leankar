@@ -2,11 +2,12 @@ import 'package:calculator_05122025/utils/enums/imc_classification.dart';
 import 'package:calculator_05122025/widgets/imc/imc_classification_badge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/l10n_test_app.dart';
 
 void main() {
   Widget buildTestWidget(ImcClassification classification) {
-    return MaterialApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: ImcClassificationBadgeWidget(classification: classification),
       ),
     );

@@ -103,6 +103,7 @@ class CalculatorController extends ChangeNotifier {
       secondOperand: '',
       clearOperation: true,
       shouldResetDisplay: false,
+      clearErrorType: true,
     );
     notifyListeners();
   }
@@ -167,8 +168,9 @@ class CalculatorController extends ChangeNotifier {
 
     _logger.logCalculation(
       operation: '%',
-      firstOperand:
-          _state.firstOperand.isEmpty ? _state.displayText : _state.firstOperand,
+      firstOperand: _state.firstOperand.isEmpty
+          ? _state.displayText
+          : _state.firstOperand,
       secondOperand: parseResult.value.toString(),
       result: _state.displayText,
     );
@@ -358,7 +360,9 @@ class CalculatorController extends ChangeNotifier {
     final parsed = NumberFormatter.parse(item.result);
     _state = _state.copyWith(
       hasError: false,
-      displayText: parsed != null ? NumberFormatter.format(parsed) : item.result,
+      displayText: parsed != null
+          ? NumberFormatter.format(parsed)
+          : item.result,
       firstOperand: '',
       secondOperand: '',
       clearOperation: true,
@@ -440,31 +444,14 @@ class CalculatorController extends ChangeNotifier {
   bool _isErrorState() => _state.hasError;
 
   void _setErrorDisplay(ErrorType errorType) {
-    final String message;
-    switch (errorType) {
-      case ErrorType.divisionByZero:
-        message = AppStrings.divisionByZeroError;
-        break;
-      case ErrorType.infinity:
-        message = AppStrings.infinityError;
-        break;
-      case ErrorType.notANumber:
-        message = AppStrings.nanError;
-        break;
-      case ErrorType.overflow:
-        message = AppStrings.overflowError;
-        break;
-      default:
-        message = AppStrings.genericError;
-    }
-
     _state = _state.copyWith(
       hasError: true,
-      displayText: message,
+      displayText: AppStrings.initialDisplayValue,
       firstOperand: '',
       secondOperand: '',
       clearOperation: true,
       shouldResetDisplay: true,
+      errorType: errorType,
     );
   }
 }

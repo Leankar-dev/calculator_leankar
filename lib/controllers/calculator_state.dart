@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 
 class CalculatorState {
@@ -11,6 +12,7 @@ class CalculatorState {
   final List<CalculationHistory> history;
   final bool isLoading;
   final bool hasError;
+  final ErrorType? errorType;
 
   const CalculatorState({
     required this.displayText,
@@ -21,6 +23,7 @@ class CalculatorState {
     required this.history,
     required this.isLoading,
     required this.hasError,
+    this.errorType,
   });
 
   static CalculatorState initial() => const CalculatorState(
@@ -32,6 +35,7 @@ class CalculatorState {
     history: [],
     isLoading: false,
     hasError: false,
+    errorType: null,
   );
 
   CalculatorState copyWith({
@@ -44,6 +48,8 @@ class CalculatorState {
     List<CalculationHistory>? history,
     bool? isLoading,
     bool? hasError,
+    ErrorType? errorType,
+    bool clearErrorType = false,
   }) {
     return CalculatorState(
       displayText: displayText ?? this.displayText,
@@ -56,6 +62,7 @@ class CalculatorState {
       history: history ?? this.history,
       isLoading: isLoading ?? this.isLoading,
       hasError: hasError ?? this.hasError,
+      errorType: clearErrorType ? null : (errorType ?? this.errorType),
     );
   }
 }

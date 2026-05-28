@@ -3,6 +3,7 @@ import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart'
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helpers/l10n_test_app.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -13,8 +14,8 @@ void main() {
   });
 
   Widget buildTestWidget() {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: ThemeSelectorWidget(controller: SettingsController.instance),
       ),
     );
@@ -29,8 +30,9 @@ void main() {
       expect(find.text('Escuro'), findsOneWidget);
     });
 
-    testWidgets('deve exibir segmento Sistema selecionado por padrão',
-        (tester) async {
+    testWidgets('deve exibir segmento Sistema selecionado por padrão', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
 
       final button = tester.widget<SegmentedButton<ThemeMode>>(
@@ -39,8 +41,9 @@ void main() {
       expect(button.selected, {ThemeMode.system});
     });
 
-    testWidgets('deve exibir segmento correto após mudança no controller',
-        (tester) async {
+    testWidgets('deve exibir segmento correto após mudança no controller', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
 
       await SettingsController.instance.setThemeMode(ThemeMode.dark);

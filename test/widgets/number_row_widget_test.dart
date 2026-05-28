@@ -1,8 +1,9 @@
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/number_row_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget({
@@ -12,8 +13,8 @@ void main() {
     void Function(String)? onNumberPressed,
     void Function(OperationsType)? onOperationPressed,
   }) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: Row(
           children: [
             Expanded(
@@ -54,8 +55,9 @@ void main() {
       expect(find.text(AppStrings.divisionSymbol), findsOneWidget);
     });
 
-    testWidgets('deve chamar onNumberPressed com número correto',
-        (tester) async {
+    testWidgets('deve chamar onNumberPressed com número correto', (
+      tester,
+    ) async {
       String? pressed;
 
       await tester.pumpWidget(
@@ -71,8 +73,9 @@ void main() {
       expect(pressed, '5');
     });
 
-    testWidgets('deve chamar onOperationPressed com operação correta',
-        (tester) async {
+    testWidgets('deve chamar onOperationPressed com operação correta', (
+      tester,
+    ) async {
       OperationsType? pressed;
 
       await tester.pumpWidget(
@@ -89,8 +92,9 @@ void main() {
       expect(pressed, OperationsType.subtraction);
     });
 
-    testWidgets('deve renderizar texto de cada número e operação',
-        (tester) async {
+    testWidgets('deve renderizar texto de cada número e operação', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           numbers: ['1', '2', '3'],

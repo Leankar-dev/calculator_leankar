@@ -32,7 +32,9 @@ class PortraitLayoutWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.layoutOuterPadding),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.layoutOuterPadding,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

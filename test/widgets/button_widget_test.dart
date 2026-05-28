@@ -1,6 +1,7 @@
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget createTestWidget({
@@ -8,8 +9,8 @@ void main() {
     required VoidCallback onPressed,
     Color? color,
   }) {
-    return NeumorphicApp(
-      home: Scaffold(
+    return L10nTestApp(
+      child: Scaffold(
         body: Row(
           children: [
             ButtonWidget(

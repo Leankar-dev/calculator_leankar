@@ -1,6 +1,6 @@
 import 'package:calculator_05122025/controllers/imc_controller.dart';
 import 'package:calculator_05122025/utils/enums/imc_classification.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/utils/enums/imc_error_type.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../mocks/mock_logger_service.dart';
 
@@ -28,8 +28,8 @@ void main() {
       expect(controller.result, isNull);
     });
 
-    test('errorMessage deve ser null', () {
-      expect(controller.errorMessage, isNull);
+    test('errorType deve ser null', () {
+      expect(controller.errorType, isNull);
     });
 
     test('hasResult deve ser false', () {
@@ -57,7 +57,7 @@ void main() {
       expect(controller.hasResult, isFalse);
     });
 
-    test('deve limpar errorMessage anterior', () {
+    test('deve limpar errorType anterior', () {
       controller.setWeight('0');
       controller.calculate();
       expect(controller.hasError, isTrue);
@@ -147,12 +147,12 @@ void main() {
   });
 
   group('calculate — validação de peso', () {
-    test('peso vazio deve gerar erro', () {
+    test('peso vazio deve gerar erro de peso inválido', () {
       controller.setHeight('170');
       controller.calculate();
 
       expect(controller.hasError, isTrue);
-      expect(controller.errorMessage, AppStrings.imcInvalidWeightError);
+      expect(controller.errorType, ImcErrorType.invalidWeight);
     });
 
     test('peso 0 deve gerar erro', () {
@@ -177,7 +177,7 @@ void main() {
       controller.calculate();
 
       expect(controller.hasError, isTrue);
-      expect(controller.errorMessage, AppStrings.imcInvalidWeightError);
+      expect(controller.errorType, ImcErrorType.invalidWeight);
     });
 
     test('peso 500 deve ser válido (no limite)', () {
@@ -190,12 +190,12 @@ void main() {
   });
 
   group('calculate — validação de altura', () {
-    test('altura vazia deve gerar erro', () {
+    test('altura vazia deve gerar erro de altura inválida', () {
       controller.setWeight('70');
       controller.calculate();
 
       expect(controller.hasError, isTrue);
-      expect(controller.errorMessage, AppStrings.imcInvalidHeightError);
+      expect(controller.errorType, ImcErrorType.invalidHeight);
     });
 
     test('altura 0 deve gerar erro', () {
@@ -212,7 +212,7 @@ void main() {
       controller.calculate();
 
       expect(controller.hasError, isTrue);
-      expect(controller.errorMessage, AppStrings.imcInvalidHeightError);
+      expect(controller.errorType, ImcErrorType.invalidHeight);
     });
 
     test('altura 251 deve gerar erro (acima do limite)', () {
@@ -252,7 +252,7 @@ void main() {
       expect(controller.weightInput, '');
       expect(controller.heightInput, '');
       expect(controller.result, isNull);
-      expect(controller.errorMessage, isNull);
+      expect(controller.errorType, isNull);
       expect(controller.hasResult, isFalse);
       expect(controller.hasError, isFalse);
     });

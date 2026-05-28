@@ -17,7 +17,9 @@ class HistoryListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.historyListPaddingV),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSizes.historyListPaddingV,
+      ),
       itemCount: history.length,
       itemBuilder: (context, index) {
         final item = history[index];

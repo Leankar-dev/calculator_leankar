@@ -21,11 +21,15 @@ class HistoryBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * AppSizes.historySheetMaxHeightRatio,
+        maxHeight:
+            MediaQuery.of(context).size.height *
+            AppSizes.historySheetMaxHeightRatio,
       ),
       decoration: BoxDecoration(
         color: NeumorphicTheme.baseColor(context),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppSizes.historySheetBorderRadius)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppSizes.historySheetBorderRadius),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

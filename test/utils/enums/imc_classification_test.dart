@@ -46,30 +46,4 @@ void main() {
       expect(ImcClassification.fromImc(100.0), ImcClassification.obesityIII);
     });
   });
-
-  group('ImcClassification propriedades', () {
-    test('underweight deve ter label correto', () {
-      expect(ImcClassification.underweight.label, 'Abaixo do peso');
-    });
-
-    test('normal deve ter label correto', () {
-      expect(ImcClassification.normal.label, 'Peso normal');
-    });
-
-    test('overweight deve ter label correto', () {
-      expect(ImcClassification.overweight.label, 'Sobrepeso');
-    });
-
-    test('obesityI deve ter label correto', () {
-      expect(ImcClassification.obesityI.label, 'Obesidade Grau I');
-    });
-
-    test('obesityII deve ter label correto', () {
-      expect(ImcClassification.obesityII.label, 'Obesidade Grau II');
-    });
-
-    test('obesityIII deve ter label correto', () {
-      expect(ImcClassification.obesityIII.label, 'Obesidade Grau III');
-    });
-  });
 }

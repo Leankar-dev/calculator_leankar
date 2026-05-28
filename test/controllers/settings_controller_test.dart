@@ -18,18 +18,27 @@ void main() {
       });
     });
 
-    group('setThemeMode', () {
-      test('deve atualizar themeMode para light e notificar listeners', () async {
-        int notifyCount = 0;
-        void listener() => notifyCount++;
-        SettingsController.instance.addListener(listener);
-
-        await SettingsController.instance.setThemeMode(ThemeMode.light);
-
-        SettingsController.instance.removeListener(listener);
-        expect(SettingsController.instance.themeMode, ThemeMode.light);
-        expect(notifyCount, 1);
+    group('locale inicial', () {
+      test('deve ser pt_BR por padrão', () {
+        expect(SettingsController.instance.locale, const Locale('pt', 'BR'));
       });
+    });
+
+    group('setThemeMode', () {
+      test(
+        'deve atualizar themeMode para light e notificar listeners',
+        () async {
+          int notifyCount = 0;
+          void listener() => notifyCount++;
+          SettingsController.instance.addListener(listener);
+
+          await SettingsController.instance.setThemeMode(ThemeMode.light);
+
+          SettingsController.instance.removeListener(listener);
+          expect(SettingsController.instance.themeMode, ThemeMode.light);
+          expect(notifyCount, 1);
+        },
+      );
 
       test('deve atualizar themeMode para dark', () async {
         await SettingsController.instance.setThemeMode(ThemeMode.dark);
@@ -37,16 +46,53 @@ void main() {
         expect(SettingsController.instance.themeMode, ThemeMode.dark);
       });
 
-      test('não deve chamar notifyListeners quando valor é igual ao atual', () async {
+      test(
+        'não deve chamar notifyListeners quando valor é igual ao atual',
+        () async {
+          int notifyCount = 0;
+          void listener() => notifyCount++;
+          SettingsController.instance.addListener(listener);
+
+          await SettingsController.instance.setThemeMode(ThemeMode.system);
+
+          SettingsController.instance.removeListener(listener);
+          expect(notifyCount, 0);
+        },
+      );
+    });
+
+    group('setLocale', () {
+      test('deve atualizar locale para en e notificar listeners', () async {
         int notifyCount = 0;
         void listener() => notifyCount++;
         SettingsController.instance.addListener(listener);
 
-        await SettingsController.instance.setThemeMode(ThemeMode.system);
+        await SettingsController.instance.setLocale(const Locale('en'));
 
         SettingsController.instance.removeListener(listener);
-        expect(notifyCount, 0);
+        expect(SettingsController.instance.locale, const Locale('en'));
+        expect(notifyCount, 1);
       });
+
+      test('deve atualizar locale para fr', () async {
+        await SettingsController.instance.setLocale(const Locale('fr'));
+
+        expect(SettingsController.instance.locale, const Locale('fr'));
+      });
+
+      test(
+        'não deve chamar notifyListeners quando locale é igual ao atual',
+        () async {
+          int notifyCount = 0;
+          void listener() => notifyCount++;
+          SettingsController.instance.addListener(listener);
+
+          await SettingsController.instance.setLocale(const Locale('pt', 'BR'));
+
+          SettingsController.instance.removeListener(listener);
+          expect(notifyCount, 0);
+        },
+      );
     });
 
     group('_parseThemeMode via loadSettings', () {
@@ -71,18 +117,65 @@ void main() {
         expect(SettingsController.instance.themeMode, ThemeMode.system);
       });
 
-      test('deve retornar ThemeMode.system quando chave ausente (null)', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SettingsController.instance.loadSettings();
+      test(
+        'deve retornar ThemeMode.system quando chave ausente (null)',
+        () async {
+          SharedPreferences.setMockInitialValues({});
+          await SettingsController.instance.loadSettings();
 
-        expect(SettingsController.instance.themeMode, ThemeMode.system);
-      });
+          expect(SettingsController.instance.themeMode, ThemeMode.system);
+        },
+      );
 
       test('deve retornar ThemeMode.system para valor desconhecido', () async {
         SharedPreferences.setMockInitialValues({'theme_mode': 'invalid'});
         await SettingsController.instance.loadSettings();
 
         expect(SettingsController.instance.themeMode, ThemeMode.system);
+      });
+    });
+
+    group('_parseLocale via loadSettings', () {
+      test("deve interpretar 'en' como Locale('en')", () async {
+        SharedPreferences.setMockInitialValues({'locale': 'en'});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('en'));
+      });
+
+      test("deve interpretar 'es' como Locale('es')", () async {
+        SharedPreferences.setMockInitialValues({'locale': 'es'});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('es'));
+      });
+
+      test("deve interpretar 'it' como Locale('it')", () async {
+        SharedPreferences.setMockInitialValues({'locale': 'it'});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('it'));
+      });
+
+      test("deve interpretar 'fr' como Locale('fr')", () async {
+        SharedPreferences.setMockInitialValues({'locale': 'fr'});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('fr'));
+      });
+
+      test('deve retornar pt_BR quando chave ausente (null)', () async {
+        SharedPreferences.setMockInitialValues({});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('pt', 'BR'));
+      });
+
+      test('deve retornar pt_BR para valor desconhecido', () async {
+        SharedPreferences.setMockInitialValues({'locale': 'invalid'});
+        await SettingsController.instance.loadSettings();
+
+        expect(SettingsController.instance.locale, const Locale('pt', 'BR'));
       });
     });
   });

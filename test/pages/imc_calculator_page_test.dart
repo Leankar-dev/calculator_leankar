@@ -2,19 +2,21 @@ import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/widgets/imc/imc_calculate_button_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_input_field_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_result_card_widget.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/l10n_test_app.dart';
 
 void main() {
   Widget buildTestWidget() {
-    return const NeumorphicApp(
-      home: ImcCalculatorPage(),
+    return const L10nTestApp(
+      child: ImcCalculatorPage(),
     );
   }
 
   group('ImcCalculatorPage', () {
-    testWidgets('deve carregar sem erros com campos e botão visíveis',
-        (tester) async {
+    testWidgets('deve carregar sem erros com campos e botão visíveis', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
@@ -29,8 +31,9 @@ void main() {
       expect(find.text('Calculadora IMC'), findsOneWidget);
     });
 
-    testWidgets('campos em branco + calcular deve exibir mensagem de erro',
-        (tester) async {
+    testWidgets('campos em branco + calcular deve exibir mensagem de erro', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
@@ -41,8 +44,9 @@ void main() {
       expect(find.textContaining('inválido'), findsOneWidget);
     });
 
-    testWidgets('deve exibir ImcResultCardWidget com valores válidos',
-        (tester) async {
+    testWidgets('deve exibir ImcResultCardWidget com valores válidos', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 

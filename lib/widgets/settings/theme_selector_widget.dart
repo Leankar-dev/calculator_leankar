@@ -1,7 +1,7 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ThemeSelectorWidget extends StatelessWidget {
@@ -11,21 +11,24 @@ class ThemeSelectorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Neumorphic(
       style: NeumorphicStyle(
         depth: AppSizes.settingsCardDepth,
         intensity: AppSizes.settingsCardIntensity,
         boxShape: NeumorphicBoxShape.roundRect(
-          const BorderRadius.all(Radius.circular(AppSizes.settingsCardBorderRadius)),
+          const BorderRadius.all(
+            Radius.circular(AppSizes.settingsCardBorderRadius),
+          ),
         ),
       ),
       padding: const EdgeInsets.all(AppSizes.settingsCardPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            AppStrings.settingsAppearanceSection,
-            style: TextStyle(
+          Text(
+            l10n.settingsAppearanceSection,
+            style: const TextStyle(
               fontSize: AppSizes.settingsSectionLabelFontSize,
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
@@ -37,21 +40,21 @@ class ThemeSelectorWidget extends StatelessWidget {
             listenable: controller,
             builder: (context, child) {
               return SegmentedButton<ThemeMode>(
-                segments: const [
+                segments: [
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.system,
-                    label: Text(AppStrings.themeOptionSystem),
-                    icon: Icon(Icons.brightness_auto_outlined),
+                    label: Text(l10n.themeOptionSystem),
+                    icon: const Icon(Icons.brightness_auto_outlined),
                   ),
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.light,
-                    label: Text(AppStrings.themeOptionLight),
-                    icon: Icon(Icons.light_mode_outlined),
+                    label: Text(l10n.themeOptionLight),
+                    icon: const Icon(Icons.light_mode_outlined),
                   ),
                   ButtonSegment<ThemeMode>(
                     value: ThemeMode.dark,
-                    label: Text(AppStrings.themeOptionDark),
-                    icon: Icon(Icons.dark_mode_outlined),
+                    label: Text(l10n.themeOptionDark),
+                    icon: const Icon(Icons.dark_mode_outlined),
                   ),
                 ],
                 selected: {controller.themeMode},

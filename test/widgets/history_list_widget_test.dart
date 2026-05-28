@@ -28,8 +28,9 @@ void main() {
   }
 
   group('HistoryListWidget', () {
-    testWidgets('deve renderizar HistoryItemWidget para cada item',
-        (tester) async {
+    testWidgets('deve renderizar HistoryItemWidget para cada item', (
+      tester,
+    ) async {
       final history = [
         createItem('5 + 3', '8'),
         createItem('10 - 4', '6'),
