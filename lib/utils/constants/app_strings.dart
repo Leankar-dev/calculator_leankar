@@ -21,7 +21,7 @@ class AppStrings {
 
   static const String appTitle = 'Calculator App';
   static const String appName = 'Leankar Calc';
-  static const String logoAssetPath = 'assets/images/logo4.png';
+  static const String logoAssetPath = 'assets/images/logo5.png';
   static const String settingsDeveloperName = 'Leankar.dev';
   static const String settingsEmail = 'leankar.dev@gmail.com';
   static const String settingsWebsite = 'leankar.dev';
