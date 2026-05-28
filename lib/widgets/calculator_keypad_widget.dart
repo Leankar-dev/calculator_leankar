@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/widgets/first_row_widget.dart';
 import 'package:calculator_05122025/widgets/last_row_widget.dart';
@@ -37,21 +38,21 @@ class CalculatorKeypadWidget extends StatelessWidget {
         NumberRowWidget(
           numbers: const ['7', '8', '9'],
           operation: OperationsType.division,
-          operationSymbol: '\u{00F7}',
+          operationSymbol: AppStrings.divisionSymbol,
           onNumberPressed: onNumberPressed,
           onOperationPressed: onOperationPressed,
         ),
         NumberRowWidget(
           numbers: const ['4', '5', '6'],
           operation: OperationsType.multiplication,
-          operationSymbol: '\u{00D7}',
+          operationSymbol: AppStrings.multiplicationSymbol,
           onNumberPressed: onNumberPressed,
           onOperationPressed: onOperationPressed,
         ),
         NumberRowWidget(
           numbers: const ['1', '2', '3'],
           operation: OperationsType.subtraction,
-          operationSymbol: '\u{002D}',
+          operationSymbol: AppStrings.subtractionSymbol,
           onNumberPressed: onNumberPressed,
           onOperationPressed: onOperationPressed,
         ),

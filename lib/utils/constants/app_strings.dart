@@ -19,6 +19,8 @@ class AppStrings {
   static const String subtractionSymbol = '\u{002D}';
   static const String multiplicationSymbol = '\u{00D7}';
   static const String divisionSymbol = '\u{00F7}';
+  static const String clearButtonText = 'C';
+  static const String equalsButtonText = '=';
 
   static const String appTitle = 'Calculator App';
   static const String appName = 'Leankar Calc';
@@ -56,6 +58,11 @@ class AppStrings {
   static const String themeOptionDark = 'Escuro';
 
   static const String settingsAboutSection = 'SOBRE O APP';
+  static const String versionPlaceholder = '—';
+  static const String versionPrefix = 'v';
+
+  static const String historyResultPrefix = '= ';
+
   static const String settingsVersionLabel = 'Versão';
   static const String settingsDeveloperLabel = 'Programador';
   static const String settingsDeveloperName = 'Leankar.dev';

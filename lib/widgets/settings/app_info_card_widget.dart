@@ -34,10 +34,15 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
         depth: AppSizes.settingsCardDepth,
         intensity: AppSizes.settingsCardIntensity,
         boxShape: NeumorphicBoxShape.roundRect(
-          const BorderRadius.all(Radius.circular(AppSizes.settingsCardBorderRadius)),
+          const BorderRadius.all(
+            Radius.circular(AppSizes.settingsCardBorderRadius),
+          ),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.settingsInfoCardPaddingH, vertical: AppSizes.settingsInfoCardPaddingV),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.settingsInfoCardPaddingH,
+        vertical: AppSizes.settingsInfoCardPaddingV,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,7 +58,9 @@ class _AppInfoCardWidgetState extends State<AppInfoCardWidget> {
           const SizedBox(height: AppSizes.settingsSectionToInfoSpacing),
           _InfoRow(
             label: AppStrings.settingsVersionLabel,
-            value: _version.isEmpty ? '—' : 'v$_version',
+            value: _version.isEmpty
+                ? AppStrings.versionPlaceholder
+                : '${AppStrings.versionPrefix}$_version',
           ),
           const _InfoDivider(),
           const _InfoRow(
@@ -85,20 +92,28 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.settingsInfoRowPaddingV),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSizes.settingsInfoRowPaddingV,
+      ),
       child: Row(
         children: [
           SizedBox(
             width: AppSizes.settingsInfoLabelWidth,
             child: Text(
               label,
-              style: const TextStyle(color: AppColors.textMuted, fontSize: AppSizes.settingsInfoFontSize),
+              style: const TextStyle(
+                color: AppColors.textMuted,
+                fontSize: AppSizes.settingsInfoFontSize,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: AppSizes.settingsInfoFontSize, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: AppSizes.settingsInfoFontSize,
+                fontWeight: FontWeight.w500,
+              ),
               textAlign: TextAlign.end,
             ),
           ),
@@ -113,6 +128,9 @@ class _InfoDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(height: AppSizes.settingsDividerHeight, thickness: AppSizes.settingsDividerThickness);
+    return const Divider(
+      height: AppSizes.settingsDividerHeight,
+      thickness: AppSizes.settingsDividerThickness,
+    );
   }
 }

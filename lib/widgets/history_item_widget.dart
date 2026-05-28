@@ -20,12 +20,17 @@ class HistoryItemWidget extends StatelessWidget {
     final dateFormat = DateFormat(AppStrings.historyDateFormat);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.historyItemMarginH, vertical: AppSizes.historyItemMarginV),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.historyItemMarginH,
+        vertical: AppSizes.historyItemMarginV,
+      ),
       child: NeumorphicButton(
         style: NeumorphicStyle(
           depth: AppSizes.historyItemDepth,
           intensity: AppSizes.historyItemIntensity,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(AppSizes.historyItemBorderRadius)),
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.circular(AppSizes.historyItemBorderRadius),
+          ),
         ),
         padding: const EdgeInsets.all(AppSizes.historyItemPadding),
         onPressed: () {
@@ -47,7 +52,7 @@ class HistoryItemWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.historyItemInnerSpacing),
                   Text(
-                    '= ${item.result}',
+                    '${AppStrings.historyResultPrefix}${item.result}',
                     style: TextStyle(
                       fontSize: AppSizes.historyItemResultFontSize,
                       fontWeight: FontWeight.bold,

@@ -20,7 +20,7 @@ class FirstRowWidget extends StatelessWidget {
     return Row(
       children: [
         ButtonWidget(
-          text: 'C',
+          text: AppStrings.clearButtonText,
           onPressed: onClear,
           color: AppColors.clearButton,
         ),

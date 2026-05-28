@@ -31,7 +31,7 @@ class LastRowWidget extends StatelessWidget {
           onPressed: onDecimal,
         ),
         ButtonWidget(
-          text: '=',
+          text: AppStrings.equalsButtonText,
           onPressed: onCalculate,
           color: AppColors.equalsButton,
         ),
