@@ -68,4 +68,65 @@ void main() {
       expect(r.formattedImc, '24,3');
     });
   });
+
+  group('ImcResult peso ideal', () {
+    test('idealWeightMin para 170cm deve ser 53,5 kg', () {
+      final result = ImcResult.calculate(weightKg: 70.0, heightCm: 170.0);
+      expect(result.idealWeightMin, closeTo(53.5, 0.1));
+    });
+
+    test('idealWeightMax para 170cm deve ser 72,0 kg', () {
+      final result = ImcResult.calculate(weightKg: 70.0, heightCm: 170.0);
+      expect(result.idealWeightMax, closeTo(72.0, 0.1));
+    });
+
+    test(
+      'idealWeightDifference deve ser 0,0 quando peso está dentro da faixa',
+      () {
+        final result = ImcResult.calculate(weightKg: 70.0, heightCm: 170.0);
+        expect(result.idealWeightDifference, 0.0);
+      },
+    );
+
+    test('idealWeightDifference deve ser positivo quando acima da faixa', () {
+      final result = ImcResult.calculate(weightKg: 90.0, heightCm: 170.0);
+      expect(result.idealWeightDifference, greaterThan(0));
+    });
+
+    test('idealWeightDifference deve ser negativo quando abaixo da faixa', () {
+      final result = ImcResult.calculate(weightKg: 50.0, heightCm: 170.0);
+      expect(result.idealWeightDifference, lessThan(0));
+    });
+
+    test('formattedIdealWeightRange deve usar vírgula e separador –', () {
+      final result = ImcResult.calculate(weightKg: 70.0, heightCm: 170.0);
+      expect(result.formattedIdealWeightRange, contains('–'));
+      expect(result.formattedIdealWeightRange, contains('kg'));
+      expect(result.formattedIdealWeightRange, isNot(contains('.')));
+    });
+
+    test(
+      'formattedIdealWeightDifference deve retornar string vazia quando dentro da faixa',
+      () {
+        final result = ImcResult.calculate(weightKg: 70.0, heightCm: 170.0);
+        expect(result.formattedIdealWeightDifference, isEmpty);
+      },
+    );
+
+    test(
+      'formattedIdealWeightDifference deve ter sinal + quando acima da faixa',
+      () {
+        final result = ImcResult.calculate(weightKg: 90.0, heightCm: 170.0);
+        expect(result.formattedIdealWeightDifference, startsWith('+'));
+      },
+    );
+
+    test(
+      'formattedIdealWeightDifference deve ter sinal - quando abaixo da faixa',
+      () {
+        final result = ImcResult.calculate(weightKg: 50.0, heightCm: 170.0);
+        expect(result.formattedIdealWeightDifference, startsWith('-'));
+      },
+    );
+  });
 }

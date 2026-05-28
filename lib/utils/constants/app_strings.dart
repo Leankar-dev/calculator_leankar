@@ -83,6 +83,14 @@ class AppStrings {
   static const String imcCalculationError =
       'Erro ao calcular. Verifique os valores.';
 
+  static const String imcIdealWeightSectionTitle = 'PESO IDEAL';
+  static const String imcIdealWeightRangeLabel = 'Faixa saudável';
+  static const String imcIdealWeightStatusLabel = 'Situação';
+  static const String imcIdealWeightDiffLabel = 'Diferença';
+  static const String imcIdealWeightOnRange = 'Dentro do ideal';
+  static const String imcIdealWeightAbove = 'Acima do ideal';
+  static const String imcIdealWeightBelow = 'Abaixo do ideal';
+
   static const String prefThemeModeKey = 'theme_mode';
   static const String prefHistoryKey = 'calculation_history';
 

@@ -183,4 +183,15 @@ class AppSizes {
   static const double imcResetButtonIntensity = 0.6;
   static const double imcResetButtonPadding = 10.0;
   static const double imcErrorFontSize = 13.0;
+
+  static const double imcIdealWeightSectionSpacing = 16.0;
+  static const double imcIdealWeightTopSpacing = 8.0;
+  static const double imcIdealWeightInnerSpacing = 8.0;
+  static const double imcIdealWeightTitleFontSize = 11.0;
+  static const double imcIdealWeightTitleLetterSpacing = 1.2;
+  static const double imcIdealWeightStatusPaddingH = 12.0;
+  static const double imcIdealWeightStatusPaddingV = 4.0;
+  static const double imcIdealWeightStatusBorderRadius = 12.0;
+  static const double imcIdealWeightStatusFontSize = 13.0;
+  static const double imcIdealWeightStatusBorderWidth = 1.0;
 }

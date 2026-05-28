@@ -37,4 +37,40 @@ class ImcResult {
       '${weightKg.toStringAsFixed(1).replaceAll('.', ',')} kg';
 
   String get formattedHeight => '${heightCm.toStringAsFixed(0)} cm';
+
+  double get idealWeightMin {
+    final heightM = heightCm / 100.0;
+    return double.parse((18.5 * heightM * heightM).toStringAsFixed(1));
+  }
+
+  double get idealWeightMax {
+    final heightM = heightCm / 100.0;
+    return double.parse((24.9 * heightM * heightM).toStringAsFixed(1));
+  }
+
+  double get idealWeightDifference {
+    final min = idealWeightMin;
+    final max = idealWeightMax;
+    if (weightKg < min) {
+      return double.parse((weightKg - min).toStringAsFixed(1));
+    }
+    if (weightKg > max) {
+      return double.parse((weightKg - max).toStringAsFixed(1));
+    }
+    return 0.0;
+  }
+
+  String get formattedIdealWeightRange {
+    final min = idealWeightMin.toStringAsFixed(1).replaceAll('.', ',');
+    final max = idealWeightMax.toStringAsFixed(1).replaceAll('.', ',');
+    return '$min – $max kg';
+  }
+
+  String get formattedIdealWeightDifference {
+    final diff = idealWeightDifference;
+    if (diff == 0.0) return '';
+    final absStr = diff.abs().toStringAsFixed(1).replaceAll('.', ',');
+    final sign = diff > 0 ? '+' : '-';
+    return '$sign$absStr kg';
+  }
 }

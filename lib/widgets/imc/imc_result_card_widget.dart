@@ -4,6 +4,7 @@ import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/widgets/imc/imc_classification_badge_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_gauge_widget.dart';
+import 'package:calculator_05122025/widgets/imc/imc_ideal_weight_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ImcResultCardWidget extends StatelessWidget {
@@ -42,6 +43,8 @@ class ImcResultCardWidget extends StatelessWidget {
             label: AppStrings.imcHeightLabel,
             value: result.formattedHeight,
           ),
+          const SizedBox(height: AppSizes.imcIdealWeightSectionSpacing),
+          ImcIdealWeightWidget(result: result),
         ],
       ),
     );
