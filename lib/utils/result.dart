@@ -5,10 +5,7 @@ class Result<T> {
   final ErrorType? _error;
   final String? _errorDetails;
 
-  const Result._({T? value, ErrorType? error, String? errorDetails})
-    : _value = value,
-      _error = error,
-      _errorDetails = errorDetails;
+  const Result._({this._value, this._error, this._errorDetails});
 
   factory Result.success(T value) => Result._(value: value);
 
