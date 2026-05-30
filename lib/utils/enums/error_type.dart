@@ -8,6 +8,9 @@ enum ErrorType {
   historySaveError('Erro ao salvar', 'Não foi possível salvar o histórico'),
   historyClearError('Erro ao limpar', 'Não foi possível limpar o histórico'),
   corruptedData('Dados corrompidos', 'Os dados salvos estão corrompidos'),
+  adMobInitError('Erro AdMob', 'Falha ao inicializar o SDK de anúncios'),
+  adLoadError('Anúncio indisponível', 'Não foi possível carregar o anúncio'),
+  adConsentError('Consentimento', 'Erro ao processar consentimento do usuário'),
   unknown('Erro', 'Ocorreu um erro inesperado');
 
   const ErrorType(this.shortMessage, this.fullMessage);

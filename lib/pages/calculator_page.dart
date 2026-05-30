@@ -1,18 +1,21 @@
 import 'dart:async';
 
+import 'package:calculator_05122025/controllers/ad_consent_controller.dart';
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
+import 'package:calculator_05122025/services/ad_mob_service.dart';
+import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
-import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
+import 'package:calculator_05122025/widgets/ads/ad_banner_footer_widget.dart';
 import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
@@ -45,6 +48,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       HapticFeedback.heavyImpact();
     });
     _initializeController();
+    AdConsentController.instance.initialize();
   }
 
   Future<void> _initializeController() async {
@@ -343,6 +347,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
               ),
             ),
+            AdBannerFooterWidget(adMobService: AdMobService.instance),
           ],
         ),
       ),

@@ -30,6 +30,7 @@ class AppStrings {
   static const String prefThemeModeKey = 'theme_mode';
   static const String prefLocaleKey = 'locale';
   static const String prefHistoryKey = 'calculation_history';
+  static const String prefAdConsentKey = 'ad_consent_can_request';
 
   static const String themeModeSerialLight = 'light';
   static const String themeModeSerialDark = 'dark';

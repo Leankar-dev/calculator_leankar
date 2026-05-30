@@ -4,7 +4,7 @@ class AppSizes {
   static const double baseWidth = 375.0;
   static const double maxCalculatorWidth = 500.0;
   static const double minWidth = 280.0;
-  static const double displayHeightPortrait = 160.0;
+  static const double displayHeightPortrait = 130.0;
   static const double displayHeightLandscape = 100.0;
   static const double displayFontSize = 48.0;
   static const double expressionFontSize = 20.0;
@@ -14,8 +14,8 @@ class AppSizes {
   static const double buttonPaddingPortrait = 16.0;
   static const double buttonPaddingLandscape = 10.0;
   static const double buttonSpacing = 6.0;
-  static const double displayHeightMin = 120.0;
-  static const double displayHeightMax = 200.0;
+  static const double displayHeightMin = 100.0;
+  static const double displayHeightMax = 160.0;
   static const double displayHeightLandscapeMin = 80.0;
   static const double displayHeightLandscapeMax = 140.0;
   static const double displayFontSizeMin = 32.0;
@@ -194,4 +194,6 @@ class AppSizes {
   static const double imcIdealWeightStatusBorderRadius = 12.0;
   static const double imcIdealWeightStatusFontSize = 13.0;
   static const double imcIdealWeightStatusBorderWidth = 1.0;
+
+  static const double adBannerPlaceholderHeight = 50.0;
 }
