@@ -2,6 +2,7 @@ import 'package:calculator_05122025/controllers/imc_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/imc_error_type.dart';
 import 'package:calculator_05122025/widgets/imc/imc_calculate_button_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_input_field_widget.dart';
@@ -98,16 +99,16 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
                 children: [
                   ImcInputFieldWidget(
                     label: l10n.imcWeightLabel,
-                    unit: 'kg',
-                    hint: '70,0',
+                    unit: AppStrings.imcWeightUnit,
+                    hint: AppStrings.imcWeightHint,
                     controller: _weightTextController,
                     onChanged: _controller.setWeight,
                   ),
                   const SizedBox(height: AppSizes.imcInputSpacing),
                   ImcInputFieldWidget(
                     label: l10n.imcHeightLabel,
-                    unit: 'cm',
-                    hint: '170',
+                    unit: AppStrings.imcHeightUnit,
+                    hint: AppStrings.imcHeightHint,
                     controller: _heightTextController,
                     onChanged: _controller.setHeight,
                   ),

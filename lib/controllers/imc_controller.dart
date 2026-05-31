@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/models/imc_result.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/imc_error_type.dart';
 import 'package:flutter/foundation.dart';
 
@@ -38,8 +39,12 @@ class ImcController extends ChangeNotifier {
   void calculate() {
     _errorType = null;
 
-    final weight = double.tryParse(_weightInput.replaceAll(',', '.'));
-    final height = double.tryParse(_heightInput.replaceAll(',', '.'));
+    final weight = double.tryParse(
+      _weightInput.replaceAll(AppStrings.decimalSeparator, '.'),
+    );
+    final height = double.tryParse(
+      _heightInput.replaceAll(AppStrings.decimalSeparator, '.'),
+    );
 
     if (weight == null || weight <= 0 || weight > 500) {
       _errorType = ImcErrorType.invalidWeight;

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/imc_classification.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,9 @@ class ImcGaugeWidget extends StatelessWidget {
               bottom: AppSizes.imcGaugePaddingBottom,
             ),
             child: Text(
-              imc.toStringAsFixed(1).replaceAll('.', ','),
+              imc
+                  .toStringAsFixed(1)
+                  .replaceAll('.', AppStrings.decimalSeparator),
               style: TextStyle(
                 fontSize: AppSizes.imcGaugeValueFontSize,
                 fontWeight: FontWeight.bold,

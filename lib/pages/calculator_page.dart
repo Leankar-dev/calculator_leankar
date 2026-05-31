@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:calculator_05122025/controllers/ad_consent_controller.dart';
 import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
@@ -194,39 +193,42 @@ class _CalculatorPageState extends State<CalculatorPage> {
         return;
       }
 
-      if (key == '+') {
+      if (key == AppStrings.additionSymbol) {
         _controller.setOperationType(OperationsType.addition);
         return;
       }
-      if (key == '-') {
+      if (key == AppStrings.subtractionSymbol) {
         _controller.setOperationType(OperationsType.subtraction);
         return;
       }
-      if (key == '*' || key == 'x' || key == 'X') {
+      if (key == AppStrings.keyboardAsterisk ||
+          key == AppStrings.keyboardXLower ||
+          key == AppStrings.keyboardXUpper) {
         _controller.setOperationType(OperationsType.multiplication);
         return;
       }
-      if (key == '/') {
+      if (key == AppStrings.keyboardSlash) {
         _controller.setOperationType(OperationsType.division);
         return;
       }
 
-      if (key == ',' || key == '.') {
+      if (key == AppStrings.decimalSeparator || key == AppStrings.keyboardDot) {
         _controller.appendDecimal();
         return;
       }
 
-      if (key == '=') {
+      if (key == AppStrings.equalsButtonText) {
         _controller.calculateResult();
         return;
       }
 
-      if (key == '%') {
+      if (key == AppStrings.percentSymbol) {
         _controller.calculatePercentage();
         return;
       }
 
-      if (key == 'c' || key == 'C') {
+      if (key == AppStrings.clearButtonLower ||
+          key == AppStrings.clearButtonText) {
         _controller.clearDisplay();
         return;
       }

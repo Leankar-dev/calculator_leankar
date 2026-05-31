@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/imc_classification.dart';
 
 class ImcResult {
@@ -31,12 +32,14 @@ class ImcResult {
     );
   }
 
-  String get formattedImc => imc.toStringAsFixed(1).replaceAll('.', ',');
+  String get formattedImc =>
+      imc.toStringAsFixed(1).replaceAll('.', AppStrings.decimalSeparator);
 
   String get formattedWeight =>
-      '${weightKg.toStringAsFixed(1).replaceAll('.', ',')} kg';
+      '${weightKg.toStringAsFixed(1).replaceAll('.', AppStrings.decimalSeparator)} ${AppStrings.imcWeightUnit}';
 
-  String get formattedHeight => '${heightCm.toStringAsFixed(0)} cm';
+  String get formattedHeight =>
+      '${heightCm.toStringAsFixed(0)} ${AppStrings.imcHeightUnit}';
 
   double get idealWeightMin {
     final heightM = heightCm / 100.0;
@@ -61,16 +64,23 @@ class ImcResult {
   }
 
   String get formattedIdealWeightRange {
-    final min = idealWeightMin.toStringAsFixed(1).replaceAll('.', ',');
-    final max = idealWeightMax.toStringAsFixed(1).replaceAll('.', ',');
-    return '$min – $max kg';
+    final min = idealWeightMin
+        .toStringAsFixed(1)
+        .replaceAll('.', AppStrings.decimalSeparator);
+    final max = idealWeightMax
+        .toStringAsFixed(1)
+        .replaceAll('.', AppStrings.decimalSeparator);
+    return '$min${AppStrings.imcRangeSeparator}$max ${AppStrings.imcWeightUnit}';
   }
 
   String get formattedIdealWeightDifference {
     final diff = idealWeightDifference;
     if (diff == 0.0) return '';
-    final absStr = diff.abs().toStringAsFixed(1).replaceAll('.', ',');
+    final absStr = diff
+        .abs()
+        .toStringAsFixed(1)
+        .replaceAll('.', AppStrings.decimalSeparator);
     final sign = diff > 0 ? '+' : '-';
-    return '$sign$absStr kg';
+    return '$sign$absStr ${AppStrings.imcWeightUnit}';
   }
 }

@@ -44,4 +44,17 @@ class AppStrings {
 
   static const String versionPlaceholder = '—';
   static const String versionPrefix = 'v';
+
+  static const String imcWeightUnit = 'kg';
+  static const String imcHeightUnit = 'cm';
+  static const String imcWeightHint = '70,0';
+  static const String imcHeightHint = '170';
+  static const String imcRangeSeparator = ' – ';
+
+  static const String keyboardAsterisk = '*';
+  static const String keyboardSlash = '/';
+  static const String keyboardXLower = 'x';
+  static const String keyboardXUpper = 'X';
+  static const String keyboardDot = '.';
+  static const String clearButtonLower = 'c';
 }
