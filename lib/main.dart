@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/app_calculator.dart';
+﻿import 'package:calculator_05122025/app_calculator.dart';
 import 'package:calculator_05122025/controllers/ad_consent_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:flutter/services.dart';
