@@ -56,5 +56,12 @@
   "semanticPercent": "Pourcentage",
   "semanticEquals": "Calculer le résultat",
   "semanticClear": "Tout effacer",
-  "semanticDecimalSeparator": "Séparateur décimal"
+  "semanticDecimalSeparator": "Séparateur décimal",
+
+  "adConsentDialogTitle": "Confidentialité et Publicités",
+  "adConsentDialogBody": "Cette app affiche des publicités pour rester gratuite. Vous pouvez choisir vos préférences de confidentialité.",
+  "adConsentAccept": "Accepter",
+  "adConsentDecline": "Refuser",
+  "adLoadingPlaceholder": "Chargement de la publicité...",
+  "adUnavailable": "Publicité indisponible"
 }

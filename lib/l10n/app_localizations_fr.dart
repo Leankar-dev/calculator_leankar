@@ -177,4 +177,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get semanticDecimalSeparator => 'Séparateur décimal';
+
+  @override
+  String get adConsentDialogTitle => 'Confidentialité et Publicités';
+
+  @override
+  String get adConsentDialogBody =>
+      'Cette app affiche des publicités pour rester gratuite. Vous pouvez choisir vos préférences de confidentialité.';
+
+  @override
+  String get adConsentAccept => 'Accepter';
+
+  @override
+  String get adConsentDecline => 'Refuser';
+
+  @override
+  String get adLoadingPlaceholder => 'Chargement de la publicité...';
+
+  @override
+  String get adUnavailable => 'Publicité indisponible';
 }

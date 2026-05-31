@@ -440,6 +440,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Decimal separator'**
   String get semanticDecimalSeparator;
+
+  /// Title of the ad consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Ads'**
+  String get adConsentDialogTitle;
+
+  /// Body text of the ad consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This app displays ads to stay free. You can choose your privacy preferences.'**
+  String get adConsentDialogBody;
+
+  /// Accept button label in ad consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get adConsentAccept;
+
+  /// Decline button label in ad consent dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get adConsentDecline;
+
+  /// Placeholder text shown while ad is loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading ad...'**
+  String get adLoadingPlaceholder;
+
+  /// Text shown when ad fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Ad unavailable'**
+  String get adUnavailable;
 }
 
 class _AppLocalizationsDelegate

@@ -167,5 +167,23 @@
   "@semanticClear": { "description": "Accessibility label for clear button" },
 
   "semanticDecimalSeparator": "Decimal separator",
-  "@semanticDecimalSeparator": { "description": "Accessibility label for decimal separator button" }
+  "@semanticDecimalSeparator": { "description": "Accessibility label for decimal separator button" },
+
+  "adConsentDialogTitle": "Privacy & Ads",
+  "@adConsentDialogTitle": { "description": "Title of the ad consent dialog" },
+
+  "adConsentDialogBody": "This app displays ads to stay free. You can choose your privacy preferences.",
+  "@adConsentDialogBody": { "description": "Body text of the ad consent dialog" },
+
+  "adConsentAccept": "Accept",
+  "@adConsentAccept": { "description": "Accept button label in ad consent dialog" },
+
+  "adConsentDecline": "Decline",
+  "@adConsentDecline": { "description": "Decline button label in ad consent dialog" },
+
+  "adLoadingPlaceholder": "Loading ad...",
+  "@adLoadingPlaceholder": { "description": "Placeholder text shown while ad is loading" },
+
+  "adUnavailable": "Ad unavailable",
+  "@adUnavailable": { "description": "Text shown when ad fails to load" }
 }

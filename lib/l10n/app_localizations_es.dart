@@ -177,4 +177,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get semanticDecimalSeparator => 'Separador decimal';
+
+  @override
+  String get adConsentDialogTitle => 'Privacidad y Anuncios';
+
+  @override
+  String get adConsentDialogBody =>
+      'Esta app muestra anuncios para mantenerse gratuita. Puede elegir sus preferencias de privacidad.';
+
+  @override
+  String get adConsentAccept => 'Aceptar';
+
+  @override
+  String get adConsentDecline => 'Rechazar';
+
+  @override
+  String get adLoadingPlaceholder => 'Cargando anuncio...';
+
+  @override
+  String get adUnavailable => 'Anuncio no disponible';
 }

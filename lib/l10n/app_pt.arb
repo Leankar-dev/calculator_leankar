@@ -56,5 +56,12 @@
   "semanticPercent": "Porcentagem",
   "semanticEquals": "Calcular resultado",
   "semanticClear": "Limpar tudo",
-  "semanticDecimalSeparator": "Vírgula decimal"
+  "semanticDecimalSeparator": "Vírgula decimal",
+
+  "adConsentDialogTitle": "Privacidade e Anúncios",
+  "adConsentDialogBody": "Este app exibe anúncios para manter-se gratuito. Você pode escolher suas preferências de privacidade.",
+  "adConsentAccept": "Aceitar",
+  "adConsentDecline": "Recusar",
+  "adLoadingPlaceholder": "Carregando anúncio...",
+  "adUnavailable": "Anúncio indisponível"
 }

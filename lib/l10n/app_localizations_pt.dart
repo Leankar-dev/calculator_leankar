@@ -177,6 +177,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get semanticDecimalSeparator => 'Vírgula decimal';
+
+  @override
+  String get adConsentDialogTitle => 'Privacidade e Anúncios';
+
+  @override
+  String get adConsentDialogBody =>
+      'Este app exibe anúncios para manter-se gratuito. Você pode escolher suas preferências de privacidade.';
+
+  @override
+  String get adConsentAccept => 'Aceitar';
+
+  @override
+  String get adConsentDecline => 'Recusar';
+
+  @override
+  String get adLoadingPlaceholder => 'Carregando anúncio...';
+
+  @override
+  String get adUnavailable => 'Anúncio indisponível';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -352,4 +371,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get semanticDecimalSeparator => 'Vírgula decimal';
+
+  @override
+  String get adConsentDialogTitle => 'Privacidade e Anúncios';
+
+  @override
+  String get adConsentDialogBody =>
+      'Este app exibe anúncios para manter-se gratuito. Você pode escolher suas preferências de privacidade.';
+
+  @override
+  String get adConsentAccept => 'Aceitar';
+
+  @override
+  String get adConsentDecline => 'Recusar';
+
+  @override
+  String get adLoadingPlaceholder => 'Carregando anúncio...';
+
+  @override
+  String get adUnavailable => 'Anúncio indisponível';
 }
