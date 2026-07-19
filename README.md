@@ -32,6 +32,10 @@ Uma calculadora Flutter com design neumórfico moderno, desenvolvida seguindo as
 - Histórico de cálculos com persistência local
 - Copiar/colar resultados (Ctrl+C / Ctrl+V)
 - Formatação automática de números grandes
+- Calculadora de IMC com classificação e peso ideal
+- Tela de configurações (tema e idioma)
+- Suporte a 5 idiomas: inglês, espanhol, francês, italiano e português (Brasil)
+- Anúncios banner com fluxo próprio de consentimento (AdMob)
 
 ### Capturas de Tela
 
@@ -77,77 +81,81 @@ flutter analyze
 
 ### Tecnologias
 
-- **Flutter SDK** ^3.10.1
-- **Dart** ^3.10.1
+- **Dart SDK** ^3.12.0
 - [flutter_neumorphic_plus](https://pub.dev/packages/flutter_neumorphic_plus) - Design neumórfico
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Persistência local
-- [intl](https://pub.dev/packages/intl) - Formatação de números e datas
+- [intl](https://pub.dev/packages/intl) - Formatação de números e suporte a i18n
+- [package_info_plus](https://pub.dev/packages/package_info_plus) - Informações de versão do app
+- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Anúncios banner (AdMob)
+- `flutter_localizations` - Internacionalização (5 idiomas)
 
 ### Arquitetura
 
-O app segue um padrão similar ao MVC com separação clara de responsabilidades:
+O app segue um padrão de controllers (`ChangeNotifier`) + páginas + widgets, com dependências injetadas via construtor (fallback para singleton `.instance`) — sem framework de DI:
 
 ```
 lib/
-├── main.dart                           # Ponto de entrada
-├── app_calculator.dart                 # Configuração do app (tema, rotas)
+├── main.dart                              # Ponto de entrada
+├── app_calculator.dart                    # Configuração do app (tema, rotas)
 ├── controllers/
-│   └── calculator_controller.dart      # Lógica de negócio (ChangeNotifier)
+│   ├── calculator_controller.dart         # Lógica da calculadora (ChangeNotifier)
+│   ├── calculator_state.dart              # Estado imutável da calculadora
+│   ├── imc_controller.dart                # Lógica do IMC
+│   ├── settings_controller.dart           # Tema/idioma
+│   ├── ad_consent_controller.dart         # Fluxo de consentimento de anúncios (UMP)
+│   └── ad_consent_state.dart
 ├── models/
-│   └── calculation_history.dart        # Modelo do histórico de cálculos
+│   ├── calculation_history.dart           # Modelo do histórico de cálculos
+│   └── imc_result.dart                    # Modelo do resultado de IMC
 ├── pages/
-│   └── calculator_page.dart            # Tela principal (StatefulWidget)
+│   ├── calculator_page.dart               # Tela principal (StatefulWidget)
+│   ├── imc_calculator_page.dart           # Tela de IMC
+│   └── settings_page.dart                 # Tela de configurações
 ├── services/
-│   ├── error_handler.dart              # Tratamento centralizado de erros
-│   ├── logger_service.dart             # Serviço de logging para debug
-│   └── storage_service.dart            # Persistência com SharedPreferences
+│   ├── ad_mob_service.dart                # Integração com AdMob
+│   ├── error_handler.dart                 # Tratamento centralizado de erros
+│   ├── logger_service.dart                # Serviço de logging para debug
+│   └── storage_service.dart               # Persistência com SharedPreferences
 ├── widgets/
-│   ├── button_widget.dart              # Botão neumórfico reutilizável
-│   ├── calculator_display_widget.dart  # Display da calculadora
-│   ├── calculator_keypad_widget.dart   # Orquestrador do teclado
-│   ├── first_row_widget.dart           # Linha: C, ⌫, %
-│   ├── history_bottom_sheet.dart       # Bottom sheet do histórico
-│   ├── number_row_widget.dart          # Linhas de números + operação
-│   └── last_row_widget.dart            # Linha: 0, vírgula, =, +
-└── utils/
-    ├── constants.dart                  # Constantes do app
-    ├── number_formatter.dart           # Formatação de números grandes
-    ├── responsive_utils.dart           # Utilitários responsivos
-    ├── result.dart                     # Padrão Result para tratamento de erros
-    └── enums/
-        ├── error_type.dart             # Tipos de erros
-        └── operations_type.dart        # Enum de operações
+│   ├── ads/                               # Banner de anúncios e placeholder
+│   ├── imc/                               # Widgets da calculadora de IMC
+│   ├── settings/                          # Widgets da tela de configurações
+│   └── ...                                # Widgets da calculadora (botão, display, teclado, histórico)
+├── utils/
+│   ├── constants/                         # Cores, tamanhos, strings, IDs de anúncio
+│   ├── enums/                             # Tipos de erro, operações, IMC, etc.
+│   ├── extensions/                        # Extensões de localização
+│   ├── number_formatter.dart              # Formatação de números grandes
+│   ├── responsive_utils.dart              # Utilitários responsivos
+│   └── result.dart                        # Padrão Result para tratamento de erros
+└── l10n/                                  # Arquivos .arb (en, es, fr, it, pt, pt_BR) + código gerado
 ```
 
 ### Testes
 
-O projeto possui cobertura completa de testes:
+O projeto possui cobertura ampla de testes, organizados espelhando a estrutura de `lib/`:
 
 ```
 test/
-├── controllers/
-│   └── calculator_controller_test.dart  # Testes do controller
-├── mocks/
-│   └── mock_storage_service.dart        # Mock para testes de storage
-├── pages/
-│   └── calculator_page_test.dart        # Testes da página principal
-├── utils/
-│   └── number_formatter_test.dart       # Testes de formatação
-└── widgets/
-    ├── button_widget_test.dart          # Testes do botão
-    ├── calculator_display_widget_test.dart # Testes do display
-    └── calculator_keypad_widget_test.dart  # Testes do teclado
+├── controllers/    # Testes de calculator/imc/settings/ad_consent controllers
+├── mocks/          # Mocks manuais (storage, logger, error handler, ad_mob)
+├── models/         # Testes de modelos (ex.: imc_result)
+├── pages/          # Testes das páginas (calculator, imc, settings)
+├── services/       # Testes de serviços (ex.: ad_mob_service)
+├── utils/          # Testes de formatação e enums
+├── helpers/        # Utilitários de teste (app de teste com l10n)
+└── widgets/        # Testes de widgets, incluindo ads/, imc/ e settings/
 ```
 
-**Total: 139 testes**
+**Total: 370 testes automatizados**
 
 ### Padrões de Código
 
 - Todos os widgets são implementados como classes (`StatelessWidget` ou `StatefulWidget`)
-- Gerenciamento de estado com `ChangeNotifier`
+- Gerenciamento de estado com `ChangeNotifier` e estado imutável (`copyWith`)
 - Separação de responsabilidades entre UI e lógica
 - Nomenclatura consistente e em inglês
-- Testes automatizados para todas as funcionalidades
+- Testes automatizados para todas as funcionalidades, com mocks injetados via construtor
 
 ---
 
@@ -169,6 +177,10 @@ A Flutter calculator with modern neumorphic design, developed following best pra
 - Calculation history with local persistence
 - Copy/paste results (Ctrl+C / Ctrl+V)
 - Automatic formatting for large numbers
+- BMI calculator with classification and ideal weight
+- Settings screen (theme and language)
+- Support for 5 languages: English, Spanish, French, Italian, and Portuguese (Brazil)
+- Banner ads with a custom consent flow (AdMob)
 
 ### Screenshots
 
@@ -214,77 +226,81 @@ flutter analyze
 
 ### Technologies
 
-- **Flutter SDK** ^3.10.1
-- **Dart** ^3.10.1
+- **Dart SDK** ^3.12.0
 - [flutter_neumorphic_plus](https://pub.dev/packages/flutter_neumorphic_plus) - Neumorphic design
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Local persistence
-- [intl](https://pub.dev/packages/intl) - Number and date formatting
+- [intl](https://pub.dev/packages/intl) - Number formatting and i18n support
+- [package_info_plus](https://pub.dev/packages/package_info_plus) - App version info
+- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Banner ads (AdMob)
+- `flutter_localizations` - Internationalization (5 languages)
 
 ### Architecture
 
-The app follows an MVC-like pattern with clear separation of concerns:
+The app follows a controller (`ChangeNotifier`) + pages + widgets pattern, with dependencies injected via constructor (falling back to a `.instance` singleton) — no DI framework:
 
 ```
 lib/
-├── main.dart                           # Entry point
-├── app_calculator.dart                 # App configuration (theme, routes)
+├── main.dart                              # Entry point
+├── app_calculator.dart                    # App configuration (theme, routes)
 ├── controllers/
-│   └── calculator_controller.dart      # Business logic (ChangeNotifier)
+│   ├── calculator_controller.dart         # Calculator business logic (ChangeNotifier)
+│   ├── calculator_state.dart              # Immutable calculator state
+│   ├── imc_controller.dart                # BMI business logic
+│   ├── settings_controller.dart           # Theme/language
+│   ├── ad_consent_controller.dart         # Ad consent flow (UMP)
+│   └── ad_consent_state.dart
 ├── models/
-│   └── calculation_history.dart        # Calculation history model
+│   ├── calculation_history.dart           # Calculation history model
+│   └── imc_result.dart                    # BMI result model
 ├── pages/
-│   └── calculator_page.dart            # Main screen (StatefulWidget)
+│   ├── calculator_page.dart               # Main screen (StatefulWidget)
+│   ├── imc_calculator_page.dart           # BMI screen
+│   └── settings_page.dart                 # Settings screen
 ├── services/
-│   ├── error_handler.dart              # Centralized error handling
-│   ├── logger_service.dart             # Logging service for debug
-│   └── storage_service.dart            # Persistence with SharedPreferences
+│   ├── ad_mob_service.dart                # AdMob integration
+│   ├── error_handler.dart                 # Centralized error handling
+│   ├── logger_service.dart                # Logging service for debug
+│   └── storage_service.dart               # Persistence with SharedPreferences
 ├── widgets/
-│   ├── button_widget.dart              # Reusable neumorphic button
-│   ├── calculator_display_widget.dart  # Calculator display
-│   ├── calculator_keypad_widget.dart   # Keypad orchestrator
-│   ├── first_row_widget.dart           # Row: C, ⌫, %
-│   ├── history_bottom_sheet.dart       # History bottom sheet
-│   ├── number_row_widget.dart          # Number rows + operation
-│   └── last_row_widget.dart            # Row: 0, comma, =, +
-└── utils/
-    ├── constants.dart                  # App constants
-    ├── number_formatter.dart           # Large number formatting
-    ├── responsive_utils.dart           # Responsive utilities
-    ├── result.dart                     # Result pattern for error handling
-    └── enums/
-        ├── error_type.dart             # Error types
-        └── operations_type.dart        # Operations enum
+│   ├── ads/                               # Ad banner and placeholder
+│   ├── imc/                               # BMI calculator widgets
+│   ├── settings/                          # Settings screen widgets
+│   └── ...                                # Calculator widgets (button, display, keypad, history)
+├── utils/
+│   ├── constants/                         # Colors, sizes, strings, ad unit IDs
+│   ├── enums/                             # Error types, operations, BMI, etc.
+│   ├── extensions/                        # Localization extensions
+│   ├── number_formatter.dart              # Large number formatting
+│   ├── responsive_utils.dart              # Responsive utilities
+│   └── result.dart                        # Result pattern for error handling
+└── l10n/                                  # .arb files (en, es, fr, it, pt, pt_BR) + generated code
 ```
 
 ### Tests
 
-The project has complete test coverage:
+The project has broad test coverage, mirroring the `lib/` structure:
 
 ```
 test/
-├── controllers/
-│   └── calculator_controller_test.dart  # Controller tests
-├── mocks/
-│   └── mock_storage_service.dart        # Mock for storage tests
-├── pages/
-│   └── calculator_page_test.dart        # Main page tests
-├── utils/
-│   └── number_formatter_test.dart       # Formatting tests
-└── widgets/
-    ├── button_widget_test.dart          # Button tests
-    ├── calculator_display_widget_test.dart # Display tests
-    └── calculator_keypad_widget_test.dart  # Keypad tests
+├── controllers/    # Calculator/imc/settings/ad_consent controller tests
+├── mocks/          # Hand-written mocks (storage, logger, error handler, ad_mob)
+├── models/         # Model tests (e.g. imc_result)
+├── pages/          # Page tests (calculator, imc, settings)
+├── services/       # Service tests (e.g. ad_mob_service)
+├── utils/          # Formatting and enum tests
+├── helpers/        # Test helpers (l10n-aware test app)
+└── widgets/        # Widget tests, including ads/, imc/, and settings/
 ```
 
-**Total: 139 tests**
+**Total: 370 automated tests**
 
 ### Code Standards
 
 - All widgets are implemented as classes (`StatelessWidget` or `StatefulWidget`)
-- State management with `ChangeNotifier`
+- State management with `ChangeNotifier` and immutable state (`copyWith`)
 - Separation of concerns between UI and logic
 - Consistent naming conventions in English
-- Automated tests for all features
+- Automated tests for all features, with mocks injected via constructor
 
 ---
 
@@ -306,6 +322,10 @@ Una calculadora Flutter con diseño neumórfico moderno, desarrollada siguiendo 
 - Historial de cálculos con persistencia local
 - Copiar/pegar resultados (Ctrl+C / Ctrl+V)
 - Formato automático para números grandes
+- Calculadora de IMC con clasificación y peso ideal
+- Pantalla de configuración (tema e idioma)
+- Soporte para 5 idiomas: inglés, español, francés, italiano y portugués (Brasil)
+- Anuncios banner con flujo propio de consentimiento (AdMob)
 
 ### Capturas de Pantalla
 
@@ -351,77 +371,81 @@ flutter analyze
 
 ### Tecnologías
 
-- **Flutter SDK** ^3.10.1
-- **Dart** ^3.10.1
+- **Dart SDK** ^3.12.0
 - [flutter_neumorphic_plus](https://pub.dev/packages/flutter_neumorphic_plus) - Diseño neumórfico
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Persistencia local
-- [intl](https://pub.dev/packages/intl) - Formato de números y fechas
+- [intl](https://pub.dev/packages/intl) - Formato de números y soporte de i18n
+- [package_info_plus](https://pub.dev/packages/package_info_plus) - Información de versión de la app
+- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Anuncios banner (AdMob)
+- `flutter_localizations` - Internacionalización (5 idiomas)
 
 ### Arquitectura
 
-La app sigue un patrón similar a MVC con clara separación de responsabilidades:
+La app sigue un patrón de controllers (`ChangeNotifier`) + páginas + widgets, con dependencias inyectadas vía constructor (con fallback a singleton `.instance`) — sin framework de DI:
 
 ```
 lib/
-├── main.dart                           # Punto de entrada
-├── app_calculator.dart                 # Configuración de la app (tema, rutas)
+├── main.dart                              # Punto de entrada
+├── app_calculator.dart                    # Configuración de la app (tema, rutas)
 ├── controllers/
-│   └── calculator_controller.dart      # Lógica de negocio (ChangeNotifier)
+│   ├── calculator_controller.dart         # Lógica de la calculadora (ChangeNotifier)
+│   ├── calculator_state.dart              # Estado inmutable de la calculadora
+│   ├── imc_controller.dart                # Lógica del IMC
+│   ├── settings_controller.dart           # Tema/idioma
+│   ├── ad_consent_controller.dart         # Flujo de consentimiento de anuncios (UMP)
+│   └── ad_consent_state.dart
 ├── models/
-│   └── calculation_history.dart        # Modelo del historial de cálculos
+│   ├── calculation_history.dart           # Modelo del historial de cálculos
+│   └── imc_result.dart                    # Modelo del resultado de IMC
 ├── pages/
-│   └── calculator_page.dart            # Pantalla principal (StatefulWidget)
+│   ├── calculator_page.dart               # Pantalla principal (StatefulWidget)
+│   ├── imc_calculator_page.dart           # Pantalla de IMC
+│   └── settings_page.dart                 # Pantalla de configuración
 ├── services/
-│   ├── error_handler.dart              # Manejo centralizado de errores
-│   ├── logger_service.dart             # Servicio de logging para debug
-│   └── storage_service.dart            # Persistencia con SharedPreferences
+│   ├── ad_mob_service.dart                # Integración con AdMob
+│   ├── error_handler.dart                 # Manejo centralizado de errores
+│   ├── logger_service.dart                # Servicio de logging para debug
+│   └── storage_service.dart               # Persistencia con SharedPreferences
 ├── widgets/
-│   ├── button_widget.dart              # Botón neumórfico reutilizable
-│   ├── calculator_display_widget.dart  # Pantalla de la calculadora
-│   ├── calculator_keypad_widget.dart   # Orquestador del teclado
-│   ├── first_row_widget.dart           # Fila: C, ⌫, %
-│   ├── history_bottom_sheet.dart       # Bottom sheet del historial
-│   ├── number_row_widget.dart          # Filas de números + operación
-│   └── last_row_widget.dart            # Fila: 0, coma, =, +
-└── utils/
-    ├── constants.dart                  # Constantes de la app
-    ├── number_formatter.dart           # Formato de números grandes
-    ├── responsive_utils.dart           # Utilidades responsivas
-    ├── result.dart                     # Patrón Result para manejo de errores
-    └── enums/
-        ├── error_type.dart             # Tipos de errores
-        └── operations_type.dart        # Enum de operaciones
+│   ├── ads/                               # Banner de anuncios y placeholder
+│   ├── imc/                               # Widgets de la calculadora de IMC
+│   ├── settings/                          # Widgets de la pantalla de configuración
+│   └── ...                                # Widgets de la calculadora (botón, display, teclado, historial)
+├── utils/
+│   ├── constants/                         # Colores, tamaños, strings, IDs de anuncio
+│   ├── enums/                             # Tipos de error, operaciones, IMC, etc.
+│   ├── extensions/                        # Extensiones de localización
+│   ├── number_formatter.dart              # Formato de números grandes
+│   ├── responsive_utils.dart              # Utilidades responsivas
+│   └── result.dart                        # Patrón Result para manejo de errores
+└── l10n/                                  # Archivos .arb (en, es, fr, it, pt, pt_BR) + código generado
 ```
 
 ### Pruebas
 
-El proyecto tiene cobertura completa de pruebas:
+El proyecto tiene amplia cobertura de pruebas, organizadas reflejando la estructura de `lib/`:
 
 ```
 test/
-├── controllers/
-│   └── calculator_controller_test.dart  # Pruebas del controller
-├── mocks/
-│   └── mock_storage_service.dart        # Mock para pruebas de storage
-├── pages/
-│   └── calculator_page_test.dart        # Pruebas de la página principal
-├── utils/
-│   └── number_formatter_test.dart       # Pruebas de formato
-└── widgets/
-    ├── button_widget_test.dart          # Pruebas del botón
-    ├── calculator_display_widget_test.dart # Pruebas del display
-    └── calculator_keypad_widget_test.dart  # Pruebas del teclado
+├── controllers/    # Pruebas de calculator/imc/settings/ad_consent controllers
+├── mocks/          # Mocks manuales (storage, logger, error handler, ad_mob)
+├── models/         # Pruebas de modelos (ej.: imc_result)
+├── pages/          # Pruebas de páginas (calculator, imc, settings)
+├── services/       # Pruebas de servicios (ej.: ad_mob_service)
+├── utils/          # Pruebas de formato y enums
+├── helpers/        # Utilidades de prueba (app de prueba con l10n)
+└── widgets/        # Pruebas de widgets, incluyendo ads/, imc/ y settings/
 ```
 
-**Total: 139 pruebas**
+**Total: 370 pruebas automatizadas**
 
 ### Estándares de Código
 
 - Todos los widgets están implementados como clases (`StatelessWidget` o `StatefulWidget`)
-- Gestión de estado con `ChangeNotifier`
+- Gestión de estado con `ChangeNotifier` y estado inmutable (`copyWith`)
 - Separación de responsabilidades entre UI y lógica
 - Nomenclatura consistente en inglés
-- Pruebas automatizadas para todas las funcionalidades
+- Pruebas automatizadas para todas las funcionalidades, con mocks inyectados vía constructor
 
 ---
 
