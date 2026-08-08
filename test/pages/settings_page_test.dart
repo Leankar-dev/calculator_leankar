@@ -14,8 +14,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues({});
-    await SettingsController.instance.loadSettings();
     PackageInfo.setMockInitialValues(
       appName: 'Test',
       packageName: 'com.test',
@@ -23,6 +21,11 @@ void main() {
       buildNumber: '1',
       buildSignature: '',
     );
+    SharedPreferences.setMockInitialValues({
+      'last_app_build_number': '1',
+      'theme_mode': 'system',
+    });
+    await SettingsController.instance.loadSettings();
   });
 
   Widget buildTestWidget() {

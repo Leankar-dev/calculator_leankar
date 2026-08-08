@@ -1,5 +1,7 @@
+import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController extends ChangeNotifier {
@@ -22,9 +24,46 @@ class SettingsController extends ChangeNotifier {
 
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    _themeMode = _parseThemeMode(prefs.getString(AppStrings.prefThemeModeKey));
+
+    if (await _isNewInstallOrUpdate(prefs)) {
+      _themeMode = ThemeMode.light;
+      await prefs.setString(
+        AppStrings.prefThemeModeKey,
+        _serializeThemeMode(ThemeMode.light),
+      );
+    } else {
+      _themeMode = _parseThemeMode(
+        prefs.getString(AppStrings.prefThemeModeKey),
+      );
+    }
+
     _locale = _parseLocale(prefs.getString(AppStrings.prefLocaleKey));
     notifyListeners();
+  }
+
+  Future<bool> _isNewInstallOrUpdate(SharedPreferences prefs) async {
+    try {
+      final currentBuildNumber = (await PackageInfo.fromPlatform()).buildNumber;
+      final lastBuildNumber = prefs.getString(
+        AppStrings.prefLastAppBuildNumberKey,
+      );
+
+      if (lastBuildNumber == currentBuildNumber) {
+        return false;
+      }
+
+      await prefs.setString(
+        AppStrings.prefLastAppBuildNumberKey,
+        currentBuildNumber,
+      );
+      return true;
+    } catch (e) {
+      logger.warning(
+        'Falha ao obter informações do pacote: $e',
+        tag: 'SettingsController',
+      );
+      return false;
+    }
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

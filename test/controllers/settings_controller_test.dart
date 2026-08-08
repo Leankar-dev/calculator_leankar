@@ -1,21 +1,38 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  const currentBuildNumber = '1';
+
+  void setMockPackageInfo({String buildNumber = currentBuildNumber}) {
+    PackageInfo.setMockInitialValues(
+      appName: 'Test',
+      packageName: 'com.test',
+      version: '1.0.0',
+      buildNumber: buildNumber,
+      buildSignature: '',
+    );
+  }
+
   setUp(() async {
+    setMockPackageInfo();
     SharedPreferences.setMockInitialValues({});
     await SettingsController.instance.loadSettings();
   });
 
   group('SettingsController', () {
     group('themeMode inicial', () {
-      test('deve ser ThemeMode.system por padrão', () {
-        expect(SettingsController.instance.themeMode, ThemeMode.system);
-      });
+      test(
+        'deve ser ThemeMode.light quando não há build number salvo (instalação nova)',
+        () {
+          expect(SettingsController.instance.themeMode, ThemeMode.light);
+        },
+      );
     });
 
     group('locale inicial', () {
@@ -26,24 +43,24 @@ void main() {
 
     group('setThemeMode', () {
       test(
-        'deve atualizar themeMode para light e notificar listeners',
+        'deve atualizar themeMode para dark e notificar listeners',
         () async {
           int notifyCount = 0;
           void listener() => notifyCount++;
           SettingsController.instance.addListener(listener);
 
-          await SettingsController.instance.setThemeMode(ThemeMode.light);
+          await SettingsController.instance.setThemeMode(ThemeMode.dark);
 
           SettingsController.instance.removeListener(listener);
-          expect(SettingsController.instance.themeMode, ThemeMode.light);
+          expect(SettingsController.instance.themeMode, ThemeMode.dark);
           expect(notifyCount, 1);
         },
       );
 
-      test('deve atualizar themeMode para dark', () async {
-        await SettingsController.instance.setThemeMode(ThemeMode.dark);
+      test('deve atualizar themeMode para system', () async {
+        await SettingsController.instance.setThemeMode(ThemeMode.system);
 
-        expect(SettingsController.instance.themeMode, ThemeMode.dark);
+        expect(SettingsController.instance.themeMode, ThemeMode.system);
       });
 
       test(
@@ -53,7 +70,7 @@ void main() {
           void listener() => notifyCount++;
           SettingsController.instance.addListener(listener);
 
-          await SettingsController.instance.setThemeMode(ThemeMode.system);
+          await SettingsController.instance.setThemeMode(ThemeMode.light);
 
           SettingsController.instance.removeListener(listener);
           expect(notifyCount, 0);
@@ -95,44 +112,118 @@ void main() {
       );
     });
 
-    group('_parseThemeMode via loadSettings', () {
+    group('instalação/atualização força tema claro', () {
+      test(
+        'deve forçar ThemeMode.light quando não há build number salvo, mesmo com tema escuro salvo (instalação nova ou atualização vinda de versão anterior a este recurso)',
+        () async {
+          SharedPreferences.setMockInitialValues({'theme_mode': 'dark'});
+
+          await SettingsController.instance.loadSettings();
+
+          expect(SettingsController.instance.themeMode, ThemeMode.light);
+        },
+      );
+
+      test(
+        'deve forçar ThemeMode.light quando o build number mudou (atualização do app), mesmo com tema escuro salvo',
+        () async {
+          SharedPreferences.setMockInitialValues({
+            'theme_mode': 'dark',
+            'last_app_build_number': '0',
+          });
+
+          await SettingsController.instance.loadSettings();
+
+          expect(SettingsController.instance.themeMode, ThemeMode.light);
+        },
+      );
+
+      test(
+        'deve persistir o novo build number após forçar o tema claro',
+        () async {
+          SharedPreferences.setMockInitialValues({});
+
+          await SettingsController.instance.loadSettings();
+
+          final prefs = await SharedPreferences.getInstance();
+          expect(
+            prefs.getString('last_app_build_number'),
+            currentBuildNumber,
+          );
+          expect(prefs.getString('theme_mode'), 'light');
+        },
+      );
+
+      test(
+        'não deve alterar o tema salvo quando o build number é o mesmo (reabertura normal)',
+        () async {
+          SharedPreferences.setMockInitialValues({
+            'theme_mode': 'dark',
+            'last_app_build_number': currentBuildNumber,
+          });
+
+          await SettingsController.instance.loadSettings();
+
+          expect(SettingsController.instance.themeMode, ThemeMode.dark);
+        },
+      );
+    });
+
+    group('_parseThemeMode via loadSettings (reabertura normal)', () {
       test("deve interpretar 'light' como ThemeMode.light", () async {
-        SharedPreferences.setMockInitialValues({'theme_mode': 'light'});
+        SharedPreferences.setMockInitialValues({
+          'theme_mode': 'light',
+          'last_app_build_number': currentBuildNumber,
+        });
         await SettingsController.instance.loadSettings();
 
         expect(SettingsController.instance.themeMode, ThemeMode.light);
       });
 
       test("deve interpretar 'dark' como ThemeMode.dark", () async {
-        SharedPreferences.setMockInitialValues({'theme_mode': 'dark'});
+        SharedPreferences.setMockInitialValues({
+          'theme_mode': 'dark',
+          'last_app_build_number': currentBuildNumber,
+        });
         await SettingsController.instance.loadSettings();
 
         expect(SettingsController.instance.themeMode, ThemeMode.dark);
       });
 
       test("deve interpretar 'system' como ThemeMode.system", () async {
-        SharedPreferences.setMockInitialValues({'theme_mode': 'system'});
+        SharedPreferences.setMockInitialValues({
+          'theme_mode': 'system',
+          'last_app_build_number': currentBuildNumber,
+        });
         await SettingsController.instance.loadSettings();
 
         expect(SettingsController.instance.themeMode, ThemeMode.system);
       });
 
       test(
-        'deve retornar ThemeMode.system quando chave ausente (null)',
+        'deve retornar ThemeMode.system quando chave ausente (null) mas build number confere',
         () async {
-          SharedPreferences.setMockInitialValues({});
+          SharedPreferences.setMockInitialValues({
+            'last_app_build_number': currentBuildNumber,
+          });
           await SettingsController.instance.loadSettings();
 
           expect(SettingsController.instance.themeMode, ThemeMode.system);
         },
       );
 
-      test('deve retornar ThemeMode.system para valor desconhecido', () async {
-        SharedPreferences.setMockInitialValues({'theme_mode': 'invalid'});
-        await SettingsController.instance.loadSettings();
+      test(
+        'deve retornar ThemeMode.system para valor desconhecido quando build number confere',
+        () async {
+          SharedPreferences.setMockInitialValues({
+            'theme_mode': 'invalid',
+            'last_app_build_number': currentBuildNumber,
+          });
+          await SettingsController.instance.loadSettings();
 
-        expect(SettingsController.instance.themeMode, ThemeMode.system);
-      });
+          expect(SettingsController.instance.themeMode, ThemeMode.system);
+        },
+      );
     });
 
     group('_parseLocale via loadSettings', () {
