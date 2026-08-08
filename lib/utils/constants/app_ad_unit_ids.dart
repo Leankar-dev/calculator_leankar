@@ -1,3 +1,3 @@
 abstract final class AppAdUnitIds {
-  static const String bannerAdUnitId = '25110135';
+  static const String bannerAdUnitId = '1f733jikide4kq3b';
 }
