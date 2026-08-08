@@ -1,22 +1,22 @@
 import 'package:calculator_05122025/controllers/ad_consent_state.dart';
-import 'package:calculator_05122025/services/ad_mob_service.dart';
+import 'package:calculator_05122025/services/level_play_ad_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 
 class AdConsentController extends ChangeNotifier {
   static final AdConsentController instance = AdConsentController();
 
   AdConsentController({
-    AdMobService? adMobService,
+    LevelPlayAdService? levelPlayAdService,
     LoggerService? loggerService,
-  }) : _adMobService = adMobService ?? AdMobService.instance,
+  }) : _levelPlayAdService = levelPlayAdService ?? LevelPlayAdService.instance,
        _logger = loggerService ?? LoggerService.instance;
 
-  final AdMobService _adMobService;
+  final LevelPlayAdService _levelPlayAdService;
   final LoggerService _logger;
 
   AdConsentState _state = const AdConsentState();
@@ -29,88 +29,58 @@ class AdConsentController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    if (kDebugMode) {
-      await _initializeForDebug();
+    _update(_state.copyWith(loadStatus: AdConsentLoadStatus.loading));
+
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey(AppStrings.prefAdConsentKey)) {
+      _update(
+        _state.copyWith(loadStatus: AdConsentLoadStatus.pendingUserChoice),
+      );
+      _logger.info(
+        'Sem preferência salva: aguardando escolha do usuário',
+        tag: 'AdConsentController',
+      );
       return;
     }
 
-    _update(_state.copyWith(loadStatus: AdConsentLoadStatus.loading));
-
-    ConsentInformation.instance.requestConsentInfoUpdate(
-      ConsentRequestParameters(),
-      () async {
-        try {
-          await _handleConsentInfoUpdated();
-        } catch (e) {
-          _logger.warning(
-            'Erro ao processar fluxo UMP: $e',
-            tag: 'AdConsentController',
-          );
-          await _finalizeConsent();
-        }
-      },
-      (FormError error) {
-        _logger.warning(
-          'Falha ao atualizar consentimento: ${error.message}',
-          tag: 'AdConsentController',
-        );
-        _finalizeConsent().catchError((e) {
-          _update(
-            _state.copyWith(
-              loadStatus: AdConsentLoadStatus.failed,
-              errorMessage: error.message,
-            ),
-          );
-        });
-      },
-    );
+    await _applyConsent(prefs.getBool(AppStrings.prefAdConsentKey) ?? false);
   }
 
-  Future<void> _initializeForDebug() async {
-    _update(_state.copyWith(loadStatus: AdConsentLoadStatus.loading));
-    await _adMobService.initialize();
-    _update(
-      _state.copyWith(
-        canRequestAds: true,
-        loadStatus: AdConsentLoadStatus.ready,
-      ),
-    );
-    _logger.info(
-      'Debug mode: MobileAds inicializado sem fluxo UMP',
-      tag: 'AdConsentController',
-    );
+  Future<void> submitUserChoice(bool accepted) async {
+    await _persistConsentStatus(canRequestAds: accepted);
+    await _applyConsent(accepted);
   }
 
-  Future<void> _handleConsentInfoUpdated() async {
-    await ConsentForm.loadAndShowConsentFormIfRequired((FormError? formError) {
-      if (formError != null) {
+  Future<void> _applyConsent(bool accepted) async {
+    try {
+      await LevelPlayPrivacySettings.setGDPRConsents({'UnityAds': accepted});
+    } catch (e) {
+      _logger.warning(
+        'Falha ao aplicar LevelPlayPrivacySettings: $e',
+        tag: 'AdConsentController',
+      );
+    }
+
+    if (accepted) {
+      final result = await _levelPlayAdService.initialize();
+      if (result.isFailure) {
         _logger.warning(
-          'Erro no formulário UMP: ${formError.message}',
+          'Falha ao inicializar SDK após consentimento: ${result.errorFullMessage}',
           tag: 'AdConsentController',
         );
       }
-    });
-    await _finalizeConsent();
-  }
-
-  Future<void> _finalizeConsent() async {
-    final canRequest = await ConsentInformation.instance.canRequestAds();
-
-    if (canRequest) {
-      await _adMobService.initialize();
     }
-
-    await _persistConsentStatus(canRequestAds: canRequest);
 
     _update(
       _state.copyWith(
-        canRequestAds: canRequest,
+        canRequestAds: accepted,
         loadStatus: AdConsentLoadStatus.ready,
       ),
     );
 
     _logger.info(
-      'Consentimento finalizado: canRequestAds=$canRequest',
+      'Consentimento finalizado: canRequestAds=$accepted',
       tag: 'AdConsentController',
     );
   }

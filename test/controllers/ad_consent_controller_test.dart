@@ -5,25 +5,25 @@ import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../mocks/mock_ad_mob_service.dart';
+import '../mocks/mock_level_play_ad_service.dart';
 import '../mocks/mock_logger_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MockAdMobService mockAdMobService;
+  late MockLevelPlayAdService mockLevelPlayAdService;
   late MockLoggerService mockLogger;
 
   AdConsentController buildController() {
     return AdConsentController(
-      adMobService: mockAdMobService,
+      levelPlayAdService: mockLevelPlayAdService,
       loggerService: mockLogger,
     );
   }
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
-    mockAdMobService = MockAdMobService();
+    mockLevelPlayAdService = MockLevelPlayAdService();
     mockLogger = MockLoggerService();
   });
 
@@ -48,7 +48,45 @@ void main() {
       });
     });
 
-    group('initialize() em debug mode', () {
+    group('initialize() sem preferência salva', () {
+      test('define loadStatus como pendingUserChoice', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(
+          controller.state.loadStatus,
+          equals(AdConsentLoadStatus.pendingUserChoice),
+        );
+      });
+
+      test('mantém canRequestAds false', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(controller.state.canRequestAds, isFalse);
+      });
+
+      test('não chama levelPlayAdService.initialize()', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(mockLevelPlayAdService.initializeCalled, isFalse);
+      });
+
+      test('passa por loadStatus.loading antes de pendingUserChoice', () async {
+        final controller = buildController();
+        final statuses = <AdConsentLoadStatus>[];
+        controller.addListener(() => statuses.add(controller.state.loadStatus));
+        await controller.initialize();
+        expect(statuses, contains(AdConsentLoadStatus.loading));
+        expect(statuses, contains(AdConsentLoadStatus.pendingUserChoice));
+      });
+    });
+
+    group('initialize() com preferência salva aceita', () {
+      setUp(() {
+        SharedPreferences.setMockInitialValues({
+          AppStrings.prefAdConsentKey: true,
+        });
+      });
+
       test('define loadStatus como ready', () async {
         final controller = buildController();
         await controller.initialize();
@@ -64,33 +102,80 @@ void main() {
         expect(controller.state.canRequestAds, isTrue);
       });
 
-      test('chama adMobService.initialize()', () async {
+      test('chama levelPlayAdService.initialize()', () async {
         final controller = buildController();
         await controller.initialize();
-        expect(mockAdMobService.initializeCalled, isTrue);
+        expect(mockLevelPlayAdService.initializeCalled, isTrue);
+      });
+    });
+
+    group('initialize() com preferência salva recusada', () {
+      setUp(() {
+        SharedPreferences.setMockInitialValues({
+          AppStrings.prefAdConsentKey: false,
+        });
       });
 
-      test('notifica listeners ao menos uma vez', () async {
+      test('define loadStatus como ready', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(
+          controller.state.loadStatus,
+          equals(AdConsentLoadStatus.ready),
+        );
+      });
+
+      test('mantém canRequestAds false', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(controller.state.canRequestAds, isFalse);
+      });
+
+      test('não chama levelPlayAdService.initialize()', () async {
+        final controller = buildController();
+        await controller.initialize();
+        expect(mockLevelPlayAdService.initializeCalled, isFalse);
+      });
+    });
+
+    group('submitUserChoice()', () {
+      test('aceitar grava preferência true e inicializa o serviço', () async {
+        final controller = buildController();
+        await controller.submitUserChoice(true);
+
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getBool(AppStrings.prefAdConsentKey), isTrue);
+        expect(controller.state.canRequestAds, isTrue);
+        expect(
+          controller.state.loadStatus,
+          equals(AdConsentLoadStatus.ready),
+        );
+        expect(mockLevelPlayAdService.initializeCalled, isTrue);
+      });
+
+      test(
+        'recusar grava preferência false e não inicializa o serviço',
+        () async {
+          final controller = buildController();
+          await controller.submitUserChoice(false);
+
+          final prefs = await SharedPreferences.getInstance();
+          expect(prefs.getBool(AppStrings.prefAdConsentKey), isFalse);
+          expect(controller.state.canRequestAds, isFalse);
+          expect(
+            controller.state.loadStatus,
+            equals(AdConsentLoadStatus.ready),
+          );
+          expect(mockLevelPlayAdService.initializeCalled, isFalse);
+        },
+      );
+
+      test('notifica listeners', () async {
         final controller = buildController();
         int notifyCount = 0;
         controller.addListener(() => notifyCount++);
-        await controller.initialize();
+        await controller.submitUserChoice(true);
         expect(notifyCount, greaterThanOrEqualTo(1));
-      });
-
-      test('passa por loadStatus.loading antes de ready', () async {
-        final controller = buildController();
-        final statuses = <AdConsentLoadStatus>[];
-        controller.addListener(() => statuses.add(controller.state.loadStatus));
-        await controller.initialize();
-        expect(statuses, contains(AdConsentLoadStatus.loading));
-        expect(statuses, contains(AdConsentLoadStatus.ready));
-      });
-
-      test('estado final não contém errorMessage', () async {
-        final controller = buildController();
-        await controller.initialize();
-        expect(controller.state.errorMessage, isNull);
       });
     });
 

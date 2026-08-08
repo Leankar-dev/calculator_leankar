@@ -1,91 +1,132 @@
-import 'package:calculator_05122025/services/ad_mob_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/constants/app_ad_unit_ids.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/widgets/ads/banner_ad_placeholder_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 
 class BannerAdWidget extends StatefulWidget {
-  final AdMobService adMobService;
-
-  const BannerAdWidget({super.key, required this.adMobService});
+  const BannerAdWidget({super.key});
 
   @override
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
 }
 
-class _BannerAdWidgetState extends State<BannerAdWidget> {
-  BannerAd? _bannerAd;
+class _BannerAdWidgetState extends State<BannerAdWidget>
+    implements LevelPlayBannerAdViewListener {
+  final GlobalKey<LevelPlayBannerAdViewState> _bannerKey =
+      GlobalKey<LevelPlayBannerAdViewState>();
+
+  LevelPlayAdSize? _adSize;
   bool _isLoaded = false;
-  bool _loadInitiated = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_loadInitiated) {
-      _loadInitiated = true;
-      _loadBanner();
+  void initState() {
+    super.initState();
+    _resolveAdSize();
+  }
+
+  Future<void> _resolveAdSize() async {
+    try {
+      final adSize = await LevelPlayAdSize.createAdaptiveAdSize();
+      if (mounted && adSize != null) {
+        setState(() {
+          _adSize = adSize;
+        });
+      }
+    } catch (e) {
+      logger.warning(
+        'Falha ao resolver tamanho do banner: $e',
+        tag: 'BannerAdWidget',
+      );
     }
   }
 
-  Future<void> _loadBanner() async {
-    final ad = widget.adMobService.createBannerAd(
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (_) {
-          if (mounted) {
-            setState(() {
-              _isLoaded = true;
-            });
-          }
-        },
-        onAdFailedToLoad: _onAdFailedToLoad,
-      ),
-    );
-
-    _bannerAd = ad;
-    await ad.load();
+  @override
+  void onAdLoaded(LevelPlayAdInfo adInfo) {
+    if (mounted) {
+      setState(() {
+        _isLoaded = true;
+      });
+    }
   }
 
-  void _onAdFailedToLoad(Ad ad, LoadAdError error) {
-    ad.dispose();
+  @override
+  void onAdLoadFailed(LevelPlayAdError error) {
     logger.warning(
-      'Banner falhou ao carregar: ${error.message}',
+      'Banner falhou ao carregar: ${error.errorMessage}',
       tag: 'BannerAdWidget',
     );
     if (mounted) {
       setState(() {
-        _bannerAd = null;
         _isLoaded = false;
       });
     }
   }
 
   @override
+  void onAdDisplayed(LevelPlayAdInfo adInfo) {}
+
+  @override
+  void onAdDisplayFailed(LevelPlayAdInfo adInfo, LevelPlayAdError error) {
+    logger.warning(
+      'Banner falhou ao exibir: ${error.errorMessage}',
+      tag: 'BannerAdWidget',
+    );
+  }
+
+  @override
+  void onAdClicked(LevelPlayAdInfo adInfo) {}
+
+  @override
+  void onAdExpanded(LevelPlayAdInfo adInfo) {}
+
+  @override
+  void onAdCollapsed(LevelPlayAdInfo adInfo) {}
+
+  @override
+  void onAdLeftApplication(LevelPlayAdInfo adInfo) {}
+
+  @override
   void dispose() {
-    _bannerAd?.dispose();
+    _bannerKey.currentState?.destroy();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_isLoaded || _bannerAd == null) {
+    final adSize = _adSize;
+
+    if (adSize == null) {
       return const BannerAdPlaceholderWidget(
         height: AppSizes.adBannerPlaceholderHeight,
       );
     }
 
-    return Neumorphic(
-      style: NeumorphicStyle(
-        depth: -1,
-        intensity: 0.4,
-        color: NeumorphicTheme.baseColor(context),
-        boxShape: const NeumorphicBoxShape.rect(),
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: AppSizes.adBannerPlaceholderHeight,
-        child: AdWidget(ad: _bannerAd!),
+    return SizedBox(
+      width: double.infinity,
+      height: AppSizes.adBannerPlaceholderHeight,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (!_isLoaded)
+            const BannerAdPlaceholderWidget(
+              height: AppSizes.adBannerPlaceholderHeight,
+            ),
+          Visibility(
+            visible: _isLoaded,
+            maintainState: true,
+            maintainAnimation: true,
+            maintainSize: true,
+            child: LevelPlayBannerAdView(
+              key: _bannerKey,
+              adUnitId: AppAdUnitIds.bannerAdUnitId,
+              adSize: adSize,
+              listener: this,
+              onPlatformViewCreated: () => _bannerKey.currentState?.loadAd(),
+            ),
+          ),
+        ],
       ),
     );
   }

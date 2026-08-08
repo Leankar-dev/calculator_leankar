@@ -196,4 +196,18 @@ class AppSizes {
   static const double imcIdealWeightStatusBorderWidth = 1.0;
 
   static const double adBannerPlaceholderHeight = 50.0;
+
+  static const double adConsentDialogBorderRadius = 20.0;
+  static const double adConsentDialogPadding = 24.0;
+  static const double adConsentDialogTitleFontSize = 18.0;
+  static const double adConsentDialogTitleBodySpacing = 12.0;
+  static const double adConsentDialogBodyFontSize = 14.0;
+  static const double adConsentDialogBodyButtonsSpacing = 24.0;
+  static const double adConsentDialogButtonSpacing = 12.0;
+  static const double adConsentDialogButtonDepth = 4.0;
+  static const double adConsentDialogButtonIntensity = 0.7;
+  static const double adConsentDialogButtonBorderRadius = 12.0;
+  static const double adConsentDialogButtonPaddingH = 20.0;
+  static const double adConsentDialogButtonPaddingV = 12.0;
+  static const double adConsentDialogButtonFontSize = 14.0;
 }

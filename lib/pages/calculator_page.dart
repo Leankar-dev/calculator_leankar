@@ -5,7 +5,6 @@ import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
-import 'package:calculator_05122025/services/ad_mob_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
@@ -13,8 +12,10 @@ import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
+import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/ads/ad_banner_footer_widget.dart';
+import 'package:calculator_05122025/widgets/ads/ad_consent_dialog_widget.dart';
 import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
@@ -37,6 +38,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late final bool _ownsController;
   final FocusNode _focusNode = FocusNode();
   StreamSubscription<void>? _inputRejectedSubscription;
+  bool _adConsentDialogShown = false;
 
   @override
   void initState() {
@@ -47,7 +49,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
       HapticFeedback.heavyImpact();
     });
     _initializeController();
+    AdConsentController.instance.addListener(_handleAdConsentStateChange);
     AdConsentController.instance.initialize();
+  }
+
+  void _handleAdConsentStateChange() {
+    if (_adConsentDialogShown || !mounted) return;
+    if (AdConsentController.instance.state.loadStatus !=
+        AdConsentLoadStatus.pendingUserChoice) {
+      return;
+    }
+
+    _adConsentDialogShown = true;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AdConsentDialogWidget(),
+    );
   }
 
   Future<void> _initializeController() async {
@@ -66,6 +84,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   @override
   void dispose() {
     _inputRejectedSubscription?.cancel();
+    AdConsentController.instance.removeListener(_handleAdConsentStateChange);
     if (_ownsController) {
       _controller.dispose();
     }
@@ -349,7 +368,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
               ),
             ),
-            AdBannerFooterWidget(adMobService: AdMobService.instance),
+            const AdBannerFooterWidget(),
           ],
         ),
       ),
