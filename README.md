@@ -35,7 +35,7 @@ Uma calculadora Flutter com design neumórfico moderno, desenvolvida seguindo as
 - Calculadora de IMC com classificação e peso ideal
 - Tela de configurações (tema e idioma)
 - Suporte a 5 idiomas: inglês, espanhol, francês, italiano e português (Brasil)
-- Anúncios banner com fluxo próprio de consentimento (AdMob)
+- Anúncios banner via Unity LevelPlay, exclusivos da versão Android, com diálogo de consentimento próprio (sem AdMob/UMP)
 
 ### Capturas de Tela
 
@@ -69,6 +69,12 @@ cd calculator_leankar
 # Instalar dependências
 flutter pub get
 
+# Criar o .env a partir de .env.example e preencher UNITY_APP_KEY_ANDROID
+cp .env.example .env
+
+# Gerar o código do envied (chave do Unity App)
+dart run build_runner build --delete-conflicting-outputs
+
 # Executar o app
 flutter run
 
@@ -86,7 +92,8 @@ flutter analyze
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Persistência local
 - [intl](https://pub.dev/packages/intl) - Formatação de números e suporte a i18n
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - Informações de versão do app
-- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Anúncios banner (AdMob)
+- [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Anúncios banner via Unity LevelPlay (Android)
+- [envied](https://pub.dev/packages/envied) + `build_runner` - Chave do Unity App carregada de forma ofuscada a partir de `.env`
 - `flutter_localizations` - Internacionalização (5 idiomas)
 
 ### Arquitetura
@@ -102,7 +109,7 @@ lib/
 │   ├── calculator_state.dart              # Estado imutável da calculadora
 │   ├── imc_controller.dart                # Lógica do IMC
 │   ├── settings_controller.dart           # Tema/idioma
-│   ├── ad_consent_controller.dart         # Fluxo de consentimento de anúncios (UMP)
+│   ├── ad_consent_controller.dart         # Diálogo de consentimento próprio para anúncios (sem UMP)
 │   └── ad_consent_state.dart
 ├── models/
 │   ├── calculation_history.dart           # Modelo do histórico de cálculos
@@ -112,7 +119,7 @@ lib/
 │   ├── imc_calculator_page.dart           # Tela de IMC
 │   └── settings_page.dart                 # Tela de configurações
 ├── services/
-│   ├── ad_mob_service.dart                # Integração com AdMob
+│   ├── level_play_ad_service.dart         # Integração com Unity LevelPlay (Android)
 │   ├── error_handler.dart                 # Tratamento centralizado de erros
 │   ├── logger_service.dart                # Serviço de logging para debug
 │   └── storage_service.dart               # Persistência com SharedPreferences
@@ -125,6 +132,7 @@ lib/
 │   ├── constants/                         # Cores, tamanhos, strings, IDs de anúncio
 │   ├── enums/                             # Tipos de erro, operações, IMC, etc.
 │   ├── extensions/                        # Extensões de localização
+│   ├── env/                               # Chave do Unity App via envied (gerado a partir de .env)
 │   ├── number_formatter.dart              # Formatação de números grandes
 │   ├── responsive_utils.dart              # Utilitários responsivos
 │   └── result.dart                        # Padrão Result para tratamento de erros
@@ -138,16 +146,16 @@ O projeto possui cobertura ampla de testes, organizados espelhando a estrutura d
 ```
 test/
 ├── controllers/    # Testes de calculator/imc/settings/ad_consent controllers
-├── mocks/          # Mocks manuais (storage, logger, error handler, ad_mob)
+├── mocks/          # Mocks manuais (storage, logger, error handler, level_play_ad_service)
 ├── models/         # Testes de modelos (ex.: imc_result)
 ├── pages/          # Testes das páginas (calculator, imc, settings)
-├── services/       # Testes de serviços (ex.: ad_mob_service)
+├── services/       # Testes de serviços (ex.: level_play_ad_service)
 ├── utils/          # Testes de formatação e enums
 ├── helpers/        # Utilitários de teste (app de teste com l10n)
 └── widgets/        # Testes de widgets, incluindo ads/, imc/ e settings/
 ```
 
-**Total: 370 testes automatizados**
+**Total: 383 testes automatizados**
 
 ### Padrões de Código
 
@@ -180,7 +188,7 @@ A Flutter calculator with modern neumorphic design, developed following best pra
 - BMI calculator with classification and ideal weight
 - Settings screen (theme and language)
 - Support for 5 languages: English, Spanish, French, Italian, and Portuguese (Brazil)
-- Banner ads with a custom consent flow (AdMob)
+- Banner ads via Unity LevelPlay, Android only, with a custom in-app consent dialog (no AdMob/UMP)
 
 ### Screenshots
 
@@ -214,6 +222,12 @@ cd calculator_leankar
 # Install dependencies
 flutter pub get
 
+# Create .env from .env.example and fill in UNITY_APP_KEY_ANDROID
+cp .env.example .env
+
+# Generate envied code (Unity App key)
+dart run build_runner build --delete-conflicting-outputs
+
 # Run the app
 flutter run
 
@@ -231,7 +245,8 @@ flutter analyze
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Local persistence
 - [intl](https://pub.dev/packages/intl) - Number formatting and i18n support
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - App version info
-- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Banner ads (AdMob)
+- [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Banner ads via Unity LevelPlay (Android)
+- [envied](https://pub.dev/packages/envied) + `build_runner` - Unity App key loaded obfuscated from `.env`
 - `flutter_localizations` - Internationalization (5 languages)
 
 ### Architecture
@@ -247,7 +262,7 @@ lib/
 │   ├── calculator_state.dart              # Immutable calculator state
 │   ├── imc_controller.dart                # BMI business logic
 │   ├── settings_controller.dart           # Theme/language
-│   ├── ad_consent_controller.dart         # Ad consent flow (UMP)
+│   ├── ad_consent_controller.dart         # Custom in-app ad consent dialog (no UMP)
 │   └── ad_consent_state.dart
 ├── models/
 │   ├── calculation_history.dart           # Calculation history model
@@ -257,7 +272,7 @@ lib/
 │   ├── imc_calculator_page.dart           # BMI screen
 │   └── settings_page.dart                 # Settings screen
 ├── services/
-│   ├── ad_mob_service.dart                # AdMob integration
+│   ├── level_play_ad_service.dart         # Unity LevelPlay integration (Android)
 │   ├── error_handler.dart                 # Centralized error handling
 │   ├── logger_service.dart                # Logging service for debug
 │   └── storage_service.dart               # Persistence with SharedPreferences
@@ -270,6 +285,7 @@ lib/
 │   ├── constants/                         # Colors, sizes, strings, ad unit IDs
 │   ├── enums/                             # Error types, operations, BMI, etc.
 │   ├── extensions/                        # Localization extensions
+│   ├── env/                               # Unity App key via envied (generated from .env)
 │   ├── number_formatter.dart              # Large number formatting
 │   ├── responsive_utils.dart              # Responsive utilities
 │   └── result.dart                        # Result pattern for error handling
@@ -283,16 +299,16 @@ The project has broad test coverage, mirroring the `lib/` structure:
 ```
 test/
 ├── controllers/    # Calculator/imc/settings/ad_consent controller tests
-├── mocks/          # Hand-written mocks (storage, logger, error handler, ad_mob)
+├── mocks/          # Hand-written mocks (storage, logger, error handler, level_play_ad_service)
 ├── models/         # Model tests (e.g. imc_result)
 ├── pages/          # Page tests (calculator, imc, settings)
-├── services/       # Service tests (e.g. ad_mob_service)
+├── services/       # Service tests (e.g. level_play_ad_service)
 ├── utils/          # Formatting and enum tests
 ├── helpers/        # Test helpers (l10n-aware test app)
 └── widgets/        # Widget tests, including ads/, imc/, and settings/
 ```
 
-**Total: 370 automated tests**
+**Total: 383 automated tests**
 
 ### Code Standards
 
@@ -325,7 +341,7 @@ Una calculadora Flutter con diseño neumórfico moderno, desarrollada siguiendo 
 - Calculadora de IMC con clasificación y peso ideal
 - Pantalla de configuración (tema e idioma)
 - Soporte para 5 idiomas: inglés, español, francés, italiano y portugués (Brasil)
-- Anuncios banner con flujo propio de consentimiento (AdMob)
+- Anuncios banner mediante Unity LevelPlay, exclusivos de la versión Android, con un diálogo de consentimiento propio (sin AdMob/UMP)
 
 ### Capturas de Pantalla
 
@@ -359,6 +375,12 @@ cd calculator_leankar
 # Instalar dependencias
 flutter pub get
 
+# Crear el .env a partir de .env.example y completar UNITY_APP_KEY_ANDROID
+cp .env.example .env
+
+# Generar el código de envied (clave del Unity App)
+dart run build_runner build --delete-conflicting-outputs
+
 # Ejecutar la app
 flutter run
 
@@ -376,7 +398,8 @@ flutter analyze
 - [shared_preferences](https://pub.dev/packages/shared_preferences) - Persistencia local
 - [intl](https://pub.dev/packages/intl) - Formato de números y soporte de i18n
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - Información de versión de la app
-- [google_mobile_ads](https://pub.dev/packages/google_mobile_ads) - Anuncios banner (AdMob)
+- [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Anuncios banner mediante Unity LevelPlay (Android)
+- [envied](https://pub.dev/packages/envied) + `build_runner` - Clave del Unity App cargada de forma ofuscada desde `.env`
 - `flutter_localizations` - Internacionalización (5 idiomas)
 
 ### Arquitectura
@@ -392,7 +415,7 @@ lib/
 │   ├── calculator_state.dart              # Estado inmutable de la calculadora
 │   ├── imc_controller.dart                # Lógica del IMC
 │   ├── settings_controller.dart           # Tema/idioma
-│   ├── ad_consent_controller.dart         # Flujo de consentimiento de anuncios (UMP)
+│   ├── ad_consent_controller.dart         # Diálogo de consentimiento propio para anuncios (sin UMP)
 │   └── ad_consent_state.dart
 ├── models/
 │   ├── calculation_history.dart           # Modelo del historial de cálculos
@@ -402,7 +425,7 @@ lib/
 │   ├── imc_calculator_page.dart           # Pantalla de IMC
 │   └── settings_page.dart                 # Pantalla de configuración
 ├── services/
-│   ├── ad_mob_service.dart                # Integración con AdMob
+│   ├── level_play_ad_service.dart         # Integración con Unity LevelPlay (Android)
 │   ├── error_handler.dart                 # Manejo centralizado de errores
 │   ├── logger_service.dart                # Servicio de logging para debug
 │   └── storage_service.dart               # Persistencia con SharedPreferences
@@ -415,6 +438,7 @@ lib/
 │   ├── constants/                         # Colores, tamaños, strings, IDs de anuncio
 │   ├── enums/                             # Tipos de error, operaciones, IMC, etc.
 │   ├── extensions/                        # Extensiones de localización
+│   ├── env/                               # Clave del Unity App vía envied (generada desde .env)
 │   ├── number_formatter.dart              # Formato de números grandes
 │   ├── responsive_utils.dart              # Utilidades responsivas
 │   └── result.dart                        # Patrón Result para manejo de errores
@@ -428,16 +452,16 @@ El proyecto tiene amplia cobertura de pruebas, organizadas reflejando la estruct
 ```
 test/
 ├── controllers/    # Pruebas de calculator/imc/settings/ad_consent controllers
-├── mocks/          # Mocks manuales (storage, logger, error handler, ad_mob)
+├── mocks/          # Mocks manuales (storage, logger, error handler, level_play_ad_service)
 ├── models/         # Pruebas de modelos (ej.: imc_result)
 ├── pages/          # Pruebas de páginas (calculator, imc, settings)
-├── services/       # Pruebas de servicios (ej.: ad_mob_service)
+├── services/       # Pruebas de servicios (ej.: level_play_ad_service)
 ├── utils/          # Pruebas de formato y enums
 ├── helpers/        # Utilidades de prueba (app de prueba con l10n)
 └── widgets/        # Pruebas de widgets, incluyendo ads/, imc/ y settings/
 ```
 
-**Total: 370 pruebas automatizadas**
+**Total: 383 pruebas automatizadas**
 
 ### Estándares de Código
 
