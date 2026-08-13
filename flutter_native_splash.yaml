@@ -1,0 +1,18 @@
+flutter_native_splash:
+  background_image: "assets/splash/background_gradient.png"
+  image: "assets/images/logo_home_fundo_transparente.png"
+
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
+  web_image_mode: cover
+
+  android: true
+  ios: true
+  web: true
+
+  android_12:
+    image: "assets/images/logo_home_fundo_transparente.png"
+    color: "#EAF4FF"
+    icon_background_color: "#FFFFFF"
+
+  fullscreen: false
