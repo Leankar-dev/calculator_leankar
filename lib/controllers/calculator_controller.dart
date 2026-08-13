@@ -316,9 +316,9 @@ class CalculatorController extends ChangeNotifier {
         '${_state.firstOperand} ${_state.currentOperation!.symbol} ${_state.displayText}';
     _calculatePendingOperation();
 
-    if (!_isErrorState()) {
-      _addToHistory(expression, _state.displayText);
-    }
+    if (_isErrorState()) return;
+
+    _addToHistory(expression, _state.displayText);
 
     _state = _state.copyWith(
       firstOperand: '',
@@ -453,5 +453,6 @@ class CalculatorController extends ChangeNotifier {
       shouldResetDisplay: true,
       errorType: errorType,
     );
+    notifyListeners();
   }
 }

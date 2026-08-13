@@ -94,6 +94,24 @@ void main() {
         expect(NumberFormatter.parse('-1.000'), -1000);
         expect(NumberFormatter.parse('-3,14'), -3.14);
       });
+
+      test(
+        'deve interpretar ponto como decimal quando inequívoco (formato internacional)',
+        () {
+          expect(NumberFormatter.parse('3.14'), 3.14);
+          expect(NumberFormatter.parse('19.99'), 19.99);
+          expect(NumberFormatter.parse('0.5'), 0.5);
+          expect(NumberFormatter.parse('-3.14'), -3.14);
+        },
+      );
+
+      test(
+        'deve continuar interpretando ponto como milhar quando ambíguo (3 dígitos após)',
+        () {
+          expect(NumberFormatter.parse('1.234'), 1234);
+          expect(NumberFormatter.parse('12.345,67'), 12345.67);
+        },
+      );
     });
 
     group('isValidNumber', () {

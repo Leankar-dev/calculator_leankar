@@ -80,6 +80,20 @@ void main() {
       expect(find.text(expectedFormat), findsOneWidget);
     });
 
+    testWidgets('deve exibir o timestamp convertido para hora local', (
+      tester,
+    ) async {
+      final utcTimestamp = DateTime.utc(2026, 3, 25, 14, 45);
+      final item = createItem(timestamp: utcTimestamp);
+      final expectedFormat = DateFormat(
+        'dd/MM HH:mm',
+      ).format(utcTimestamp.toLocal());
+
+      await tester.pumpWidget(createTestWidget(item, (_) {}));
+
+      expect(find.text(expectedFormat), findsOneWidget);
+    });
+
     testWidgets('deve conter NeumorphicButton', (tester) async {
       final item = createItem();
 

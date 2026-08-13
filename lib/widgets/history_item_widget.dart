@@ -63,7 +63,7 @@ class HistoryItemWidget extends StatelessWidget {
               ),
             ),
             Text(
-              dateFormat.format(item.timestamp),
+              dateFormat.format(item.timestamp.toLocal()),
               style: const TextStyle(
                 fontSize: AppSizes.historyItemTimestampFontSize,
                 color: AppColors.textMuted,

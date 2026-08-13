@@ -230,6 +230,44 @@ void main() {
         controller.calculateResult();
         expect(notifyCount, 4);
       });
+
+      test(
+        'deve notificar listeners ao entrar em erro por operador encadeado',
+        () {
+          controller.appendNumber('5');
+          controller.setOperationType(OperationsType.division);
+          controller.appendNumber('0');
+
+          int notifyCount = 0;
+          controller.addListener(() => notifyCount++);
+          controller.setOperationType(OperationsType.addition);
+
+          expect(controller.hasError, isTrue);
+          expect(notifyCount, greaterThan(0));
+        },
+      );
+
+      test(
+        'deve notificar listeners ao entrar em erro por overflow em porcentagem',
+        () {
+          controller.appendNumber('9');
+          for (int i = 0; i < 14; i++) {
+            controller.appendNumber('9');
+          }
+          controller.setOperationType(OperationsType.multiplication);
+          controller.appendNumber('9');
+          for (int i = 0; i < 14; i++) {
+            controller.appendNumber('9');
+          }
+
+          int notifyCount = 0;
+          controller.addListener(() => notifyCount++);
+          controller.calculatePercentage();
+
+          expect(controller.hasError, isTrue);
+          expect(notifyCount, greaterThan(0));
+        },
+      );
     });
 
     group('Limites de entrada', () {

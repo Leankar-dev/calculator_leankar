@@ -84,6 +84,10 @@ class NumberFormatter {
         return _parseScientific(cleaned);
       }
 
+      if (_looksLikeUnambiguousDotDecimal(cleaned)) {
+        return double.tryParse(cleaned);
+      }
+
       cleaned = cleaned.replaceAll('.', '');
       cleaned = cleaned.replaceAll(AppStrings.decimalSeparator, '.');
 
@@ -91,6 +95,16 @@ class NumberFormatter {
     } catch (_) {
       return null;
     }
+  }
+
+  static bool _looksLikeUnambiguousDotDecimal(String cleaned) {
+    if (cleaned.contains(AppStrings.decimalSeparator)) return false;
+
+    final dotIndex = cleaned.indexOf('.');
+    if (dotIndex == -1 || dotIndex != cleaned.lastIndexOf('.')) return false;
+
+    final digitsAfterDot = cleaned.length - dotIndex - 1;
+    return digitsAfterDot > 0 && digitsAfterDot != 3;
   }
 
   static double? _parseScientific(String text) {
