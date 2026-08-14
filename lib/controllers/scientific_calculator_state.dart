@@ -29,7 +29,7 @@ class ScientificCalculatorState {
 
   static ScientificCalculatorState initial() => const ScientificCalculatorState(
     tokens: [],
-    currentInput: '0',
+    currentInput: '',
     resultDisplay: '0',
     angleMode: AngleMode.deg,
     isShiftActive: false,
