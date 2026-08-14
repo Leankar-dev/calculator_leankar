@@ -11,6 +11,7 @@ class ButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
   final Color? color;
   final bool isAccent;
+  final VoidCallback? onLongPress;
 
   const ButtonWidget({
     super.key,
@@ -18,6 +19,7 @@ class ButtonWidget extends StatelessWidget {
     required this.onPressed,
     this.color,
     this.isAccent = false,
+    this.onLongPress,
   });
 
   String _getSemanticLabel(String text, AppLocalizations l10n) {
@@ -60,32 +62,35 @@ class ButtonWidget extends StatelessWidget {
         child: Semantics(
           button: true,
           label: _getSemanticLabel(text, l10n),
-          child: NeumorphicButton(
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              onPressed();
-            },
-            style: NeumorphicStyle(
-              shape: NeumorphicShape.concave,
-              boxShape: NeumorphicBoxShape.roundRect(
-                BorderRadius.circular(AppSizes.buttonBorderRadius),
+          child: GestureDetector(
+            onLongPress: onLongPress,
+            child: NeumorphicButton(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                onPressed();
+              },
+              style: NeumorphicStyle(
+                shape: NeumorphicShape.concave,
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(AppSizes.buttonBorderRadius),
+                ),
+                depth: AppSizes.buttonDepth,
+                intensity: AppSizes.buttonIntensity,
+                surfaceIntensity: AppSizes.buttonSurfaceIntensity,
+                color: hasCustomColor
+                    ? color!.withValues(alpha: AppColors.colorAlpha)
+                    : baseColor,
+                lightSource: LightSource.topLeft,
               ),
-              depth: AppSizes.buttonDepth,
-              intensity: AppSizes.buttonIntensity,
-              surfaceIntensity: AppSizes.buttonSurfaceIntensity,
-              color: hasCustomColor
-                  ? color!.withValues(alpha: AppColors.colorAlpha)
-                  : baseColor,
-              lightSource: LightSource.topLeft,
-            ),
-            padding: EdgeInsets.all(buttonPadding),
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: buttonFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: hasCustomColor ? color : AppColors.primaryText,
+              padding: EdgeInsets.all(buttonPadding),
+              child: Center(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: buttonFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: hasCustomColor ? color : AppColors.primaryText,
+                  ),
                 ),
               ),
             ),

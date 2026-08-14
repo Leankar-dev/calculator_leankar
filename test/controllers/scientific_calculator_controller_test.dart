@@ -95,6 +95,21 @@ void main() {
       });
     });
 
+    group('calculatePercentage', () {
+      test('divide o valor em edição por 100', () {
+        mockEvaluator.resultToReturn = 0.5;
+        controller.appendNumber('5');
+        controller.appendNumber('0');
+        controller.calculatePercentage();
+        expect(controller.expressionDisplay, '0,5');
+      });
+
+      test('sem nada em edição não faz nada', () {
+        controller.calculatePercentage();
+        expect(controller.expressionDisplay, '');
+      });
+    });
+
     group('openParen / closeParen', () {
       test('parênteses aparecem na expressão', () {
         mockEvaluator.resultToReturn = 5;

@@ -69,6 +69,21 @@ class ScientificCalculatorController extends ChangeNotifier {
     _previewResult();
   }
 
+  void calculatePercentage() {
+    if (_state.hasError || _state.currentInput.isEmpty) {
+      return;
+    }
+    final value = NumberFormatter.parse(_state.currentInput);
+    if (value == null) {
+      return;
+    }
+    _state = _state.copyWith(
+      currentInput: _toCanonicalNumberString(value / 100),
+    );
+    notifyListeners();
+    _previewResult();
+  }
+
   void openParen() {
     if (_state.hasError) {
       _resetCurrentExpression();

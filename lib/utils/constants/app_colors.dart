@@ -28,4 +28,8 @@ class AppColors {
   static const Color imcObesityI = Color(0xFFFF8A65);
   static const Color imcObesityII = Color(0xFFE57373);
   static const Color imcObesityIII = Color(0xFFC62828);
+
+  static const Color scientificShiftActive = Color(0xFFBA68C8);
+  static const Color scientificFunction = Color(0xFF4DB6AC);
+  static const Color scientificConstant = Color(0xFFFFB300);
 }
