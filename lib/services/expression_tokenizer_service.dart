@@ -8,6 +8,10 @@ import 'package:calculator_05122025/utils/number_formatter.dart';
 class ExpressionTokenizerService {
   static final RegExp _numberPattern = RegExp(r'\d[\d.,]*([eE][+-]?\d+)?');
 
+  static final RegExp _validNumberFormat = RegExp(
+    r'^(\d+|\d{1,3}(\.\d{3})+)(,\d+)?([eE][+-]?\d+)?$',
+  );
+
   static const List<String> _prefixFunctionLexemes = [
     'asin(',
     'acos(',
@@ -44,7 +48,8 @@ class ExpressionTokenizerService {
       final numberMatch = _numberPattern.matchAsPrefix(expression, index);
       if (numberMatch != null) {
         final lexeme = numberMatch.group(0)!;
-        if (NumberFormatter.parse(lexeme) == null) {
+        if (!_validNumberFormat.hasMatch(lexeme) ||
+            NumberFormatter.parse(lexeme) == null) {
           throw ScientificCalculationException(
             ScientificErrorType.syntaxError,
             'Número inválido: "$lexeme"',
@@ -161,12 +166,14 @@ class ExpressionTokenizerService {
     int index,
     List<String> candidates,
   ) {
+    String? longestMatch;
     for (final candidate in candidates) {
-      if (expression.startsWith(candidate, index)) {
-        return candidate;
+      if (expression.startsWith(candidate, index) &&
+          (longestMatch == null || candidate.length > longestMatch.length)) {
+        longestMatch = candidate;
       }
     }
-    return null;
+    return longestMatch;
   }
 
   bool _isBinaryOperatorChar(String char) {

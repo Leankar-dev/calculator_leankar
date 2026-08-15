@@ -43,6 +43,55 @@ void main() {
         final tokens = tokenizer.tokenize('1.234,56');
         expectTokens(tokens, [(TokenType.number, '1.234,56')]);
       });
+
+      test('número grande sem separador continua válido', () {
+        final tokens = tokenizer.tokenize('123456789');
+        expectTokens(tokens, [(TokenType.number, '123456789')]);
+      });
+
+      test('milhar com múltiplos grupos de três dígitos', () {
+        final tokens = tokenizer.tokenize('1.234.567');
+        expectTokens(tokens, [(TokenType.number, '1.234.567')]);
+      });
+
+      test('1.2.3 (pontos mal-formados) lança syntaxError', () {
+        expect(
+          () => tokenizer.tokenize('1.2.3'),
+          throwsA(
+            isA<ScientificCalculationException>().having(
+              (e) => e.errorType,
+              'errorType',
+              ScientificErrorType.syntaxError,
+            ),
+          ),
+        );
+      });
+
+      test('1,2,3 (múltiplas vírgulas decimais) lança syntaxError', () {
+        expect(
+          () => tokenizer.tokenize('1,2,3'),
+          throwsA(
+            isA<ScientificCalculationException>().having(
+              (e) => e.errorType,
+              'errorType',
+              ScientificErrorType.syntaxError,
+            ),
+          ),
+        );
+      });
+
+      test('grupo de milhar com menos de três dígitos lança syntaxError', () {
+        expect(
+          () => tokenizer.tokenize('1.23'),
+          throwsA(
+            isA<ScientificCalculationException>().having(
+              (e) => e.errorType,
+              'errorType',
+              ScientificErrorType.syntaxError,
+            ),
+          ),
+        );
+      });
     });
 
     group('Notação científica vs. constante de Euler', () {
