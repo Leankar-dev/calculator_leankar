@@ -465,6 +465,12 @@ class ScientificCalculatorController extends ChangeNotifier {
 
   void _previewResult() {
     if (_state.tokens.isEmpty && _state.currentInput.isEmpty) {
+      if (_state.resultDisplay != AppStrings.initialDisplayValue) {
+        _state = _state.copyWith(
+          resultDisplay: AppStrings.initialDisplayValue,
+        );
+        notifyListeners();
+      }
       return;
     }
     if (_shouldSkipPreview()) {

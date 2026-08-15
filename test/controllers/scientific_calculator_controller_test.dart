@@ -379,6 +379,32 @@ void main() {
         controller.backspace();
         expect(controller.expressionDisplay, '');
       });
+
+      test(
+        'apagar o único dígito digitado volta resultDisplay para 0',
+        () {
+          mockEvaluator.resultToReturn = 7;
+          controller.appendNumber('7');
+          expect(controller.resultDisplay, '7');
+          controller.backspace();
+          expect(controller.resultDisplay, '0');
+        },
+      );
+
+      test(
+        'apagar o último token restante volta resultDisplay para 0',
+        () {
+          mockEvaluator.resultToReturn = 5;
+          controller.appendNumber('5');
+          controller.setBinaryOperator('+');
+          controller.backspace();
+          expect(controller.expressionDisplay, '5');
+          expect(controller.resultDisplay, '5');
+          controller.backspace();
+          expect(controller.expressionDisplay, '');
+          expect(controller.resultDisplay, '0');
+        },
+      );
     });
 
     group('clearAll', () {
