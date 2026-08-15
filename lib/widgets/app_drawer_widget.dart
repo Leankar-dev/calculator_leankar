@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -7,12 +8,14 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 class AppDrawerWidget extends StatelessWidget {
   final VoidCallback onHistoryTap;
   final VoidCallback onImcTap;
+  final VoidCallback onScientificTap;
   final VoidCallback onSettingsTap;
 
   const AppDrawerWidget({
     super.key,
     required this.onHistoryTap,
     required this.onImcTap,
+    required this.onScientificTap,
     required this.onSettingsTap,
   });
 
@@ -40,6 +43,14 @@ class AppDrawerWidget extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pop();
                 onImcTap();
+              },
+            ),
+            _DrawerItem(
+              icon: Icons.functions,
+              label: AppScientificStrings.drawerLabel,
+              onTap: () {
+                Navigator.of(context).pop();
+                onScientificTap();
               },
             ),
             _DrawerItem(

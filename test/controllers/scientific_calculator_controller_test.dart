@@ -50,7 +50,7 @@ void main() {
       test('primeiro dígito substitui o 0 inicial', () {
         mockEvaluator.resultToReturn = 5;
         controller.appendNumber('5');
-        expect(controller.expressionDisplay, '5');
+        expect(controller.resultDisplay, '5');
       });
 
       test('dígitos seguintes concatenam', () {
@@ -58,7 +58,7 @@ void main() {
         controller.appendNumber('1');
         controller.appendNumber('2');
         controller.appendNumber('3');
-        expect(controller.expressionDisplay, '123');
+        expect(controller.resultDisplay, '123');
       });
 
       test('appendDecimal adiciona separador decimal uma única vez', () {
@@ -67,7 +67,7 @@ void main() {
         controller.appendDecimal();
         controller.appendNumber('5');
         controller.appendDecimal();
-        expect(controller.expressionDisplay, '1,5');
+        expect(controller.resultDisplay, '1,5');
       });
 
       test('0 digitado como primeiro dígito de um novo número não some', () {
@@ -91,7 +91,7 @@ void main() {
         mockEvaluator.resultToReturn = 7;
         controller.appendNumber('7');
         expect(controller.hasError, false);
-        expect(controller.expressionDisplay, '7');
+        expect(controller.resultDisplay, '7');
       });
     });
 
@@ -101,7 +101,7 @@ void main() {
         controller.appendNumber('5');
         controller.appendNumber('0');
         controller.calculatePercentage();
-        expect(controller.expressionDisplay, '0,5');
+        expect(controller.resultDisplay, '0,5');
       });
 
       test('sem nada em edição não faz nada', () {
@@ -285,7 +285,7 @@ void main() {
         controller.appendNumber('3');
         controller.calculateResult();
         expect(controller.resultDisplay, '5');
-        expect(controller.expressionDisplay, '5');
+        expect(controller.expressionDisplay, '');
       });
 
       test('resultado vira ponto de partida para o próximo cálculo', () {
@@ -346,7 +346,7 @@ void main() {
         controller.appendNumber('2');
         controller.appendNumber('3');
         controller.backspace();
-        expect(controller.expressionDisplay, '12');
+        expect(controller.resultDisplay, '12');
       });
 
       test('remove o último token quando currentInput já está resetado', () {
@@ -442,13 +442,14 @@ void main() {
         controller.memoryClear();
         expect(controller.state.hasMemoryValue, false);
         expect(controller.state.memoryValue, 0);
-        expect(controller.expressionDisplay, '9');
+        expect(controller.resultDisplay, '9');
       });
 
       test('MR desabilitado (sem efeito) quando não há memória guardada', () {
+        mockEvaluator.resultToReturn = 2;
         controller.appendNumber('2');
         controller.memoryRecall();
-        expect(controller.expressionDisplay, '2');
+        expect(controller.resultDisplay, '2');
       });
 
       test('MR insere valor canônico, sem separador de milhar', () {

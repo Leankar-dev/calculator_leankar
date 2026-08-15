@@ -32,4 +32,17 @@ class AppScientificStrings {
   static const String memoryRecall = 'MR';
   static const String memoryClear = 'MC';
   static const String memoryIndicator = 'M';
+
+  static const String pageTitle = 'Calculadora Científica';
+  static const String drawerLabel = 'Calculadora Científica';
+
+  static const String errorSyntax = 'Erro de sintaxe';
+  static const String errorParens = 'Parênteses não fechados';
+  static const String errorDomain = 'Erro de domínio matemático';
+  static const String errorFactorialDomain =
+      'Fatorial requer inteiro não-negativo';
+  static const String errorFactorialOverflow =
+      'Valor grande demais para fatorial';
+  static const String errorDivisionByZero = 'Divisão por zero';
+  static const String errorOverflow = 'Resultado grande demais';
 }

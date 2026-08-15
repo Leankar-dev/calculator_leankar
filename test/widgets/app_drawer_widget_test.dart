@@ -23,6 +23,7 @@ void main() {
   Widget createTestWidget({
     VoidCallback? onHistoryTap,
     VoidCallback? onImcTap,
+    VoidCallback? onScientificTap,
     VoidCallback? onSettingsTap,
   }) {
     return L10nTestApp(
@@ -31,6 +32,7 @@ void main() {
           endDrawer: AppDrawerWidget(
             onHistoryTap: onHistoryTap ?? () {},
             onImcTap: onImcTap ?? () {},
+            onScientificTap: onScientificTap ?? () {},
             onSettingsTap: onSettingsTap ?? () {},
           ),
           body: Builder(
@@ -71,6 +73,13 @@ void main() {
       expect(find.text('Calculadora IMC'), findsOneWidget);
     });
 
+    testWidgets('deve exibir item Calculadora Científica', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await openDrawer(tester);
+
+      expect(find.text('Calculadora Científica'), findsOneWidget);
+    });
+
     testWidgets('deve exibir item Configurações', (tester) async {
       await tester.pumpWidget(createTestWidget());
       await openDrawer(tester);
@@ -92,6 +101,15 @@ void main() {
       expect(find.byIcon(Icons.monitor_weight_outlined), findsOneWidget);
     });
 
+    testWidgets('deve exibir ícone de calculadora científica', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await openDrawer(tester);
+
+      expect(find.byIcon(Icons.functions), findsOneWidget);
+    });
+
     testWidgets('deve exibir ícone de configurações', (tester) async {
       await tester.pumpWidget(createTestWidget());
       await openDrawer(tester);
@@ -99,13 +117,13 @@ void main() {
       expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
     });
 
-    testWidgets('deve exibir três NeumorphicButton para os itens do menu', (
+    testWidgets('deve exibir quatro NeumorphicButton para os itens do menu', (
       tester,
     ) async {
       await tester.pumpWidget(createTestWidget());
       await openDrawer(tester);
 
-      expect(find.byType(NeumorphicButton), findsNWidgets(3));
+      expect(find.byType(NeumorphicButton), findsNWidgets(4));
     });
 
     testWidgets('deve chamar onHistoryTap ao pressionar Histórico', (
@@ -139,6 +157,23 @@ void main() {
 
       expect(called, isTrue);
     });
+
+    testWidgets(
+      'deve chamar onScientificTap ao pressionar Calculadora Científica',
+      (tester) async {
+        bool called = false;
+
+        await tester.pumpWidget(
+          createTestWidget(onScientificTap: () => called = true),
+        );
+        await openDrawer(tester);
+
+        await tester.tap(find.text('Calculadora Científica'));
+        await tester.pumpAndSettle();
+
+        expect(called, isTrue);
+      },
+    );
 
     testWidgets('deve chamar onSettingsTap ao pressionar Configurações', (
       tester,

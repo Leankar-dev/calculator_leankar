@@ -10,26 +10,24 @@ void main() {
   Widget createTestWidget({
     String displayText = '0',
     String expressionDisplay = '',
-    VoidCallback? onClear,
-    VoidCallback? onBackspace,
-    VoidCallback? onPercentage,
-    VoidCallback? onDecimal,
-    VoidCallback? onCalculate,
-    void Function(String)? onNumberPressed,
-    void Function(OperationsType)? onOperationPressed,
+    Widget? keypad,
   }) {
     return L10nTestApp(
       child: Scaffold(
         body: LandscapeLayoutWidget(
           displayText: displayText,
           expressionDisplay: expressionDisplay,
-          onClear: onClear ?? () {},
-          onBackspace: onBackspace ?? () {},
-          onPercentage: onPercentage ?? () {},
-          onDecimal: onDecimal ?? () {},
-          onCalculate: onCalculate ?? () {},
-          onNumberPressed: onNumberPressed ?? (_) {},
-          onOperationPressed: onOperationPressed ?? (_) {},
+          keypad:
+              keypad ??
+              CalculatorKeypadWidget(
+                onClear: () {},
+                onBackspace: () {},
+                onPercentage: () {},
+                onDecimal: () {},
+                onCalculate: () {},
+                onNumberPressed: (_) {},
+                onOperationPressed: (OperationsType op) {},
+              ),
         ),
       ),
     );
@@ -42,7 +40,7 @@ void main() {
       expect(find.byType(CalculatorDisplayWidget), findsOneWidget);
     });
 
-    testWidgets('deve renderizar CalculatorKeypadWidget', (tester) async {
+    testWidgets('deve renderizar o keypad recebido', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byType(CalculatorKeypadWidget), findsOneWidget);
@@ -69,6 +67,14 @@ void main() {
 
       final row = tester.widget<Row>(find.byType(Row).first);
       expect(row.crossAxisAlignment, CrossAxisAlignment.stretch);
+    });
+
+    testWidgets('coluna do keypad é rolável (SingleChildScrollView)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
   });
 }

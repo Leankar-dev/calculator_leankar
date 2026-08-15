@@ -27,8 +27,12 @@ class ScientificCalculatorController extends ChangeNotifier {
 
   ScientificCalculatorState get state => _state;
 
-  String get expressionDisplay =>
-      _serializeExpression(_state.tokens, _state.currentInput);
+  String get expressionDisplay {
+    if (_state.tokens.isEmpty) {
+      return '';
+    }
+    return _serializeExpression(_state.tokens, _state.currentInput);
+  }
 
   String get resultDisplay => _state.resultDisplay;
 

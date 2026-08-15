@@ -4,6 +4,7 @@ import 'package:calculator_05122025/controllers/calculator_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/imc_calculator_page.dart';
+import 'package:calculator_05122025/pages/scientific_calculator_page.dart';
 import 'package:calculator_05122025/pages/settings_page.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
@@ -18,6 +19,7 @@ import 'package:calculator_05122025/widgets/ads/ad_banner_footer_widget.dart';
 import 'package:calculator_05122025/widgets/ads/ad_consent_dialog_widget.dart';
 import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
+import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
@@ -92,10 +94,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
     super.dispose();
   }
 
+  Widget _buildKeypad() {
+    return CalculatorKeypadWidget(
+      onClear: _controller.clearDisplay,
+      onBackspace: _controller.backspace,
+      onPercentage: _controller.calculatePercentage,
+      onDecimal: _controller.appendDecimal,
+      onCalculate: _controller.calculateResult,
+      onNumberPressed: _controller.appendNumber,
+      onOperationPressed: _controller.setOperationType,
+    );
+  }
+
   void _navigateToImc() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => const ImcCalculatorPage(),
+      ),
+    );
+  }
+
+  void _navigateToScientific() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const ScientificCalculatorPage(),
       ),
     );
   }
@@ -312,6 +334,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       endDrawer: AppDrawerWidget(
         onHistoryTap: _showHistory,
         onImcTap: _navigateToImc,
+        onScientificTap: _navigateToScientific,
         onSettingsTap: _navigateToSettings,
       ),
       body: SafeArea(
@@ -340,27 +363,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
-                                onClear: _controller.clearDisplay,
-                                onBackspace: _controller.backspace,
-                                onPercentage: _controller.calculatePercentage,
-                                onDecimal: _controller.appendDecimal,
-                                onCalculate: _controller.calculateResult,
-                                onNumberPressed: _controller.appendNumber,
-                                onOperationPressed:
-                                    _controller.setOperationType,
+                                keypad: _buildKeypad(),
                               )
                             : PortraitLayoutWidget(
                                 displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
-                                onClear: _controller.clearDisplay,
-                                onBackspace: _controller.backspace,
-                                onPercentage: _controller.calculatePercentage,
-                                onDecimal: _controller.appendDecimal,
-                                onCalculate: _controller.calculateResult,
-                                onNumberPressed: _controller.appendNumber,
-                                onOperationPressed:
-                                    _controller.setOperationType,
+                                keypad: _buildKeypad(),
                               ),
                       ),
                     );
