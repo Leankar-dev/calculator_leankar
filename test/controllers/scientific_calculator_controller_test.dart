@@ -1,9 +1,11 @@
 import 'package:calculator_05122025/controllers/scientific_calculator_controller.dart';
 import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../mocks/mock_expression_evaluator_service.dart';
@@ -11,6 +13,8 @@ import '../mocks/mock_logger_service.dart';
 import '../mocks/mock_storage_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ScientificCalculatorController controller;
   late MockExpressionEvaluatorService mockEvaluator;
   late MockLoggerService mockLogger;
@@ -622,6 +626,112 @@ void main() {
 
         expect(controller.resultDisplay, '12');
         expect(controller.hasError, false);
+      });
+    });
+
+    group('Copiar e Colar', () {
+      late String clipboardContent;
+
+      setUp(() {
+        clipboardContent = '';
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, (
+              MethodCall methodCall,
+            ) async {
+              if (methodCall.method == 'Clipboard.setData') {
+                final Map<String, dynamic> args =
+                    methodCall.arguments as Map<String, dynamic>;
+                clipboardContent = args['text'] as String;
+                return null;
+              }
+              if (methodCall.method == 'Clipboard.getData') {
+                return <String, dynamic>{'text': clipboardContent};
+              }
+              return null;
+            });
+      });
+
+      tearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, null);
+      });
+
+      test(
+        'deve copiar o resultado atual para a área de transferência',
+        () async {
+          mockEvaluator.resultToReturn = 8;
+          controller.appendNumber('8');
+
+          final success = await controller.copyToClipboard();
+          expect(success, isTrue);
+          expect(clipboardContent, '8');
+        },
+      );
+
+      test('não deve copiar quando em estado de erro', () async {
+        mockEvaluator.exceptionToThrow = const ScientificCalculationException(
+          ScientificErrorType.divisionByZero,
+        );
+        controller.appendNumber('5');
+        controller.setBinaryOperator('÷');
+        controller.appendNumber('0');
+        await controller.calculateResult();
+        expect(controller.hasError, isTrue);
+
+        final success = await controller.copyToClipboard();
+        expect(success, isFalse);
+      });
+
+      test('deve colar número válido do clipboard', () async {
+        mockEvaluator.resultToReturn = 456;
+        clipboardContent = '456';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
+        expect(controller.resultDisplay, '456');
+      });
+
+      test('deve colar número com vírgula decimal', () async {
+        mockEvaluator.resultToReturn = 3.14;
+        clipboardContent = '3,14';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
+        expect(controller.resultDisplay, '3,14');
+      });
+
+      test('deve continuar a expressão existente ao colar', () async {
+        mockEvaluator.resultToReturn = 5;
+        controller.appendNumber('5');
+        controller.setBinaryOperator('+');
+
+        mockEvaluator.resultToReturn = 8;
+        clipboardContent = '3';
+        final result = await controller.pasteFromClipboard();
+
+        expect(result, PasteResult.success);
+        expect(controller.expressionDisplay, '5 + 3');
+      });
+
+      test('deve rejeitar texto não numérico ao colar', () async {
+        clipboardContent = 'abc';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.invalidFormat);
+      });
+
+      test('deve rejeitar clipboard vazio', () async {
+        clipboardContent = '';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.emptyClipboard);
+      });
+
+      test('deve rejeitar número fora dos limites ao colar', () async {
+        clipboardContent = '9999999999999999';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.outOfRange);
       });
     });
   });

@@ -59,5 +59,33 @@ void main() {
 
       expect(find.text('20 -'), findsOneWidget);
     });
+
+    testWidgets('display não fica dentro do SingleChildScrollView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+
+      expect(
+        find.descendant(
+          of: find.byType(SingleChildScrollView),
+          matching: find.byType(CalculatorDisplayWidget),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('keypad fica dentro de um SingleChildScrollView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+
+      expect(
+        find.descendant(
+          of: find.byType(SingleChildScrollView),
+          matching: find.byType(CalculatorKeypadWidget),
+        ),
+        findsOneWidget,
+      );
+    });
   });
 }

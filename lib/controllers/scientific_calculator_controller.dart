@@ -7,11 +7,13 @@ import 'package:calculator_05122025/services/storage_service.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 class ScientificCalculatorController extends ChangeNotifier {
   final ExpressionEvaluatorService _evaluator;
@@ -408,6 +410,82 @@ class ScientificCalculatorController extends ChangeNotifier {
   void memoryClear() {
     _state = _state.copyWith(memoryValue: 0, hasMemoryValue: false);
     notifyListeners();
+  }
+
+  Future<bool> copyToClipboard() async {
+    if (_state.hasError) {
+      _logger.debug(
+        'Tentativa de copiar em estado de erro',
+        tag: 'ScientificCalculatorController',
+      );
+      return false;
+    }
+    try {
+      await Clipboard.setData(ClipboardData(text: _state.resultDisplay));
+      _logger.info(
+        'Valor copiado: ${_state.resultDisplay}',
+        tag: 'ScientificCalculatorController',
+      );
+      return true;
+    } catch (e) {
+      _logger.warning(
+        'Falha ao copiar: $e',
+        tag: 'ScientificCalculatorController',
+      );
+      return false;
+    }
+  }
+
+  Future<PasteResult> pasteFromClipboard() async {
+    try {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      if (data?.text == null || data!.text!.isEmpty) {
+        _logger.debug(
+          'Área de transferência vazia',
+          tag: 'ScientificCalculatorController',
+        );
+        return PasteResult.emptyClipboard;
+      }
+
+      final text = data.text!.trim();
+      final parsed = NumberFormatter.parse(text);
+
+      if (parsed == null) {
+        _logger.debug(
+          'Valor inválido para colar: $text',
+          tag: 'ScientificCalculatorController',
+        );
+        return PasteResult.invalidFormat;
+      }
+
+      if (parsed.isNaN ||
+          parsed.isInfinite ||
+          parsed.abs() > AppStrings.maxDisplayValue) {
+        _logger.debug(
+          'Valor fora dos limites: $text',
+          tag: 'ScientificCalculatorController',
+        );
+        return PasteResult.outOfRange;
+      }
+
+      if (_state.hasError) {
+        _resetCurrentExpression();
+      }
+      _state = _state.copyWith(currentInput: _toCanonicalNumberString(parsed));
+      _logger.info(
+        'Valor colado: ${_state.currentInput}',
+        tag: 'ScientificCalculatorController',
+      );
+      notifyListeners();
+      _previewResult();
+      return PasteResult.success;
+    } catch (e) {
+      _logger.warning(
+        'Falha ao colar: $e',
+        tag: 'ScientificCalculatorController',
+      );
+      return PasteResult.invalidFormat;
+    }
   }
 
   Future<void> loadHistory() async {

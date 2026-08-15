@@ -16,22 +16,19 @@ class PortraitLayoutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.layoutOuterPadding,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CalculatorDisplayWidget(
-              displayText: displayText,
-              expressionDisplay: expressionDisplay,
-            ),
-            const SizedBox(height: AppSizes.portraitSectionSpacing),
-            keypad,
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.layoutOuterPadding,
+      ),
+      child: Column(
+        children: [
+          CalculatorDisplayWidget(
+            displayText: displayText,
+            expressionDisplay: expressionDisplay,
+          ),
+          const SizedBox(height: AppSizes.portraitSectionSpacing),
+          Expanded(child: SingleChildScrollView(child: keypad)),
+        ],
       ),
     );
   }

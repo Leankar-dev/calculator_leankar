@@ -5,6 +5,7 @@ import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
@@ -90,6 +91,41 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
       final String? key = event.character;
       final String? lowerKey = key?.toLowerCase();
       final LogicalKeyboardKey logicalKey = event.logicalKey;
+
+      final isControlPressed =
+          HardwareKeyboard.instance.isControlPressed ||
+          HardwareKeyboard.instance.isMetaPressed;
+
+      if (isControlPressed) {
+        if (logicalKey == LogicalKeyboardKey.keyC) {
+          _controller.copyToClipboard().then((success) {
+            if (success && mounted) {
+              _showSnackBar(AppLocalizations.of(context).snackbarValueCopied);
+            }
+          });
+          return;
+        }
+        if (logicalKey == LogicalKeyboardKey.keyV) {
+          _controller.pasteFromClipboard().then((result) {
+            if (result == PasteResult.success || !mounted) return;
+            final l10n = AppLocalizations.of(context);
+            switch (result) {
+              case PasteResult.emptyClipboard:
+                _showSnackBar(l10n.snackbarEmptyClipboard);
+                break;
+              case PasteResult.invalidFormat:
+                _showSnackBar(l10n.snackbarInvalidPaste);
+                break;
+              case PasteResult.outOfRange:
+                _showSnackBar(l10n.snackbarOutOfRange);
+                break;
+              case PasteResult.success:
+                break;
+            }
+          });
+          return;
+        }
+      }
 
       if (logicalKey == LogicalKeyboardKey.enter ||
           logicalKey == LogicalKeyboardKey.numpadEnter) {
@@ -190,6 +226,16 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _showHistory() {
