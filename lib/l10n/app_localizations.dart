@@ -476,6 +476,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ad unavailable'**
   String get adUnavailable;
+
+  /// End drawer menu item for scientific calculator
+  ///
+  /// In en, this message translates to:
+  /// **'Scientific Calculator'**
+  String get drawerItemScientific;
+
+  /// AppBar title on scientific calculator page
+  ///
+  /// In en, this message translates to:
+  /// **'Scientific Calculator'**
+  String get scientificPageTitle;
+
+  /// Angle mode label — degrees
+  ///
+  /// In en, this message translates to:
+  /// **'DEG'**
+  String get scientificAngleModeDeg;
+
+  /// Angle mode label — radians
+  ///
+  /// In en, this message translates to:
+  /// **'RAD'**
+  String get scientificAngleModeRad;
+
+  /// Shift button label on scientific keypad
+  ///
+  /// In en, this message translates to:
+  /// **'SHIFT'**
+  String get scientificShift;
+
+  /// Memory add label (long form)
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Add'**
+  String get scientificMemoryAdd;
+
+  /// Memory subtract label (long form)
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Subtract'**
+  String get scientificMemorySubtract;
+
+  /// Memory recall label (long form)
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Recall'**
+  String get scientificMemoryRecall;
+
+  /// Memory clear label (long form)
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Clear'**
+  String get scientificMemoryClear;
+
+  /// Scientific calculator display error — malformed expression
+  ///
+  /// In en, this message translates to:
+  /// **'Syntax error'**
+  String get scientificErrorSyntax;
+
+  /// Scientific calculator display error — unbalanced parentheses
+  ///
+  /// In en, this message translates to:
+  /// **'Unbalanced parentheses'**
+  String get scientificErrorParens;
+
+  /// Scientific calculator display error — invalid math domain (e.g. log of a negative number)
+  ///
+  /// In en, this message translates to:
+  /// **'Math domain error'**
+  String get scientificErrorDomain;
+
+  /// Scientific calculator display error — factorial of negative or non-integer
+  ///
+  /// In en, this message translates to:
+  /// **'Factorial requires a non-negative integer'**
+  String get scientificErrorFactorialDomain;
+
+  /// Scientific calculator display error — factorial argument greater than 170
+  ///
+  /// In en, this message translates to:
+  /// **'Value too large for factorial'**
+  String get scientificErrorFactorialOverflow;
+
+  /// Scientific calculator display error — division by zero
+  ///
+  /// In en, this message translates to:
+  /// **'Division by zero'**
+  String get scientificErrorDivisionByZero;
+
+  /// Scientific calculator display error — result exceeds display limits
+  ///
+  /// In en, this message translates to:
+  /// **'Result too large'**
+  String get scientificErrorOverflow;
+
+  /// Accessibility label for sine button
+  ///
+  /// In en, this message translates to:
+  /// **'Sine'**
+  String get semanticSin;
+
+  /// Accessibility label for cosine button
+  ///
+  /// In en, this message translates to:
+  /// **'Cosine'**
+  String get semanticCos;
+
+  /// Accessibility label for tangent button
+  ///
+  /// In en, this message translates to:
+  /// **'Tangent'**
+  String get semanticTan;
+
+  /// Accessibility label for inverse sine button
+  ///
+  /// In en, this message translates to:
+  /// **'Inverse sine'**
+  String get semanticArcsin;
+
+  /// Accessibility label for inverse cosine button
+  ///
+  /// In en, this message translates to:
+  /// **'Inverse cosine'**
+  String get semanticArccos;
+
+  /// Accessibility label for inverse tangent button
+  ///
+  /// In en, this message translates to:
+  /// **'Inverse tangent'**
+  String get semanticArctan;
+
+  /// Accessibility label for base 10 logarithm button
+  ///
+  /// In en, this message translates to:
+  /// **'Base 10 logarithm'**
+  String get semanticLog;
+
+  /// Accessibility label for natural logarithm button
+  ///
+  /// In en, this message translates to:
+  /// **'Natural logarithm'**
+  String get semanticLn;
+
+  /// Accessibility label for 10^x button
+  ///
+  /// In en, this message translates to:
+  /// **'10 to the power of x'**
+  String get semanticExp10;
+
+  /// Accessibility label for e^x button
+  ///
+  /// In en, this message translates to:
+  /// **'E to the power of x'**
+  String get semanticExpE;
+
+  /// Accessibility label for x squared button
+  ///
+  /// In en, this message translates to:
+  /// **'Square'**
+  String get semanticSquare;
+
+  /// Accessibility label for x cubed button
+  ///
+  /// In en, this message translates to:
+  /// **'Cube'**
+  String get semanticCube;
+
+  /// Accessibility label for x^y button
+  ///
+  /// In en, this message translates to:
+  /// **'X to the power of y'**
+  String get semanticPower;
+
+  /// Accessibility label for cube root button
+  ///
+  /// In en, this message translates to:
+  /// **'Cube root'**
+  String get semanticCubeRoot;
+
+  /// Accessibility label for square root button
+  ///
+  /// In en, this message translates to:
+  /// **'Square root'**
+  String get semanticSqrt;
+
+  /// Accessibility label for 1/x button
+  ///
+  /// In en, this message translates to:
+  /// **'One divided by x'**
+  String get semanticReciprocal;
+
+  /// Accessibility label for |x| button
+  ///
+  /// In en, this message translates to:
+  /// **'Absolute value'**
+  String get semanticAbsoluteValue;
+
+  /// Accessibility label for factorial button
+  ///
+  /// In en, this message translates to:
+  /// **'Factorial'**
+  String get semanticFactorial;
+
+  /// Accessibility label for nPr button
+  ///
+  /// In en, this message translates to:
+  /// **'Permutation'**
+  String get semanticPermutation;
+
+  /// Accessibility label for pi constant button
+  ///
+  /// In en, this message translates to:
+  /// **'Pi'**
+  String get semanticPi;
+
+  /// Accessibility label for Euler's number constant button
+  ///
+  /// In en, this message translates to:
+  /// **'Euler\'s number'**
+  String get semanticEuler;
+
+  /// Accessibility label for open parenthesis button
+  ///
+  /// In en, this message translates to:
+  /// **'Open parenthesis'**
+  String get semanticOpenParen;
+
+  /// Accessibility label for close parenthesis button
+  ///
+  /// In en, this message translates to:
+  /// **'Close parenthesis'**
+  String get semanticCloseParen;
+
+  /// Accessibility label for memory add button
+  ///
+  /// In en, this message translates to:
+  /// **'Memory add'**
+  String get semanticMemoryAdd;
+
+  /// Accessibility label for memory subtract button
+  ///
+  /// In en, this message translates to:
+  /// **'Memory subtract'**
+  String get semanticMemorySubtract;
+
+  /// Accessibility label for memory recall button
+  ///
+  /// In en, this message translates to:
+  /// **'Memory recall'**
+  String get semanticMemoryRecall;
+
+  /// Accessibility label for memory clear button
+  ///
+  /// In en, this message translates to:
+  /// **'Memory clear'**
+  String get semanticMemoryClear;
+
+  /// Accessibility label for DEG/RAD toggle button
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle angle mode'**
+  String get semanticAngleModeToggle;
 }
 
 class _AppLocalizationsDelegate

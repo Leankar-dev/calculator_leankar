@@ -196,4 +196,138 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adUnavailable => 'Annuncio non disponibile';
+
+  @override
+  String get drawerItemScientific => 'Calcolatrice Scientifica';
+
+  @override
+  String get scientificPageTitle => 'Calcolatrice Scientifica';
+
+  @override
+  String get scientificAngleModeDeg => 'DEG';
+
+  @override
+  String get scientificAngleModeRad => 'RAD';
+
+  @override
+  String get scientificShift => 'SHIFT';
+
+  @override
+  String get scientificMemoryAdd => 'Aggiungi alla Memoria';
+
+  @override
+  String get scientificMemorySubtract => 'Sottrai dalla Memoria';
+
+  @override
+  String get scientificMemoryRecall => 'Richiama Memoria';
+
+  @override
+  String get scientificMemoryClear => 'Cancella Memoria';
+
+  @override
+  String get scientificErrorSyntax => 'Errore di sintassi';
+
+  @override
+  String get scientificErrorParens => 'Parentesi non bilanciate';
+
+  @override
+  String get scientificErrorDomain => 'Errore di dominio matematico';
+
+  @override
+  String get scientificErrorFactorialDomain =>
+      'Il fattoriale richiede un intero non negativo';
+
+  @override
+  String get scientificErrorFactorialOverflow =>
+      'Valore troppo grande per il fattoriale';
+
+  @override
+  String get scientificErrorDivisionByZero => 'Divisione per zero';
+
+  @override
+  String get scientificErrorOverflow => 'Risultato troppo grande';
+
+  @override
+  String get semanticSin => 'Seno';
+
+  @override
+  String get semanticCos => 'Coseno';
+
+  @override
+  String get semanticTan => 'Tangente';
+
+  @override
+  String get semanticArcsin => 'Arcoseno';
+
+  @override
+  String get semanticArccos => 'Arcocoseno';
+
+  @override
+  String get semanticArctan => 'Arcotangente';
+
+  @override
+  String get semanticLog => 'Logaritmo base 10';
+
+  @override
+  String get semanticLn => 'Logaritmo naturale';
+
+  @override
+  String get semanticExp10 => '10 elevato a x';
+
+  @override
+  String get semanticExpE => 'E elevato a x';
+
+  @override
+  String get semanticSquare => 'Al quadrato';
+
+  @override
+  String get semanticCube => 'Al cubo';
+
+  @override
+  String get semanticPower => 'X elevato a y';
+
+  @override
+  String get semanticCubeRoot => 'Radice cubica';
+
+  @override
+  String get semanticSqrt => 'Radice quadrata';
+
+  @override
+  String get semanticReciprocal => 'Uno diviso x';
+
+  @override
+  String get semanticAbsoluteValue => 'Valore assoluto';
+
+  @override
+  String get semanticFactorial => 'Fattoriale';
+
+  @override
+  String get semanticPermutation => 'Permutazione';
+
+  @override
+  String get semanticPi => 'Pi greco';
+
+  @override
+  String get semanticEuler => 'Numero di Eulero';
+
+  @override
+  String get semanticOpenParen => 'Apri parentesi';
+
+  @override
+  String get semanticCloseParen => 'Chiudi parentesi';
+
+  @override
+  String get semanticMemoryAdd => 'Aggiungi alla memoria';
+
+  @override
+  String get semanticMemorySubtract => 'Sottrai dalla memoria';
+
+  @override
+  String get semanticMemoryRecall => 'Richiama memoria';
+
+  @override
+  String get semanticMemoryClear => 'Cancella memoria';
+
+  @override
+  String get semanticAngleModeToggle => 'Cambia modalità angolo';
 }

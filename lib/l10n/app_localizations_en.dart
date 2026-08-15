@@ -196,4 +196,138 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adUnavailable => 'Ad unavailable';
+
+  @override
+  String get drawerItemScientific => 'Scientific Calculator';
+
+  @override
+  String get scientificPageTitle => 'Scientific Calculator';
+
+  @override
+  String get scientificAngleModeDeg => 'DEG';
+
+  @override
+  String get scientificAngleModeRad => 'RAD';
+
+  @override
+  String get scientificShift => 'SHIFT';
+
+  @override
+  String get scientificMemoryAdd => 'Memory Add';
+
+  @override
+  String get scientificMemorySubtract => 'Memory Subtract';
+
+  @override
+  String get scientificMemoryRecall => 'Memory Recall';
+
+  @override
+  String get scientificMemoryClear => 'Memory Clear';
+
+  @override
+  String get scientificErrorSyntax => 'Syntax error';
+
+  @override
+  String get scientificErrorParens => 'Unbalanced parentheses';
+
+  @override
+  String get scientificErrorDomain => 'Math domain error';
+
+  @override
+  String get scientificErrorFactorialDomain =>
+      'Factorial requires a non-negative integer';
+
+  @override
+  String get scientificErrorFactorialOverflow =>
+      'Value too large for factorial';
+
+  @override
+  String get scientificErrorDivisionByZero => 'Division by zero';
+
+  @override
+  String get scientificErrorOverflow => 'Result too large';
+
+  @override
+  String get semanticSin => 'Sine';
+
+  @override
+  String get semanticCos => 'Cosine';
+
+  @override
+  String get semanticTan => 'Tangent';
+
+  @override
+  String get semanticArcsin => 'Inverse sine';
+
+  @override
+  String get semanticArccos => 'Inverse cosine';
+
+  @override
+  String get semanticArctan => 'Inverse tangent';
+
+  @override
+  String get semanticLog => 'Base 10 logarithm';
+
+  @override
+  String get semanticLn => 'Natural logarithm';
+
+  @override
+  String get semanticExp10 => '10 to the power of x';
+
+  @override
+  String get semanticExpE => 'E to the power of x';
+
+  @override
+  String get semanticSquare => 'Square';
+
+  @override
+  String get semanticCube => 'Cube';
+
+  @override
+  String get semanticPower => 'X to the power of y';
+
+  @override
+  String get semanticCubeRoot => 'Cube root';
+
+  @override
+  String get semanticSqrt => 'Square root';
+
+  @override
+  String get semanticReciprocal => 'One divided by x';
+
+  @override
+  String get semanticAbsoluteValue => 'Absolute value';
+
+  @override
+  String get semanticFactorial => 'Factorial';
+
+  @override
+  String get semanticPermutation => 'Permutation';
+
+  @override
+  String get semanticPi => 'Pi';
+
+  @override
+  String get semanticEuler => 'Euler\'s number';
+
+  @override
+  String get semanticOpenParen => 'Open parenthesis';
+
+  @override
+  String get semanticCloseParen => 'Close parenthesis';
+
+  @override
+  String get semanticMemoryAdd => 'Memory add';
+
+  @override
+  String get semanticMemorySubtract => 'Memory subtract';
+
+  @override
+  String get semanticMemoryRecall => 'Memory recall';
+
+  @override
+  String get semanticMemoryClear => 'Memory clear';
+
+  @override
+  String get semanticAngleModeToggle => 'Toggle angle mode';
 }

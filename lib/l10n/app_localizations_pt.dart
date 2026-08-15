@@ -196,6 +196,140 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adUnavailable => 'Anúncio indisponível';
+
+  @override
+  String get drawerItemScientific => 'Calculadora Científica';
+
+  @override
+  String get scientificPageTitle => 'Calculadora Científica';
+
+  @override
+  String get scientificAngleModeDeg => 'DEG';
+
+  @override
+  String get scientificAngleModeRad => 'RAD';
+
+  @override
+  String get scientificShift => 'SHIFT';
+
+  @override
+  String get scientificMemoryAdd => 'Adicionar à Memória';
+
+  @override
+  String get scientificMemorySubtract => 'Subtrair da Memória';
+
+  @override
+  String get scientificMemoryRecall => 'Recuperar da Memória';
+
+  @override
+  String get scientificMemoryClear => 'Limpar Memória';
+
+  @override
+  String get scientificErrorSyntax => 'Erro de sintaxe';
+
+  @override
+  String get scientificErrorParens => 'Parênteses não fechados';
+
+  @override
+  String get scientificErrorDomain => 'Erro de domínio matemático';
+
+  @override
+  String get scientificErrorFactorialDomain =>
+      'Fatorial requer inteiro não-negativo';
+
+  @override
+  String get scientificErrorFactorialOverflow =>
+      'Valor grande demais para fatorial';
+
+  @override
+  String get scientificErrorDivisionByZero => 'Divisão por zero';
+
+  @override
+  String get scientificErrorOverflow => 'Resultado grande demais';
+
+  @override
+  String get semanticSin => 'Seno';
+
+  @override
+  String get semanticCos => 'Cosseno';
+
+  @override
+  String get semanticTan => 'Tangente';
+
+  @override
+  String get semanticArcsin => 'Arco seno';
+
+  @override
+  String get semanticArccos => 'Arco cosseno';
+
+  @override
+  String get semanticArctan => 'Arco tangente';
+
+  @override
+  String get semanticLog => 'Logaritmo base 10';
+
+  @override
+  String get semanticLn => 'Logaritmo natural';
+
+  @override
+  String get semanticExp10 => '10 elevado a x';
+
+  @override
+  String get semanticExpE => 'E elevado a x';
+
+  @override
+  String get semanticSquare => 'Ao quadrado';
+
+  @override
+  String get semanticCube => 'Ao cubo';
+
+  @override
+  String get semanticPower => 'X elevado a y';
+
+  @override
+  String get semanticCubeRoot => 'Raiz cúbica';
+
+  @override
+  String get semanticSqrt => 'Raiz quadrada';
+
+  @override
+  String get semanticReciprocal => 'Um dividido por x';
+
+  @override
+  String get semanticAbsoluteValue => 'Valor absoluto';
+
+  @override
+  String get semanticFactorial => 'Fatorial';
+
+  @override
+  String get semanticPermutation => 'Permutação';
+
+  @override
+  String get semanticPi => 'Pi';
+
+  @override
+  String get semanticEuler => 'Número de Euler';
+
+  @override
+  String get semanticOpenParen => 'Abrir parêntese';
+
+  @override
+  String get semanticCloseParen => 'Fechar parêntese';
+
+  @override
+  String get semanticMemoryAdd => 'Adicionar à memória';
+
+  @override
+  String get semanticMemorySubtract => 'Subtrair da memória';
+
+  @override
+  String get semanticMemoryRecall => 'Recuperar da memória';
+
+  @override
+  String get semanticMemoryClear => 'Limpar memória';
+
+  @override
+  String get semanticAngleModeToggle => 'Alternar modo de ângulo';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -390,4 +524,138 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get adUnavailable => 'Anúncio indisponível';
+
+  @override
+  String get drawerItemScientific => 'Calculadora Científica';
+
+  @override
+  String get scientificPageTitle => 'Calculadora Científica';
+
+  @override
+  String get scientificAngleModeDeg => 'DEG';
+
+  @override
+  String get scientificAngleModeRad => 'RAD';
+
+  @override
+  String get scientificShift => 'SHIFT';
+
+  @override
+  String get scientificMemoryAdd => 'Adicionar à Memória';
+
+  @override
+  String get scientificMemorySubtract => 'Subtrair da Memória';
+
+  @override
+  String get scientificMemoryRecall => 'Recuperar da Memória';
+
+  @override
+  String get scientificMemoryClear => 'Limpar Memória';
+
+  @override
+  String get scientificErrorSyntax => 'Erro de sintaxe';
+
+  @override
+  String get scientificErrorParens => 'Parênteses não fechados';
+
+  @override
+  String get scientificErrorDomain => 'Erro de domínio matemático';
+
+  @override
+  String get scientificErrorFactorialDomain =>
+      'Fatorial requer inteiro não-negativo';
+
+  @override
+  String get scientificErrorFactorialOverflow =>
+      'Valor grande demais para fatorial';
+
+  @override
+  String get scientificErrorDivisionByZero => 'Divisão por zero';
+
+  @override
+  String get scientificErrorOverflow => 'Resultado grande demais';
+
+  @override
+  String get semanticSin => 'Seno';
+
+  @override
+  String get semanticCos => 'Cosseno';
+
+  @override
+  String get semanticTan => 'Tangente';
+
+  @override
+  String get semanticArcsin => 'Arco seno';
+
+  @override
+  String get semanticArccos => 'Arco cosseno';
+
+  @override
+  String get semanticArctan => 'Arco tangente';
+
+  @override
+  String get semanticLog => 'Logaritmo base 10';
+
+  @override
+  String get semanticLn => 'Logaritmo natural';
+
+  @override
+  String get semanticExp10 => '10 elevado a x';
+
+  @override
+  String get semanticExpE => 'E elevado a x';
+
+  @override
+  String get semanticSquare => 'Ao quadrado';
+
+  @override
+  String get semanticCube => 'Ao cubo';
+
+  @override
+  String get semanticPower => 'X elevado a y';
+
+  @override
+  String get semanticCubeRoot => 'Raiz cúbica';
+
+  @override
+  String get semanticSqrt => 'Raiz quadrada';
+
+  @override
+  String get semanticReciprocal => 'Um dividido por x';
+
+  @override
+  String get semanticAbsoluteValue => 'Valor absoluto';
+
+  @override
+  String get semanticFactorial => 'Fatorial';
+
+  @override
+  String get semanticPermutation => 'Permutação';
+
+  @override
+  String get semanticPi => 'Pi';
+
+  @override
+  String get semanticEuler => 'Número de Euler';
+
+  @override
+  String get semanticOpenParen => 'Abrir parêntese';
+
+  @override
+  String get semanticCloseParen => 'Fechar parêntese';
+
+  @override
+  String get semanticMemoryAdd => 'Adicionar à memória';
+
+  @override
+  String get semanticMemorySubtract => 'Subtrair da memória';
+
+  @override
+  String get semanticMemoryRecall => 'Recuperar da memória';
+
+  @override
+  String get semanticMemoryClear => 'Limpar memória';
+
+  @override
+  String get semanticAngleModeToggle => 'Alternar modo de ângulo';
 }

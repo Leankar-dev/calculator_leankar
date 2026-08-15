@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
@@ -42,6 +43,63 @@ class ButtonWidget extends StatelessWidget {
         return l10n.semanticClear;
       case AppStrings.decimalSeparator:
         return l10n.semanticDecimalSeparator;
+      case AppScientificStrings.sin:
+        return l10n.semanticSin;
+      case AppScientificStrings.cos:
+        return l10n.semanticCos;
+      case AppScientificStrings.tan:
+        return l10n.semanticTan;
+      case AppScientificStrings.sinInverse:
+        return l10n.semanticArcsin;
+      case AppScientificStrings.cosInverse:
+        return l10n.semanticArccos;
+      case AppScientificStrings.tanInverse:
+        return l10n.semanticArctan;
+      case AppScientificStrings.log:
+        return l10n.semanticLog;
+      case AppScientificStrings.ln:
+        return l10n.semanticLn;
+      case AppScientificStrings.exp10:
+        return l10n.semanticExp10;
+      case AppScientificStrings.expE:
+        return l10n.semanticExpE;
+      case AppScientificStrings.square:
+        return l10n.semanticSquare;
+      case AppScientificStrings.cube:
+        return l10n.semanticCube;
+      case AppScientificStrings.power:
+        return l10n.semanticPower;
+      case AppScientificStrings.cbrt:
+        return l10n.semanticCubeRoot;
+      case AppScientificStrings.sqrt:
+        return l10n.semanticSqrt;
+      case AppScientificStrings.reciprocal:
+        return l10n.semanticReciprocal;
+      case AppScientificStrings.absoluteValue:
+        return l10n.semanticAbsoluteValue;
+      case AppScientificStrings.factorial:
+        return l10n.semanticFactorial;
+      case AppScientificStrings.permutation:
+        return l10n.semanticPermutation;
+      case AppScientificStrings.pi:
+        return l10n.semanticPi;
+      case AppScientificStrings.euler:
+        return l10n.semanticEuler;
+      case AppScientificStrings.openParen:
+        return l10n.semanticOpenParen;
+      case AppScientificStrings.closeParen:
+        return l10n.semanticCloseParen;
+      case AppScientificStrings.memoryAdd:
+        return l10n.semanticMemoryAdd;
+      case AppScientificStrings.memorySubtract:
+        return l10n.semanticMemorySubtract;
+      case AppScientificStrings.memoryRecall:
+        return l10n.semanticMemoryRecall;
+      case AppScientificStrings.memoryClear:
+        return l10n.semanticMemoryClear;
+      case AppScientificStrings.degMode:
+      case AppScientificStrings.radMode:
+        return l10n.semanticAngleModeToggle;
       default:
         return text;
     }

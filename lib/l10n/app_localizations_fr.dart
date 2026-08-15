@@ -196,4 +196,138 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adUnavailable => 'Publicité indisponible';
+
+  @override
+  String get drawerItemScientific => 'Calculatrice Scientifique';
+
+  @override
+  String get scientificPageTitle => 'Calculatrice Scientifique';
+
+  @override
+  String get scientificAngleModeDeg => 'DEG';
+
+  @override
+  String get scientificAngleModeRad => 'RAD';
+
+  @override
+  String get scientificShift => 'SHIFT';
+
+  @override
+  String get scientificMemoryAdd => 'Ajouter à la Mémoire';
+
+  @override
+  String get scientificMemorySubtract => 'Soustraire de la Mémoire';
+
+  @override
+  String get scientificMemoryRecall => 'Rappeler la Mémoire';
+
+  @override
+  String get scientificMemoryClear => 'Effacer la Mémoire';
+
+  @override
+  String get scientificErrorSyntax => 'Erreur de syntaxe';
+
+  @override
+  String get scientificErrorParens => 'Parenthèses non équilibrées';
+
+  @override
+  String get scientificErrorDomain => 'Erreur de domaine mathématique';
+
+  @override
+  String get scientificErrorFactorialDomain =>
+      'La factorielle nécessite un entier non négatif';
+
+  @override
+  String get scientificErrorFactorialOverflow =>
+      'Valeur trop grande pour la factorielle';
+
+  @override
+  String get scientificErrorDivisionByZero => 'Division par zéro';
+
+  @override
+  String get scientificErrorOverflow => 'Résultat trop grand';
+
+  @override
+  String get semanticSin => 'Sinus';
+
+  @override
+  String get semanticCos => 'Cosinus';
+
+  @override
+  String get semanticTan => 'Tangente';
+
+  @override
+  String get semanticArcsin => 'Arc sinus';
+
+  @override
+  String get semanticArccos => 'Arc cosinus';
+
+  @override
+  String get semanticArctan => 'Arc tangente';
+
+  @override
+  String get semanticLog => 'Logarithme base 10';
+
+  @override
+  String get semanticLn => 'Logarithme népérien';
+
+  @override
+  String get semanticExp10 => '10 puissance x';
+
+  @override
+  String get semanticExpE => 'E puissance x';
+
+  @override
+  String get semanticSquare => 'Au carré';
+
+  @override
+  String get semanticCube => 'Au cube';
+
+  @override
+  String get semanticPower => 'X puissance y';
+
+  @override
+  String get semanticCubeRoot => 'Racine cubique';
+
+  @override
+  String get semanticSqrt => 'Racine carrée';
+
+  @override
+  String get semanticReciprocal => 'Un divisé par x';
+
+  @override
+  String get semanticAbsoluteValue => 'Valeur absolue';
+
+  @override
+  String get semanticFactorial => 'Factorielle';
+
+  @override
+  String get semanticPermutation => 'Permutation';
+
+  @override
+  String get semanticPi => 'Pi';
+
+  @override
+  String get semanticEuler => 'Nombre d\'Euler';
+
+  @override
+  String get semanticOpenParen => 'Parenthèse ouvrante';
+
+  @override
+  String get semanticCloseParen => 'Parenthèse fermante';
+
+  @override
+  String get semanticMemoryAdd => 'Ajouter à la mémoire';
+
+  @override
+  String get semanticMemorySubtract => 'Soustraire de la mémoire';
+
+  @override
+  String get semanticMemoryRecall => 'Rappeler la mémoire';
+
+  @override
+  String get semanticMemoryClear => 'Effacer la mémoire';
+
+  @override
+  String get semanticAngleModeToggle => 'Changer le mode d\'angle';
 }

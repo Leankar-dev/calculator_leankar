@@ -185,5 +185,137 @@
   "@adLoadingPlaceholder": { "description": "Placeholder text shown while ad is loading" },
 
   "adUnavailable": "Ad unavailable",
-  "@adUnavailable": { "description": "Text shown when ad fails to load" }
+  "@adUnavailable": { "description": "Text shown when ad fails to load" },
+
+  "drawerItemScientific": "Scientific Calculator",
+  "@drawerItemScientific": { "description": "End drawer menu item for scientific calculator" },
+
+  "scientificPageTitle": "Scientific Calculator",
+  "@scientificPageTitle": { "description": "AppBar title on scientific calculator page" },
+
+  "scientificAngleModeDeg": "DEG",
+  "@scientificAngleModeDeg": { "description": "Angle mode label — degrees" },
+
+  "scientificAngleModeRad": "RAD",
+  "@scientificAngleModeRad": { "description": "Angle mode label — radians" },
+
+  "scientificShift": "SHIFT",
+  "@scientificShift": { "description": "Shift button label on scientific keypad" },
+
+  "scientificMemoryAdd": "Memory Add",
+  "@scientificMemoryAdd": { "description": "Memory add label (long form)" },
+
+  "scientificMemorySubtract": "Memory Subtract",
+  "@scientificMemorySubtract": { "description": "Memory subtract label (long form)" },
+
+  "scientificMemoryRecall": "Memory Recall",
+  "@scientificMemoryRecall": { "description": "Memory recall label (long form)" },
+
+  "scientificMemoryClear": "Memory Clear",
+  "@scientificMemoryClear": { "description": "Memory clear label (long form)" },
+
+  "scientificErrorSyntax": "Syntax error",
+  "@scientificErrorSyntax": { "description": "Scientific calculator display error — malformed expression" },
+
+  "scientificErrorParens": "Unbalanced parentheses",
+  "@scientificErrorParens": { "description": "Scientific calculator display error — unbalanced parentheses" },
+
+  "scientificErrorDomain": "Math domain error",
+  "@scientificErrorDomain": { "description": "Scientific calculator display error — invalid math domain (e.g. log of a negative number)" },
+
+  "scientificErrorFactorialDomain": "Factorial requires a non-negative integer",
+  "@scientificErrorFactorialDomain": { "description": "Scientific calculator display error — factorial of negative or non-integer" },
+
+  "scientificErrorFactorialOverflow": "Value too large for factorial",
+  "@scientificErrorFactorialOverflow": { "description": "Scientific calculator display error — factorial argument greater than 170" },
+
+  "scientificErrorDivisionByZero": "Division by zero",
+  "@scientificErrorDivisionByZero": { "description": "Scientific calculator display error — division by zero" },
+
+  "scientificErrorOverflow": "Result too large",
+  "@scientificErrorOverflow": { "description": "Scientific calculator display error — result exceeds display limits" },
+
+  "semanticSin": "Sine",
+  "@semanticSin": { "description": "Accessibility label for sine button" },
+
+  "semanticCos": "Cosine",
+  "@semanticCos": { "description": "Accessibility label for cosine button" },
+
+  "semanticTan": "Tangent",
+  "@semanticTan": { "description": "Accessibility label for tangent button" },
+
+  "semanticArcsin": "Inverse sine",
+  "@semanticArcsin": { "description": "Accessibility label for inverse sine button" },
+
+  "semanticArccos": "Inverse cosine",
+  "@semanticArccos": { "description": "Accessibility label for inverse cosine button" },
+
+  "semanticArctan": "Inverse tangent",
+  "@semanticArctan": { "description": "Accessibility label for inverse tangent button" },
+
+  "semanticLog": "Base 10 logarithm",
+  "@semanticLog": { "description": "Accessibility label for base 10 logarithm button" },
+
+  "semanticLn": "Natural logarithm",
+  "@semanticLn": { "description": "Accessibility label for natural logarithm button" },
+
+  "semanticExp10": "10 to the power of x",
+  "@semanticExp10": { "description": "Accessibility label for 10^x button" },
+
+  "semanticExpE": "E to the power of x",
+  "@semanticExpE": { "description": "Accessibility label for e^x button" },
+
+  "semanticSquare": "Square",
+  "@semanticSquare": { "description": "Accessibility label for x squared button" },
+
+  "semanticCube": "Cube",
+  "@semanticCube": { "description": "Accessibility label for x cubed button" },
+
+  "semanticPower": "X to the power of y",
+  "@semanticPower": { "description": "Accessibility label for x^y button" },
+
+  "semanticCubeRoot": "Cube root",
+  "@semanticCubeRoot": { "description": "Accessibility label for cube root button" },
+
+  "semanticSqrt": "Square root",
+  "@semanticSqrt": { "description": "Accessibility label for square root button" },
+
+  "semanticReciprocal": "One divided by x",
+  "@semanticReciprocal": { "description": "Accessibility label for 1/x button" },
+
+  "semanticAbsoluteValue": "Absolute value",
+  "@semanticAbsoluteValue": { "description": "Accessibility label for |x| button" },
+
+  "semanticFactorial": "Factorial",
+  "@semanticFactorial": { "description": "Accessibility label for factorial button" },
+
+  "semanticPermutation": "Permutation",
+  "@semanticPermutation": { "description": "Accessibility label for nPr button" },
+
+  "semanticPi": "Pi",
+  "@semanticPi": { "description": "Accessibility label for pi constant button" },
+
+  "semanticEuler": "Euler's number",
+  "@semanticEuler": { "description": "Accessibility label for Euler's number constant button" },
+
+  "semanticOpenParen": "Open parenthesis",
+  "@semanticOpenParen": { "description": "Accessibility label for open parenthesis button" },
+
+  "semanticCloseParen": "Close parenthesis",
+  "@semanticCloseParen": { "description": "Accessibility label for close parenthesis button" },
+
+  "semanticMemoryAdd": "Memory add",
+  "@semanticMemoryAdd": { "description": "Accessibility label for memory add button" },
+
+  "semanticMemorySubtract": "Memory subtract",
+  "@semanticMemorySubtract": { "description": "Accessibility label for memory subtract button" },
+
+  "semanticMemoryRecall": "Memory recall",
+  "@semanticMemoryRecall": { "description": "Accessibility label for memory recall button" },
+
+  "semanticMemoryClear": "Memory clear",
+  "@semanticMemoryClear": { "description": "Accessibility label for memory clear button" },
+
+  "semanticAngleModeToggle": "Toggle angle mode",
+  "@semanticAngleModeToggle": { "description": "Accessibility label for DEG/RAD toggle button" }
 }

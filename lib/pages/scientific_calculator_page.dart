@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/scientific_calculator_controller.dart';
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
@@ -45,25 +46,25 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
     super.dispose();
   }
 
-  String _resolveDisplayText() {
+  String _resolveDisplayText(AppLocalizations l10n) {
     final errorType = _controller.state.errorType;
     if (errorType == null) return _controller.resultDisplay;
     switch (errorType) {
       case ScientificErrorType.syntaxError:
       case ScientificErrorType.emptyExpression:
-        return AppScientificStrings.errorSyntax;
+        return l10n.scientificErrorSyntax;
       case ScientificErrorType.unbalancedParens:
-        return AppScientificStrings.errorParens;
+        return l10n.scientificErrorParens;
       case ScientificErrorType.domainError:
-        return AppScientificStrings.errorDomain;
+        return l10n.scientificErrorDomain;
       case ScientificErrorType.factorialDomainError:
-        return AppScientificStrings.errorFactorialDomain;
+        return l10n.scientificErrorFactorialDomain;
       case ScientificErrorType.factorialOverflow:
-        return AppScientificStrings.errorFactorialOverflow;
+        return l10n.scientificErrorFactorialOverflow;
       case ScientificErrorType.divisionByZero:
-        return AppScientificStrings.errorDivisionByZero;
+        return l10n.scientificErrorDivisionByZero;
       case ScientificErrorType.overflow:
-        return AppScientificStrings.errorOverflow;
+        return l10n.scientificErrorOverflow;
     }
   }
 
@@ -205,6 +206,7 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: NeumorphicTheme.baseColor(context),
       appBar: NeumorphicAppBar(
@@ -221,9 +223,9 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
             color: AppColors.primaryText,
           ),
         ),
-        title: const Text(
-          AppScientificStrings.pageTitle,
-          style: TextStyle(
+        title: Text(
+          l10n.scientificPageTitle,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.primaryText,
           ),
@@ -240,7 +242,7 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
             builder: (context, child) {
               final isLandscape = ResponsiveUtils.isLandscape(context);
               final maxWidth = ResponsiveUtils.getMaxCalculatorWidth();
-              final resolvedDisplayText = _resolveDisplayText();
+              final resolvedDisplayText = _resolveDisplayText(l10n);
 
               return Center(
                 child: ConstrainedBox(
