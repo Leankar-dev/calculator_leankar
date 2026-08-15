@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/models/expression_token.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
@@ -13,6 +14,7 @@ class ScientificCalculatorState {
   final bool hasMemoryValue;
   final bool hasError;
   final ScientificErrorType? errorType;
+  final List<CalculationHistory> history;
 
   const ScientificCalculatorState({
     required this.tokens,
@@ -25,6 +27,7 @@ class ScientificCalculatorState {
     required this.hasMemoryValue,
     required this.hasError,
     this.errorType,
+    required this.history,
   });
 
   static ScientificCalculatorState initial() => const ScientificCalculatorState(
@@ -38,6 +41,7 @@ class ScientificCalculatorState {
     hasMemoryValue: false,
     hasError: false,
     errorType: null,
+    history: [],
   );
 
   ScientificCalculatorState copyWith({
@@ -52,6 +56,7 @@ class ScientificCalculatorState {
     bool? hasError,
     ScientificErrorType? errorType,
     bool clearErrorType = false,
+    List<CalculationHistory>? history,
   }) {
     return ScientificCalculatorState(
       tokens: tokens ?? this.tokens,
@@ -64,6 +69,7 @@ class ScientificCalculatorState {
       hasMemoryValue: hasMemoryValue ?? this.hasMemoryValue,
       hasError: hasError ?? this.hasError,
       errorType: clearErrorType ? null : (errorType ?? this.errorType),
+      history: history ?? this.history,
     );
   }
 }

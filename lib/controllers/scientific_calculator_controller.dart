@@ -1,7 +1,10 @@
 import 'package:calculator_05122025/controllers/scientific_calculator_state.dart';
+import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/models/expression_token.dart';
 import 'package:calculator_05122025/services/expression_evaluator_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/services/storage_service.dart';
+import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
@@ -13,6 +16,7 @@ import 'package:flutter/foundation.dart';
 class ScientificCalculatorController extends ChangeNotifier {
   final ExpressionEvaluatorService _evaluator;
   final LoggerService _logger;
+  final StorageService _storageService;
 
   static const String _powerSymbol = '^';
   static const String _permutationSymbol = 'P';
@@ -22,10 +26,14 @@ class ScientificCalculatorController extends ChangeNotifier {
   ScientificCalculatorController({
     ExpressionEvaluatorService? evaluator,
     LoggerService? logger,
+    StorageService? storageService,
   }) : _evaluator = evaluator ?? ExpressionEvaluatorService(),
-       _logger = logger ?? LoggerService.instance;
+       _logger = logger ?? LoggerService.instance,
+       _storageService = storageService ?? StorageService();
 
   ScientificCalculatorState get state => _state;
+
+  List<CalculationHistory> get history => List.unmodifiable(_state.history);
 
   String get expressionDisplay {
     if (_state.tokens.isEmpty) {
@@ -236,7 +244,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     _previewResult();
   }
 
-  void calculateResult() {
+  Future<void> calculateResult() async {
     if (_state.hasError) {
       return;
     }
@@ -252,6 +260,8 @@ class ScientificCalculatorController extends ChangeNotifier {
       _state.currentInput,
     );
 
+    var shouldPersistHistory = false;
+
     try {
       final result = _evaluator.evaluate(expression, _state.angleMode);
       final formatted = NumberFormatter.format(result);
@@ -260,10 +270,12 @@ class ScientificCalculatorController extends ChangeNotifier {
         currentInput: _toCanonicalNumberString(result),
         resultDisplay: formatted,
       );
+      _addToHistory(expression, formatted);
       _logger.debug(
         'Cálculo científico: $expression = $formatted',
         tag: 'ScientificCalculatorController',
       );
+      shouldPersistHistory = true;
     } on ScientificCalculationException catch (e) {
       _state = _state.copyWith(
         hasError: true,
@@ -279,6 +291,10 @@ class ScientificCalculatorController extends ChangeNotifier {
     }
 
     notifyListeners();
+
+    if (shouldPersistHistory) {
+      await _persistHistory();
+    }
   }
 
   void toggleShift() {
@@ -392,6 +408,85 @@ class ScientificCalculatorController extends ChangeNotifier {
   void memoryClear() {
     _state = _state.copyWith(memoryValue: 0, hasMemoryValue: false);
     notifyListeners();
+  }
+
+  Future<void> loadHistory() async {
+    final result = await _storageService.loadHistory(
+      key: AppStrings.prefScientificHistoryKey,
+    );
+
+    result.fold(
+      onSuccess: (loadedHistory) {
+        _state = _state.copyWith(history: loadedHistory);
+      },
+      onFailure: (error, details) {
+        _logger.warning(
+          'Falha ao carregar histórico científico: ${error.fullMessage}',
+          tag: 'ScientificCalculatorController',
+        );
+      },
+    );
+
+    notifyListeners();
+  }
+
+  void useHistoryResult(CalculationHistory item) {
+    final parsed = NumberFormatter.parse(item.result);
+    _state = _state.copyWith(
+      tokens: const [],
+      currentInput: parsed != null
+          ? _toCanonicalNumberString(parsed)
+          : item.result,
+      resultDisplay: item.result,
+      hasError: false,
+      clearErrorType: true,
+    );
+    notifyListeners();
+  }
+
+  Future<void> clearHistory() async {
+    _state = _state.copyWith(history: const []);
+    notifyListeners();
+
+    final result = await _storageService.clearHistory(
+      key: AppStrings.prefScientificHistoryKey,
+    );
+    if (result.isFailure) {
+      _logger.warning(
+        'Falha ao limpar histórico científico: ${result.errorFullMessage}',
+        tag: 'ScientificCalculatorController',
+      );
+    }
+  }
+
+  void _addToHistory(String expression, String result) {
+    final newEntry = CalculationHistory(
+      expression: expression,
+      result: result,
+      timestamp: DateTime.now().toUtc(),
+    );
+    final updated = [newEntry, ..._state.history];
+    final trimmed = updated.length > AppSizes.maxHistoryItems
+        ? updated.sublist(0, AppSizes.maxHistoryItems)
+        : updated;
+    _state = _state.copyWith(history: trimmed);
+  }
+
+  Future<void> _persistHistory() async {
+    final saveResult = await _storageService.saveHistory(
+      _state.history,
+      key: AppStrings.prefScientificHistoryKey,
+    );
+    saveResult.fold(
+      onSuccess: (_) => _logger.debug(
+        'Histórico científico salvo',
+        tag: 'ScientificCalculatorController',
+      ),
+      onFailure: (error, details) => _logger.warning(
+        'Falha ao salvar histórico científico: ${error.fullMessage}',
+        tag: 'ScientificCalculatorController',
+      ),
+    );
   }
 
   bool _expectsNewOperand() {

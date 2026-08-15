@@ -8,6 +8,7 @@ import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
+import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
 import 'package:calculator_05122025/widgets/scientific/scientific_display_indicators_widget.dart';
@@ -35,6 +36,20 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
     super.initState();
     _ownsController = widget.controller == null;
     _controller = widget.controller ?? ScientificCalculatorController();
+    _initializeController();
+  }
+
+  Future<void> _initializeController() async {
+    try {
+      await _controller.loadHistory();
+    } catch (e, stackTrace) {
+      logger.error(
+        'Erro ao inicializar controller',
+        tag: 'ScientificCalculatorPage',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
@@ -177,6 +192,19 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
     }
   }
 
+  void _showHistory() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => HistoryBottomSheet(
+        history: _controller.history,
+        onItemTap: _controller.useHistoryResult,
+        onClearHistory: _controller.clearHistory,
+      ),
+    );
+  }
+
   Widget _buildKeypad() {
     return ScientificKeypadWidget(
       angleMode: _controller.angleMode,
@@ -231,6 +259,18 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          NeumorphicButton(
+            onPressed: _showHistory,
+            style: const NeumorphicStyle(
+              boxShape: NeumorphicBoxShape.circle(),
+              depth: AppSizes.appBarMenuButtonDepth,
+              intensity: AppSizes.appBarMenuButtonIntensity,
+            ),
+            padding: const EdgeInsets.all(AppSizes.appBarMenuButtonPadding),
+            child: const Icon(Icons.history, color: AppColors.iconMuted),
+          ),
+        ],
       ),
       body: SafeArea(
         child: KeyboardListener(

@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/controllers/scientific_calculator_controller.dart';
+import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
@@ -7,18 +8,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../mocks/mock_expression_evaluator_service.dart';
 import '../mocks/mock_logger_service.dart';
+import '../mocks/mock_storage_service.dart';
 
 void main() {
   late ScientificCalculatorController controller;
   late MockExpressionEvaluatorService mockEvaluator;
   late MockLoggerService mockLogger;
+  late MockStorageService mockStorageService;
 
   setUp(() {
     mockEvaluator = MockExpressionEvaluatorService();
     mockLogger = MockLoggerService();
+    mockStorageService = MockStorageService();
     controller = ScientificCalculatorController(
       evaluator: mockEvaluator,
       logger: mockLogger,
+      storageService: mockStorageService,
     );
   });
 
@@ -543,6 +548,80 @@ void main() {
       test('guarda: não avalia logo após sinal unário', () {
         controller.setBinaryOperator('-');
         expect(mockEvaluator.callCount, 0);
+      });
+    });
+
+    group('Histórico', () {
+      test('loadHistory popula o histórico a partir do storage', () async {
+        await mockStorageService.saveHistory([
+          CalculationHistory(
+            expression: '2 + 2',
+            result: '4',
+            timestamp: DateTime.now().toUtc(),
+          ),
+        ], key: 'scientific_calculation_history');
+
+        await controller.loadHistory();
+
+        expect(controller.history.length, 1);
+        expect(controller.history.first.expression, '2 + 2');
+      });
+
+      test(
+        'calculateResult com sucesso adiciona uma entrada ao histórico e persiste',
+        () async {
+          mockEvaluator.resultToReturn = 5;
+          controller.appendNumber('2');
+          controller.setBinaryOperator('+');
+          controller.appendNumber('3');
+          await controller.calculateResult();
+
+          expect(controller.history.length, 1);
+          expect(controller.history.first.result, '5');
+
+          final persisted = await mockStorageService.loadHistory(
+            key: 'scientific_calculation_history',
+          );
+          expect(persisted.value.length, 1);
+        },
+      );
+
+      test('calculateResult com erro não adiciona ao histórico', () async {
+        mockEvaluator.exceptionToThrow = const ScientificCalculationException(
+          ScientificErrorType.syntaxError,
+        );
+        controller.appendNumber('2');
+        controller.setBinaryOperator('+');
+        controller.appendNumber('3');
+        await controller.calculateResult();
+
+        expect(controller.history, isEmpty);
+      });
+
+      test(
+        'clearHistory esvazia o histórico em memória e persiste a limpeza',
+        () async {
+          mockEvaluator.resultToReturn = 5;
+          controller.appendNumber('5');
+          await controller.calculateResult();
+          expect(controller.history.length, 1);
+
+          await controller.clearHistory();
+
+          expect(controller.history, isEmpty);
+        },
+      );
+
+      test('useHistoryResult carrega o resultado de volta para edição', () {
+        final item = CalculationHistory(
+          expression: '3 × 4',
+          result: '12',
+          timestamp: DateTime.now().toUtc(),
+        );
+        controller.useHistoryResult(item);
+
+        expect(controller.resultDisplay, '12');
+        expect(controller.hasError, false);
       });
     });
   });

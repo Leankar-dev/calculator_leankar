@@ -8,11 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StorageService {
   static const String _historyKey = AppStrings.prefHistoryKey;
 
-  Future<Result<bool>> saveHistory(List<CalculationHistory> history) async {
+  Future<Result<bool>> saveHistory(
+    List<CalculationHistory> history, {
+    String key = _historyKey,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = CalculationHistory.encodeList(history);
-      final success = await prefs.setString(_historyKey, jsonString);
+      final success = await prefs.setString(key, jsonString);
 
       if (success) {
         logger.logStorage(
@@ -36,10 +39,12 @@ class StorageService {
     }
   }
 
-  Future<Result<List<CalculationHistory>>> loadHistory() async {
+  Future<Result<List<CalculationHistory>>> loadHistory({
+    String key = _historyKey,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_historyKey);
+      final jsonString = prefs.getString(key);
 
       if (jsonString == null || jsonString.isEmpty) {
         logger.logStorage('Histórico carregado', details: 'Vazio');
@@ -59,7 +64,7 @@ class StorageService {
           'Dados corrompidos detectados, limpando histórico',
           tag: 'StorageService',
         );
-        await _clearCorruptedData(prefs);
+        await _clearCorruptedData(prefs, key);
         return Result.failure(result.error!, result.errorDetails);
       }
     } catch (e, stackTrace) {
@@ -74,10 +79,10 @@ class StorageService {
     }
   }
 
-  Future<Result<bool>> clearHistory() async {
+  Future<Result<bool>> clearHistory({String key = _historyKey}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final success = await prefs.remove(_historyKey);
+      final success = await prefs.remove(key);
 
       if (success) {
         logger.logStorage('Histórico limpo');
@@ -98,9 +103,9 @@ class StorageService {
     }
   }
 
-  Future<void> _clearCorruptedData(SharedPreferences prefs) async {
+  Future<void> _clearCorruptedData(SharedPreferences prefs, String key) async {
     try {
-      await prefs.remove(_historyKey);
+      await prefs.remove(key);
       logger.debug('Dados corrompidos removidos', tag: 'StorageService');
     } catch (e) {
       logger.warning(

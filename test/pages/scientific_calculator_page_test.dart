@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/pages/scientific_calculator_page.dart';
 import 'package:calculator_05122025/widgets/calculator_display_widget.dart';
+import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/scientific/scientific_keypad_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -137,6 +138,24 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(findInDisplay('0'), findsOneWidget);
+    });
+
+    testWidgets('deve exibir botão de histórico na AppBar', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+
+      expect(find.byIcon(Icons.history), findsOneWidget);
+    });
+
+    testWidgets('deve abrir o bottom sheet de histórico ao tocar no ícone', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.history));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(HistoryBottomSheet), findsOneWidget);
     });
   });
 }

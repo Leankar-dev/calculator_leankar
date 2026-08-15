@@ -30,6 +30,8 @@ class AppStrings {
   static const String prefThemeModeKey = 'theme_mode';
   static const String prefLocaleKey = 'locale';
   static const String prefHistoryKey = 'calculation_history';
+  static const String prefScientificHistoryKey =
+      'scientific_calculation_history';
   static const String prefAdConsentKey = 'ad_consent_can_request';
   static const String prefLastAppBuildNumberKey = 'last_app_build_number';
 
