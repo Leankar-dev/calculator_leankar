@@ -15,6 +15,7 @@ class ScientificCalculatorState {
   final bool hasError;
   final ScientificErrorType? errorType;
   final List<CalculationHistory> history;
+  final bool shouldResetCurrentInput;
 
   const ScientificCalculatorState({
     required this.tokens,
@@ -28,6 +29,7 @@ class ScientificCalculatorState {
     required this.hasError,
     this.errorType,
     required this.history,
+    required this.shouldResetCurrentInput,
   });
 
   static ScientificCalculatorState initial() => const ScientificCalculatorState(
@@ -42,6 +44,7 @@ class ScientificCalculatorState {
     hasError: false,
     errorType: null,
     history: [],
+    shouldResetCurrentInput: false,
   );
 
   ScientificCalculatorState copyWith({
@@ -57,6 +60,7 @@ class ScientificCalculatorState {
     ScientificErrorType? errorType,
     bool clearErrorType = false,
     List<CalculationHistory>? history,
+    bool? shouldResetCurrentInput,
   }) {
     return ScientificCalculatorState(
       tokens: tokens ?? this.tokens,
@@ -70,6 +74,8 @@ class ScientificCalculatorState {
       hasError: hasError ?? this.hasError,
       errorType: clearErrorType ? null : (errorType ?? this.errorType),
       history: history ?? this.history,
+      shouldResetCurrentInput:
+          shouldResetCurrentInput ?? this.shouldResetCurrentInput,
     );
   }
 }

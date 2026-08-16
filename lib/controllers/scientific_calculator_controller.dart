@@ -58,6 +58,15 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (_state.hasError) {
       _resetCurrentExpression();
     }
+    if (_state.shouldResetCurrentInput) {
+      _state = _state.copyWith(
+        currentInput: digit,
+        shouldResetCurrentInput: false,
+      );
+      notifyListeners();
+      _previewResult();
+      return;
+    }
     final updatedInput = _state.currentInput.isEmpty
         ? digit
         : _state.currentInput + digit;
@@ -69,6 +78,16 @@ class ScientificCalculatorController extends ChangeNotifier {
   void appendDecimal() {
     if (_state.hasError) {
       _resetCurrentExpression();
+    }
+    if (_state.shouldResetCurrentInput) {
+      _state = _state.copyWith(
+        currentInput:
+            '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}',
+        shouldResetCurrentInput: false,
+      );
+      notifyListeners();
+      _previewResult();
+      return;
     }
     if (_state.currentInput.contains(AppStrings.decimalSeparator)) {
       return;
@@ -84,7 +103,10 @@ class ScientificCalculatorController extends ChangeNotifier {
   }
 
   void calculatePercentage() {
-    if (_state.hasError || _state.currentInput.isEmpty) {
+    if (_state.hasError) {
+      _resetCurrentExpression();
+    }
+    if (_state.currentInput.isEmpty) {
       return;
     }
     final value = NumberFormatter.parse(_state.currentInput);
@@ -93,6 +115,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     }
     _state = _state.copyWith(
       currentInput: _toCanonicalNumberString(value / 100),
+      shouldResetCurrentInput: true,
     );
     notifyListeners();
     _previewResult();
@@ -271,6 +294,7 @@ class ScientificCalculatorController extends ChangeNotifier {
         tokens: const [],
         currentInput: _toCanonicalNumberString(result),
         resultDisplay: formatted,
+        shouldResetCurrentInput: true,
       );
       _addToHistory(expression, formatted);
       _logger.debug(
@@ -285,6 +309,7 @@ class ScientificCalculatorController extends ChangeNotifier {
         tokens: const [],
         currentInput: '',
         resultDisplay: AppStrings.initialDisplayValue,
+        shouldResetCurrentInput: false,
       );
       _logger.warning(
         'Erro no cálculo científico "$expression": ${e.errorType}',
@@ -335,7 +360,10 @@ class ScientificCalculatorController extends ChangeNotifier {
         0,
         _state.currentInput.length - 1,
       );
-      _state = _state.copyWith(currentInput: trimmed);
+      _state = _state.copyWith(
+        currentInput: trimmed,
+        shouldResetCurrentInput: false,
+      );
       notifyListeners();
       _previewResult();
       return;
@@ -471,7 +499,10 @@ class ScientificCalculatorController extends ChangeNotifier {
       if (_state.hasError) {
         _resetCurrentExpression();
       }
-      _state = _state.copyWith(currentInput: _toCanonicalNumberString(parsed));
+      _state = _state.copyWith(
+        currentInput: _toCanonicalNumberString(parsed),
+        shouldResetCurrentInput: true,
+      );
       _logger.info(
         'Valor colado: ${_state.currentInput}',
         tag: 'ScientificCalculatorController',
@@ -518,6 +549,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       resultDisplay: item.result,
       hasError: false,
       clearErrorType: true,
+      shouldResetCurrentInput: true,
     );
     notifyListeners();
   }
@@ -738,6 +770,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       resultDisplay: AppStrings.initialDisplayValue,
       hasError: false,
       clearErrorType: true,
+      shouldResetCurrentInput: false,
     );
   }
 

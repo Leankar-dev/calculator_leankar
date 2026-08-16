@@ -24,6 +24,7 @@ class ShuntingYardService {
           output.add(token);
           break;
         case TokenType.unaryFunction:
+        case TokenType.unaryMinus:
           operatorStack.add(token);
           break;
         case TokenType.postfixOperator:
@@ -34,7 +35,6 @@ class ShuntingYardService {
           output.add(token);
           break;
         case TokenType.binaryOperator:
-        case TokenType.unaryMinus:
           while (operatorStack.isNotEmpty &&
               operatorStack.last.type != TokenType.openParen &&
               _shouldPopBeforePushing(operatorStack.last, token)) {
@@ -90,9 +90,6 @@ class ShuntingYardService {
   }
 
   bool _isLeftAssociative(ExpressionToken token) {
-    if (token.type == TokenType.unaryMinus) {
-      return false;
-    }
     if (token.type == TokenType.binaryOperator &&
         _rightAssociativeOperators.contains(token.value)) {
       return false;

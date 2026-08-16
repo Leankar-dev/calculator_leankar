@@ -152,6 +152,10 @@ void main() {
       expect(evaluator.evaluate('---3', AngleMode.deg), -3);
     });
 
+    test('expoente negativo digitado após ^: 2^-3 = 0,125', () {
+      expect(evaluator.evaluate('2^-3', AngleMode.deg), closeTo(0.125, 1e-9));
+    });
+
     test(
       'inversa trig dentro de expressão maior: asin(0,5) + 10 = 40 em DEG',
       () {

@@ -203,6 +203,24 @@ void main() {
       },
     );
 
+    test(
+      'sinal unário logo após operador direita-associativo não faz pop prematuro: 2^-3 vira 2 3 neg ^',
+      () {
+        final rpn = shuntingYard.toRpn([
+          _number('2'),
+          _op('^'),
+          _unaryMinus(),
+          _number('3'),
+        ]);
+        expectRpn(rpn, [
+          (TokenType.number, '2'),
+          (TokenType.number, '3'),
+          (TokenType.unaryMinus, '-'),
+          (TokenType.binaryOperator, '^'),
+        ]);
+      },
+    );
+
     test('sinal unário encadeado: ---3', () {
       final rpn = shuntingYard.toRpn([
         _unaryMinus(),

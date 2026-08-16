@@ -117,6 +117,18 @@ void main() {
         controller.calculatePercentage();
         expect(controller.expressionDisplay, '');
       });
+
+      test('em estado de erro, limpa o erro assim como os demais botões', () {
+        mockEvaluator.exceptionToThrow = const ScientificCalculationException(
+          ScientificErrorType.syntaxError,
+        );
+        controller.appendNumber('1');
+        controller.calculateResult();
+        expect(controller.hasError, true);
+
+        controller.calculatePercentage();
+        expect(controller.hasError, false);
+      });
     });
 
     group('openParen / closeParen', () {
@@ -309,6 +321,56 @@ void main() {
         controller.appendNumber('3');
         expect(mockEvaluator.lastExpression, '5 × 3');
       });
+
+      test(
+        'dígito digitado logo após = começa um número novo em vez de grudar no resultado anterior',
+        () {
+          mockEvaluator.resultToReturn = 5;
+          controller.appendNumber('2');
+          controller.setBinaryOperator('+');
+          controller.appendNumber('3');
+          controller.calculateResult();
+          expect(controller.resultDisplay, '5');
+
+          mockEvaluator.resultToReturn = 7;
+          controller.appendNumber('7');
+          expect(mockEvaluator.lastExpression, '7');
+        },
+      );
+
+      test(
+        'decimal digitado logo após = começa um número novo (0,) em vez de anexar ao resultado anterior',
+        () {
+          mockEvaluator.resultToReturn = 5;
+          controller.appendNumber('2');
+          controller.setBinaryOperator('+');
+          controller.appendNumber('3');
+          controller.calculateResult();
+
+          mockEvaluator.resultToReturn = 0.5;
+          controller.appendDecimal();
+          controller.appendNumber('5');
+          expect(mockEvaluator.lastExpression, '0,5');
+        },
+      );
+
+      test(
+        'backspace editando o resultado herdado permite continuar digitando por cima sem resetar',
+        () {
+          mockEvaluator.resultToReturn = 15;
+          controller.appendNumber('1');
+          controller.appendNumber('5');
+          controller.setBinaryOperator('+');
+          controller.appendNumber('0');
+          controller.calculateResult();
+          expect(controller.resultDisplay, '15');
+
+          controller.backspace();
+          mockEvaluator.resultToReturn = 12;
+          controller.appendNumber('2');
+          expect(mockEvaluator.lastExpression, '12');
+        },
+      );
 
       test(
         'erro: liga hasError e não altera resultDisplay/expressionDisplay para o inválido',
