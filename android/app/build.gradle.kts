@@ -56,3 +56,8 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation("com.unity3d.ads-mediation:unityads-adapter:5.12.0")
+    implementation("com.unity3d.ads:unity-ads:4.20.0")
+}
