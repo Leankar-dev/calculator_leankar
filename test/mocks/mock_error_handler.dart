@@ -12,11 +12,11 @@ class MockErrorHandler extends ErrorHandler {
   }
 
   @override
-  Result<double> parseDouble(String value, {String decimalSeparator = ','}) {
+  Result<double> parseDouble(String value) {
     if (value.isEmpty) {
       return Result.failure(ErrorType.invalidNumber, 'Valor vazio');
     }
-    final cleaned = value.replaceAll('.', '').replaceAll(decimalSeparator, '.');
+    final cleaned = value.replaceAll('.', '').replaceAll(',', '.');
     final parsed = double.tryParse(cleaned);
     if (parsed == null) {
       return Result.failure(ErrorType.invalidNumber, 'Inválido: $value');
@@ -28,32 +28,6 @@ class MockErrorHandler extends ErrorHandler {
   Result<double> safeDivide(double dividend, double divisor) {
     if (divisor == 0) return Result.failure(ErrorType.divisionByZero);
     return validateCalculationResult(dividend / divisor);
-  }
-
-  @override
-  Result<T> tryExecute<T>(
-    T Function() operation, {
-    ErrorType defaultError = ErrorType.unknown,
-    String? tag,
-  }) {
-    try {
-      return Result.success(operation());
-    } catch (e) {
-      return Result.failure(defaultError, e.toString());
-    }
-  }
-
-  @override
-  Future<Result<T>> tryExecuteAsync<T>(
-    Future<T> Function() operation, {
-    ErrorType defaultError = ErrorType.unknown,
-    String? tag,
-  }) async {
-    try {
-      return Result.success(await operation());
-    } catch (e) {
-      return Result.failure(defaultError, e.toString());
-    }
   }
 
   @override

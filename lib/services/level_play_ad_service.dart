@@ -9,9 +9,29 @@ import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 class LevelPlayAdService {
   static final LevelPlayAdService instance = LevelPlayAdService();
 
+  static const Duration _initializationTimeout = Duration(seconds: 15);
+
   LevelPlayAdService();
 
-  Future<Result<LevelPlayConfiguration>> initialize() async {
+  Future<Result<LevelPlayConfiguration>>? _initialization;
+
+  Future<Result<LevelPlayConfiguration>> initialize() {
+    final pendingInitialization = _initialization;
+    if (pendingInitialization != null) {
+      return pendingInitialization;
+    }
+
+    final initialization = _initializeSdk().then((result) {
+      if (result.isFailure) {
+        _initialization = null;
+      }
+      return result;
+    });
+    _initialization = initialization;
+    return initialization;
+  }
+
+  Future<Result<LevelPlayConfiguration>> _initializeSdk() async {
     final completer = Completer<Result<LevelPlayConfiguration>>();
 
     try {
@@ -31,7 +51,19 @@ class LevelPlayAdService {
       return Result.failure(ErrorType.adInitError, e.toString());
     }
 
-    return completer.future;
+    return completer.future.timeout(
+      _initializationTimeout,
+      onTimeout: () {
+        logger.warning(
+          'Tempo esgotado aguardando a inicialização do SDK',
+          tag: 'LevelPlayAdService',
+        );
+        return Result.failure(
+          ErrorType.adInitError,
+          'Tempo esgotado aguardando a inicialização',
+        );
+      },
+    );
   }
 }
 

@@ -53,7 +53,7 @@ docs/
 android/key.properties
 *.jks
 *.keystore
-android\app\build.gradle.kts
 
 .env
+lib/utils/env/app_env.g.dart
  

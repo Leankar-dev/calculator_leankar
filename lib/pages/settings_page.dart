@@ -1,8 +1,12 @@
+import 'package:calculator_05122025/controllers/ad_consent_controller.dart';
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
+import 'package:calculator_05122025/utils/ad_platform_support.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/widgets/app_bar_title_widget.dart';
+import 'package:calculator_05122025/widgets/settings/ad_consent_settings_widget.dart';
 import 'package:calculator_05122025/widgets/settings/app_info_card_widget.dart';
 import 'package:calculator_05122025/widgets/settings/language_selector_widget.dart';
 import 'package:calculator_05122025/widgets/settings/theme_selector_widget.dart';
@@ -10,8 +14,13 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class SettingsPage extends StatelessWidget {
   final SettingsController controller;
+  final AdConsentController? adConsentController;
 
-  const SettingsPage({super.key, required this.controller});
+  const SettingsPage({
+    super.key,
+    required this.controller,
+    this.adConsentController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +41,7 @@ class SettingsPage extends StatelessWidget {
             color: AppColors.primaryText,
           ),
         ),
-        title: Text(
-          l10n.settingsPageTitle,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryText,
-          ),
-        ),
+        title: AppBarTitleWidget(text: l10n.settingsPageTitle),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -52,6 +55,13 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: AppSizes.settingsSectionSpacing),
               LanguageSelectorWidget(controller: controller),
               const SizedBox(height: AppSizes.settingsSectionSpacing),
+              if (AdPlatformSupport.isSupported) ...[
+                AdConsentSettingsWidget(
+                  controller:
+                      adConsentController ?? AdConsentController.instance,
+                ),
+                const SizedBox(height: AppSizes.settingsSectionSpacing),
+              ],
               const AppInfoCardWidget(),
               const SizedBox(height: AppSizes.settingsBottomSpacing),
             ],

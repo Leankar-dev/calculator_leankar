@@ -16,58 +16,61 @@ class AdConsentDialogWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          boxShape: NeumorphicBoxShape.roundRect(
-            BorderRadius.circular(AppSizes.adConsentDialogBorderRadius),
+    return PopScope(
+      canPop: false,
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        child: Neumorphic(
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.roundRect(
+              BorderRadius.circular(AppSizes.adConsentDialogBorderRadius),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(AppSizes.adConsentDialogPadding),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.adConsentDialogTitle,
-              style: TextStyle(
-                fontSize: AppSizes.adConsentDialogTitleFontSize,
-                fontWeight: FontWeight.bold,
-                color: NeumorphicTheme.defaultTextColor(context),
-              ),
-            ),
-            const SizedBox(height: AppSizes.adConsentDialogTitleBodySpacing),
-            Text(
-              l10n.adConsentDialogBody,
-              style: TextStyle(
-                fontSize: AppSizes.adConsentDialogBodyFontSize,
-                color: NeumorphicTheme.defaultTextColor(context),
-              ),
-            ),
-            const SizedBox(
-              height: AppSizes.adConsentDialogBodyButtonsSpacing,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: _AdConsentDialogButton(
-                    label: l10n.adConsentDecline,
-                    color: AppColors.clearButton,
-                    onPressed: () => _submit(context, false),
-                  ),
+          padding: const EdgeInsets.all(AppSizes.adConsentDialogPadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.adConsentDialogTitle,
+                style: TextStyle(
+                  fontSize: AppSizes.adConsentDialogTitleFontSize,
+                  fontWeight: FontWeight.bold,
+                  color: NeumorphicTheme.defaultTextColor(context),
                 ),
-                const SizedBox(width: AppSizes.adConsentDialogButtonSpacing),
-                Expanded(
-                  child: _AdConsentDialogButton(
-                    label: l10n.adConsentAccept,
-                    color: AppColors.equalsButton,
-                    onPressed: () => _submit(context, true),
-                  ),
+              ),
+              const SizedBox(height: AppSizes.adConsentDialogTitleBodySpacing),
+              Text(
+                l10n.adConsentDialogBody,
+                style: TextStyle(
+                  fontSize: AppSizes.adConsentDialogBodyFontSize,
+                  color: NeumorphicTheme.defaultTextColor(context),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(
+                height: AppSizes.adConsentDialogBodyButtonsSpacing,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _AdConsentDialogButton(
+                      label: l10n.adConsentDecline,
+                      color: AppColors.clearButton,
+                      onPressed: () => _submit(context, false),
+                    ),
+                  ),
+                  const SizedBox(width: AppSizes.adConsentDialogButtonSpacing),
+                  Expanded(
+                    child: _AdConsentDialogButton(
+                      label: l10n.adConsentAccept,
+                      color: AppColors.equalsButton,
+                      onPressed: () => _submit(context, true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

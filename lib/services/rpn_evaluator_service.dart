@@ -1,16 +1,22 @@
 import 'dart:math' as math;
 
 import 'package:calculator_05122025/models/expression_token.dart';
-import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/services/trigonometry_service.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
+import 'package:calculator_05122025/utils/numeric_precision.dart';
 
 class RpnEvaluatorService {
   static const int _maxFactorialInput = 170;
   static const double _integerTolerance = 1e-9;
+
+  final TrigonometryService _trigonometry;
+
+  RpnEvaluatorService({TrigonometryService? trigonometry})
+    : _trigonometry = trigonometry ?? TrigonometryService();
 
   double evaluate(List<ExpressionToken> rpn, AngleMode angleMode) {
     final stack = <double>[];
@@ -19,24 +25,18 @@ class RpnEvaluatorService {
       switch (token.type) {
         case TokenType.number:
           stack.add(_parseNumber(token.value));
-          break;
         case TokenType.constant:
           stack.add(_constantValue(token.value));
-          break;
         case TokenType.unaryMinus:
           stack.add(-_pop(stack));
-          break;
         case TokenType.postfixOperator:
           stack.add(_applyPostfix(token.value, _pop(stack)));
-          break;
         case TokenType.unaryFunction:
           stack.add(_applyFunction(token.value, _pop(stack), angleMode));
-          break;
         case TokenType.binaryOperator:
           final right = _pop(stack);
           final left = _pop(stack);
           stack.add(_applyBinaryOperator(token.value, left, right));
-          break;
         case TokenType.openParen:
         case TokenType.closeParen:
           throw const ScientificCalculationException(
@@ -51,7 +51,7 @@ class RpnEvaluatorService {
       );
     }
 
-    final result = stack.single;
+    final result = NumericPrecision.roundToSignificantDigits(stack.single);
     _validateResult(result);
     return result;
   }
@@ -87,34 +87,20 @@ class RpnEvaluatorService {
     );
   }
 
-  double _degreesToRadians(double degrees) => degrees * math.pi / 180;
-
-  double _radiansToDegrees(double radians) => radians * 180 / math.pi;
-
-  double _toRadiansIfNeeded(double value, AngleMode angleMode) {
-    return angleMode == AngleMode.deg ? _degreesToRadians(value) : value;
-  }
-
-  double _fromRadiansIfNeeded(double value, AngleMode angleMode) {
-    return angleMode == AngleMode.deg ? _radiansToDegrees(value) : value;
-  }
-
   double _applyFunction(String name, double operand, AngleMode angleMode) {
     switch (name) {
       case 'sin':
-        return math.sin(_toRadiansIfNeeded(operand, angleMode));
+        return _trigonometry.sin(operand, angleMode);
       case 'cos':
-        return math.cos(_toRadiansIfNeeded(operand, angleMode));
+        return _trigonometry.cos(operand, angleMode);
       case 'tan':
-        return math.tan(_toRadiansIfNeeded(operand, angleMode));
+        return _trigonometry.tan(operand, angleMode);
       case 'asin':
-        _requireDomain(operand >= -1 && operand <= 1);
-        return _fromRadiansIfNeeded(math.asin(operand), angleMode);
+        return _trigonometry.asin(operand, angleMode);
       case 'acos':
-        _requireDomain(operand >= -1 && operand <= 1);
-        return _fromRadiansIfNeeded(math.acos(operand), angleMode);
+        return _trigonometry.acos(operand, angleMode);
       case 'atan':
-        return _fromRadiansIfNeeded(math.atan(operand), angleMode);
+        return _trigonometry.atan(operand, angleMode);
       case 'log':
         _requireDomain(operand > 0);
         return math.log(operand) / math.ln10;
@@ -160,6 +146,11 @@ class RpnEvaluatorService {
   }
 
   double _factorial(double value) {
+    if (!value.isFinite) {
+      throw const ScientificCalculationException(
+        ScientificErrorType.factorialOverflow,
+      );
+    }
     final isInteger = (value - value.round()).abs() < _integerTolerance;
     if (!isInteger || value < 0) {
       throw const ScientificCalculationException(
@@ -182,9 +173,17 @@ class RpnEvaluatorService {
   double _applyBinaryOperator(String symbol, double left, double right) {
     switch (symbol) {
       case '+':
-        return left + right;
+        return NumericPrecision.snapCancellationToZero(
+          result: left + right,
+          left: left,
+          right: right,
+        );
       case '-':
-        return left - right;
+        return NumericPrecision.snapCancellationToZero(
+          result: left - right,
+          left: left,
+          right: right,
+        );
       case '×':
         return left * right;
       case '÷':
@@ -206,6 +205,7 @@ class RpnEvaluatorService {
   }
 
   double _permutation(double n, double r) {
+    _requireDomain(n.isFinite && r.isFinite);
     final nIsInteger = (n - n.round()).abs() < _integerTolerance;
     final rIsInteger = (r - r.round()).abs() < _integerTolerance;
     if (!nIsInteger || !rIsInteger || n < 0 || r < 0 || r > n) {
@@ -236,7 +236,7 @@ class RpnEvaluatorService {
         ScientificErrorType.domainError,
       );
     }
-    if (result.isInfinite || result.abs() > AppStrings.maxDisplayValue) {
+    if (result.isInfinite) {
       throw const ScientificCalculationException(
         ScientificErrorType.overflow,
       );

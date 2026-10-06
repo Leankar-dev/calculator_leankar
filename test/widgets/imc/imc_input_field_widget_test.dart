@@ -67,5 +67,27 @@ void main() {
         const TextInputType.numberWithOptions(decimal: true),
       );
     });
+
+    testWidgets('deve aceitar dígitos, vírgula e ponto', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+
+      await tester.enterText(find.byType(TextField), '70,5');
+      expect(textController.text, '70,5');
+
+      await tester.enterText(find.byType(TextField), '70.5');
+      expect(textController.text, '70.5');
+    });
+
+    testWidgets('deve descartar letras e símbolos digitados ou colados', (
+      tester,
+    ) async {
+      await tester.pumpWidget(buildTestWidget());
+
+      await tester.enterText(find.byType(TextField), 'NaN');
+      expect(textController.text, '');
+
+      await tester.enterText(find.byType(TextField), '7a0e-1');
+      expect(textController.text, '701');
+    });
   });
 }

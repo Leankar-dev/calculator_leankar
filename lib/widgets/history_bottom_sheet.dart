@@ -22,7 +22,7 @@ class HistoryBottomSheet extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(
         maxHeight:
-            MediaQuery.of(context).size.height *
+            MediaQuery.sizeOf(context).height *
             AppSizes.historySheetMaxHeightRatio,
       ),
       decoration: BoxDecoration(

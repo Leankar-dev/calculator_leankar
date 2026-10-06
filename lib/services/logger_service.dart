@@ -20,11 +20,7 @@ class LoggerService {
   static final LoggerService _instance = LoggerService();
   static LoggerService get instance => _instance;
 
-  LogLevel _minLevel = kDebugMode ? LogLevel.debug : LogLevel.warning;
-
-  void setMinLevel(LogLevel level) {
-    _minLevel = level;
-  }
+  final LogLevel _minLevel = kDebugMode ? LogLevel.debug : LogLevel.warning;
 
   void debug(String message, {String? tag, Object? data}) {
     _log(LogLevel.debug, message, tag: tag, data: data);

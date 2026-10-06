@@ -10,13 +10,16 @@ import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
+import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
+import 'package:calculator_05122025/utils/enums/calculator_key_action.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
-import 'package:calculator_05122025/utils/enums/paste_result.dart';
-import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
+import 'package:calculator_05122025/utils/keyboard/calculator_key_resolver.dart';
+import 'package:calculator_05122025/utils/mixins/clipboard_feedback_mixin.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/ads/ad_banner_footer_widget.dart';
 import 'package:calculator_05122025/widgets/ads/ad_consent_dialog_widget.dart';
+import 'package:calculator_05122025/widgets/app_bar_title_widget.dart';
 import 'package:calculator_05122025/widgets/app_drawer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_footer_widget.dart';
 import 'package:calculator_05122025/widgets/calculator_keypad_widget.dart';
@@ -35,7 +38,8 @@ class CalculatorPage extends StatefulWidget {
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
 
-class _CalculatorPageState extends State<CalculatorPage> {
+class _CalculatorPageState extends State<CalculatorPage>
+    with ClipboardFeedbackMixin<CalculatorPage> {
   late final CalculatorController _controller;
   late final bool _ownsController;
   final FocusNode _focusNode = FocusNode();
@@ -94,18 +98,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
     super.dispose();
   }
 
-  Widget _buildKeypad() {
-    return CalculatorKeypadWidget(
-      onClear: _controller.clearDisplay,
-      onBackspace: _controller.backspace,
-      onPercentage: _controller.calculatePercentage,
-      onDecimal: _controller.appendDecimal,
-      onCalculate: _controller.calculateResult,
-      onNumberPressed: _controller.appendNumber,
-      onOperationPressed: _controller.setOperationType,
-    );
-  }
-
   void _navigateToImc() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -143,16 +135,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
     );
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 1),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   String _resolveDisplayText(AppLocalizations l10n) {
     final errorType = _controller.state.errorType;
     if (errorType == null) return _controller.displayText;
@@ -171,108 +153,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
+
     try {
-      if (event is! KeyDownEvent) return;
-
-      final String? key = event.character;
-      final LogicalKeyboardKey logicalKey = event.logicalKey;
-
-      final isControlPressed =
-          HardwareKeyboard.instance.isControlPressed ||
-          HardwareKeyboard.instance.isMetaPressed;
-
-      if (isControlPressed) {
-        if (logicalKey == LogicalKeyboardKey.keyC) {
-          _controller.copyToClipboard().then((success) {
-            if (success && mounted) {
-              _showSnackBar(AppLocalizations.of(context).snackbarValueCopied);
-            }
-          });
-          return;
-        }
-        if (logicalKey == LogicalKeyboardKey.keyV) {
-          _controller.pasteFromClipboard().then((result) {
-            if (result == PasteResult.success || !mounted) return;
-            final l10n = AppLocalizations.of(context);
-            switch (result) {
-              case PasteResult.emptyClipboard:
-                _showSnackBar(l10n.snackbarEmptyClipboard);
-                break;
-              case PasteResult.invalidFormat:
-                _showSnackBar(l10n.snackbarInvalidPaste);
-                break;
-              case PasteResult.outOfRange:
-                _showSnackBar(l10n.snackbarOutOfRange);
-                break;
-              case PasteResult.success:
-                break;
-            }
-          });
-          return;
-        }
-      }
-
-      if (logicalKey == LogicalKeyboardKey.enter ||
-          logicalKey == LogicalKeyboardKey.numpadEnter) {
-        _controller.calculateResult();
+      final action = CalculatorKeyResolver.resolve(event);
+      if (action != null) {
+        _runKeyAction(action, event.character);
         return;
       }
-
-      if (logicalKey == LogicalKeyboardKey.backspace) {
-        _controller.backspace();
-        return;
-      }
-
-      if (logicalKey == LogicalKeyboardKey.escape ||
-          logicalKey == LogicalKeyboardKey.delete) {
-        _controller.clearDisplay();
-        return;
-      }
-
-      if (key != null && RegExp(r'^[0-9]$').hasMatch(key)) {
-        _controller.appendNumber(key);
-        return;
-      }
-
-      if (key == AppStrings.additionSymbol) {
-        _controller.setOperationType(OperationsType.addition);
-        return;
-      }
-      if (key == AppStrings.subtractionSymbol) {
-        _controller.setOperationType(OperationsType.subtraction);
-        return;
-      }
-      if (key == AppStrings.keyboardAsterisk ||
-          key == AppStrings.keyboardXLower ||
-          key == AppStrings.keyboardXUpper) {
-        _controller.setOperationType(OperationsType.multiplication);
-        return;
-      }
-      if (key == AppStrings.keyboardSlash) {
-        _controller.setOperationType(OperationsType.division);
-        return;
-      }
-
-      if (key == AppStrings.decimalSeparator || key == AppStrings.keyboardDot) {
-        _controller.appendDecimal();
-        return;
-      }
-
-      if (key == AppStrings.equalsButtonText) {
-        _controller.calculateResult();
-        return;
-      }
-
-      if (key == AppStrings.percentSymbol) {
-        _controller.calculatePercentage();
-        return;
-      }
-
-      if (key == AppStrings.clearButtonLower ||
-          key == AppStrings.clearButtonText) {
-        _controller.clearDisplay();
-        return;
-      }
+      _runBasicCalculatorKey(event.character);
     } catch (e, stackTrace) {
       logger.error(
         'Erro ao processar evento de teclado',
@@ -280,6 +169,47 @@ class _CalculatorPageState extends State<CalculatorPage> {
         error: e,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  void _runKeyAction(CalculatorKeyAction action, String? character) {
+    switch (action) {
+      case CalculatorKeyAction.copy:
+        copyWithFeedback(_controller.copyToClipboard);
+      case CalculatorKeyAction.paste:
+        pasteWithFeedback(_controller.pasteFromClipboard);
+      case CalculatorKeyAction.calculate:
+        _controller.calculateResult();
+      case CalculatorKeyAction.backspace:
+        _controller.backspace();
+      case CalculatorKeyAction.clear:
+        _controller.clearDisplay();
+      case CalculatorKeyAction.digit:
+        if (character != null) {
+          _controller.appendNumber(character);
+        }
+      case CalculatorKeyAction.decimal:
+        _controller.appendDecimal();
+      case CalculatorKeyAction.add:
+        _controller.setOperationType(OperationsType.addition);
+      case CalculatorKeyAction.subtract:
+        _controller.setOperationType(OperationsType.subtraction);
+      case CalculatorKeyAction.multiply:
+        _controller.setOperationType(OperationsType.multiplication);
+      case CalculatorKeyAction.divide:
+        _controller.setOperationType(OperationsType.division);
+    }
+  }
+
+  void _runBasicCalculatorKey(String? character) {
+    if (character == AppStrings.percentSymbol) {
+      _controller.calculatePercentage();
+      return;
+    }
+
+    if (character == AppStrings.clearButtonLower ||
+        character == AppStrings.clearButtonText) {
+      _controller.clearDisplay();
     }
   }
 
@@ -308,13 +238,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
             ),
           ),
         ),
-        title: Text(
-          l10n.calculatorPageTitle,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryText,
-          ),
-        ),
+        title: AppBarTitleWidget(text: l10n.calculatorPageTitle),
         centerTitle: true,
         actions: [
           Builder(
@@ -363,13 +287,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
-                                keypad: _buildKeypad(),
+                                keypad: _CalculatorKeypadSection(
+                                  controller: _controller,
+                                ),
                               )
                             : PortraitLayoutWidget(
                                 displayText: resolvedDisplayText,
                                 expressionDisplay:
                                     _controller.expressionDisplay,
-                                keypad: _buildKeypad(),
+                                keypad: _CalculatorKeypadSection(
+                                  controller: _controller,
+                                ),
                               ),
                       ),
                     );
@@ -381,6 +309,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CalculatorKeypadSection extends StatelessWidget {
+  final CalculatorController controller;
+
+  const _CalculatorKeypadSection({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return CalculatorKeypadWidget(
+      onClear: controller.clearDisplay,
+      onBackspace: controller.backspace,
+      onPercentage: controller.calculatePercentage,
+      onDecimal: controller.appendDecimal,
+      onCalculate: controller.calculateResult,
+      onNumberPressed: controller.appendNumber,
+      onOperationPressed: controller.setOperationType,
     );
   }
 }

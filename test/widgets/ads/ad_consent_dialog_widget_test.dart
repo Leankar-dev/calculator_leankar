@@ -127,5 +127,35 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AdConsentDialogWidget), findsNothing);
     });
+
+    testWidgets('não fecha com o botão voltar do sistema', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        L10nTestApp(
+          child: Scaffold(
+            body: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => AdConsentDialogWidget(controller: controller),
+                ),
+                child: const Text('abrir'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('abrir'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AdConsentDialogWidget), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AdConsentDialogWidget), findsOneWidget);
+    });
   });
 }

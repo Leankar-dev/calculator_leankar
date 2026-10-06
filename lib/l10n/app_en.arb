@@ -70,6 +70,15 @@
   "settingsLanguageSection": "LANGUAGE",
   "@settingsLanguageSection": { "description": "Section header in settings for language selection" },
 
+  "settingsAdsSection": "ADS",
+  "@settingsAdsSection": { "description": "Section header in settings for ad consent" },
+
+  "settingsAdsConsentTitle": "Show ads",
+  "@settingsAdsConsentTitle": { "description": "Title of the switch that grants or revokes ad consent" },
+
+  "settingsAdsConsentDescription": "Ads keep the app free. You can change this choice at any time.",
+  "@settingsAdsConsentDescription": { "description": "Explanation below the ad consent switch" },
+
   "settingsAboutSection": "ABOUT",
   "@settingsAboutSection": { "description": "Section header in settings for app info" },
 

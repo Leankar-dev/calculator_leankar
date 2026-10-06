@@ -373,7 +373,7 @@ void main() {
       );
 
       test(
-        'erro: liga hasError e não altera resultDisplay/expressionDisplay para o inválido',
+        'erro: liga hasError, zera o resultDisplay e preserva a expressão para correção',
         () {
           mockEvaluator.exceptionToThrow = const ScientificCalculationException(
             ScientificErrorType.divisionByZero,
@@ -388,9 +388,44 @@ void main() {
             ScientificErrorType.divisionByZero,
           );
           expect(controller.resultDisplay, '0');
-          expect(controller.expressionDisplay, '');
+          expect(controller.expressionDisplay, '5 ÷ 0');
         },
       );
+
+      test('erro: backspace limpa o erro e remove o último elemento', () {
+        mockEvaluator.exceptionToThrow = const ScientificCalculationException(
+          ScientificErrorType.divisionByZero,
+        );
+        controller.appendNumber('5');
+        controller.setBinaryOperator('÷');
+        controller.appendNumber('0');
+        controller.calculateResult();
+
+        mockEvaluator.exceptionToThrow = null;
+        mockEvaluator.resultToReturn = 5;
+        controller.backspace();
+
+        expect(controller.hasError, false);
+        expect(controller.state.errorType, isNull);
+        expect(controller.expressionDisplay, '5 ÷');
+      });
+
+      test('erro: dígito digitado depois descarta a expressão com erro', () {
+        mockEvaluator.exceptionToThrow = const ScientificCalculationException(
+          ScientificErrorType.divisionByZero,
+        );
+        controller.appendNumber('5');
+        controller.setBinaryOperator('÷');
+        controller.appendNumber('0');
+        controller.calculateResult();
+
+        mockEvaluator.exceptionToThrow = null;
+        mockEvaluator.resultToReturn = 7;
+        controller.appendNumber('7');
+
+        expect(controller.hasError, false);
+        expect(controller.expressionDisplay, '');
+      });
 
       test('= sem nada digitado não faz nada', () {
         controller.calculateResult();
@@ -789,11 +824,214 @@ void main() {
         expect(result, PasteResult.emptyClipboard);
       });
 
-      test('deve rejeitar número fora dos limites ao colar', () async {
-        clipboardContent = '9999999999999999';
+      test('deve aceitar número grande ao colar', () async {
+        clipboardContent = '1e20';
 
         final result = await controller.pasteFromClipboard();
-        expect(result, PasteResult.outOfRange);
+        expect(result, PasteResult.success);
+        expect(controller.state.currentInput, '100000000000000000000');
+      });
+
+      test('deve rejeitar número não finito ao colar', () async {
+        clipboardContent = '1e999';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.invalidFormat);
+      });
+
+      test('deve colar decimal com ponto iniciado por zero', () async {
+        clipboardContent = '0.123';
+
+        final result = await controller.pasteFromClipboard();
+        expect(result, PasteResult.success);
+        expect(controller.state.currentInput, '0,123');
+      });
+    });
+
+    group('com avaliador real', () {
+      late ScientificCalculatorController realController;
+
+      void typeNumber(String digits) {
+        for (final character in digits.split('')) {
+          if (character == ',') {
+            realController.appendDecimal();
+          } else {
+            realController.appendNumber(character);
+          }
+        }
+      }
+
+      setUp(() {
+        realController = ScientificCalculatorController(
+          logger: mockLogger,
+          storageService: mockStorageService,
+        );
+      });
+
+      group('porcentagem', () {
+        test('após + usa a porcentagem do total acumulado', () {
+          typeNumber('200');
+          realController.setBinaryOperator('+');
+          typeNumber('10');
+          realController.calculatePercentage();
+
+          expect(realController.expressionDisplay, '200 + 20');
+          expect(realController.resultDisplay, '220');
+        });
+
+        test('após - usa a porcentagem do total acumulado', () {
+          typeNumber('100');
+          realController.setBinaryOperator('-');
+          typeNumber('10');
+          realController.calculatePercentage();
+
+          expect(realController.expressionDisplay, '100 - 10');
+        });
+
+        test('após × divide o valor por 100', () {
+          typeNumber('200');
+          realController.setBinaryOperator('×');
+          typeNumber('10');
+          realController.calculatePercentage();
+
+          expect(realController.expressionDisplay, '200 × 0,1');
+          expect(realController.resultDisplay, '20');
+        });
+
+        test('após ÷ divide o valor por 100', () {
+          typeNumber('50');
+          realController.setBinaryOperator('÷');
+          typeNumber('50');
+          realController.calculatePercentage();
+
+          expect(realController.expressionDisplay, '50 ÷ 0,5');
+        });
+
+        test('usa o total de toda a expressão anterior', () {
+          typeNumber('2');
+          realController.setBinaryOperator('×');
+          typeNumber('3');
+          realController.setBinaryOperator('+');
+          typeNumber('10');
+          realController.calculatePercentage();
+
+          expect(realController.expressionDisplay, '2 × 3 + 0,6');
+        });
+      });
+
+      group('fechamento automático de parênteses', () {
+        test(
+          '= fecha os parênteses abertos e grava a expressão completa',
+          () async {
+            realController.appendFunction(ScientificFunctionType.sin);
+            typeNumber('30');
+            await realController.calculateResult();
+
+            expect(realController.hasError, false);
+            expect(realController.resultDisplay, '0,5');
+            expect(realController.history.first.expression, 'sin(30)');
+          },
+        );
+
+        test(
+          'parêntese de fechamento sem abertura continua sendo erro',
+          () async {
+            typeNumber('5');
+            realController.closeParen();
+            await realController.calculateResult();
+
+            expect(realController.hasError, true);
+            expect(
+              realController.state.errorType,
+              ScientificErrorType.unbalancedParens,
+            );
+          },
+        );
+      });
+
+      group('precisão numérica', () {
+        test('0,1 + 0,2 - 0,3 resulta em 0', () async {
+          typeNumber('0,1');
+          realController.setBinaryOperator('+');
+          typeNumber('0,2');
+          realController.setBinaryOperator('-');
+          typeNumber('0,3');
+          await realController.calculateResult();
+
+          expect(realController.resultDisplay, '0');
+        });
+
+        test('sin(180) em graus resulta em 0', () async {
+          realController.appendFunction(ScientificFunctionType.sin);
+          typeNumber('180');
+          await realController.calculateResult();
+
+          expect(realController.resultDisplay, '0');
+        });
+
+        test('cos(90) em graus resulta em 0', () async {
+          realController.appendFunction(ScientificFunctionType.cos);
+          typeNumber('90');
+          await realController.calculateResult();
+
+          expect(realController.resultDisplay, '0');
+        });
+
+        test('tan(90) em graus gera erro de domínio', () async {
+          realController.appendFunction(ScientificFunctionType.tan);
+          typeNumber('90');
+          await realController.calculateResult();
+
+          expect(realController.hasError, true);
+          expect(
+            realController.state.errorType,
+            ScientificErrorType.domainError,
+          );
+        });
+
+        test('18! é calculado e exibido em notação científica', () async {
+          typeNumber('18');
+          realController.appendFunction(ScientificFunctionType.factorial);
+          await realController.calculateResult();
+
+          expect(realController.hasError, false);
+          expect(realController.resultDisplay, '6,4024e15');
+        });
+
+        test('memória preserva a precisão completa do valor', () {
+          typeNumber('1');
+          realController.setBinaryOperator('÷');
+          typeNumber('3');
+          realController.memoryAdd();
+          realController.clearAll();
+          realController.memoryRecall();
+
+          expect(realController.expressionDisplay.length, greaterThan(10));
+        });
+      });
+
+      group('entrada', () {
+        test(
+          'vírgula decimal sem dígitos antes do operador é aceita',
+          () async {
+            typeNumber('5,');
+            realController.setBinaryOperator('+');
+            typeNumber('3');
+            await realController.calculateResult();
+
+            expect(realController.hasError, false);
+            expect(realController.resultDisplay, '8');
+          },
+        );
+
+        test('cada toque notifica os listeners uma única vez', () {
+          var notifyCount = 0;
+          realController.addListener(() => notifyCount++);
+
+          realController.appendNumber('5');
+
+          expect(notifyCount, 1);
+        });
       });
     });
   });

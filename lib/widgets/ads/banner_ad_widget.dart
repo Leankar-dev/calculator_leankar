@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_ad_unit_ids.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
@@ -103,16 +105,18 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
       );
     }
 
+    final bannerHeight = math.max(
+      AppSizes.adBannerPlaceholderHeight,
+      adSize.height.toDouble(),
+    );
+
     return SizedBox(
       width: double.infinity,
-      height: AppSizes.adBannerPlaceholderHeight,
+      height: bannerHeight,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (!_isLoaded)
-            const BannerAdPlaceholderWidget(
-              height: AppSizes.adBannerPlaceholderHeight,
-            ),
+          if (!_isLoaded) BannerAdPlaceholderWidget(height: bannerHeight),
           Visibility(
             visible: _isLoaded,
             maintainState: true,

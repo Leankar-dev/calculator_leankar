@@ -1,15 +1,15 @@
-import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController extends ChangeNotifier {
   static final SettingsController instance = SettingsController._();
   SettingsController._();
 
+  static const Locale defaultLocale = Locale('pt', 'BR');
+
   static const List<Locale> supportedLocales = [
-    Locale('pt', 'BR'),
+    defaultLocale,
     Locale('en'),
     Locale('es'),
     Locale('it'),
@@ -19,51 +19,30 @@ class SettingsController extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
 
-  Locale _locale = const Locale('pt', 'BR');
+  Locale _locale = defaultLocale;
   Locale get locale => _locale;
 
-  Future<void> loadSettings() async {
+  Future<void> loadSettings({Locale deviceLocale = defaultLocale}) async {
     final prefs = await SharedPreferences.getInstance();
 
-    if (await _isNewInstallOrUpdate(prefs)) {
-      _themeMode = ThemeMode.light;
-      await prefs.setString(
-        AppStrings.prefThemeModeKey,
-        _serializeThemeMode(ThemeMode.light),
-      );
-    } else {
-      _themeMode = _parseThemeMode(
-        prefs.getString(AppStrings.prefThemeModeKey),
-      );
-    }
-
-    _locale = _parseLocale(prefs.getString(AppStrings.prefLocaleKey));
+    _themeMode = await _loadThemeMode(prefs);
+    _locale =
+        _parseLocale(prefs.getString(AppStrings.prefLocaleKey)) ??
+        _matchDeviceLocale(deviceLocale);
     notifyListeners();
   }
 
-  Future<bool> _isNewInstallOrUpdate(SharedPreferences prefs) async {
-    try {
-      final currentBuildNumber = (await PackageInfo.fromPlatform()).buildNumber;
-      final lastBuildNumber = prefs.getString(
-        AppStrings.prefLastAppBuildNumberKey,
-      );
-
-      if (lastBuildNumber == currentBuildNumber) {
-        return false;
-      }
-
-      await prefs.setString(
-        AppStrings.prefLastAppBuildNumberKey,
-        currentBuildNumber,
-      );
-      return true;
-    } catch (e) {
-      logger.warning(
-        'Falha ao obter informações do pacote: $e',
-        tag: 'SettingsController',
-      );
-      return false;
+  Future<ThemeMode> _loadThemeMode(SharedPreferences prefs) async {
+    final storedValue = prefs.getString(AppStrings.prefThemeModeKey);
+    if (storedValue != null) {
+      return _parseThemeMode(storedValue);
     }
+
+    await prefs.setString(
+      AppStrings.prefThemeModeKey,
+      _serializeThemeMode(ThemeMode.light),
+    );
+    return ThemeMode.light;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -85,7 +64,7 @@ class SettingsController extends ChangeNotifier {
     await prefs.setString(AppStrings.prefLocaleKey, _serializeLocale(locale));
   }
 
-  ThemeMode _parseThemeMode(String? value) {
+  ThemeMode _parseThemeMode(String value) {
     switch (value) {
       case AppStrings.themeModeSerialLight:
         return ThemeMode.light;
@@ -107,19 +86,19 @@ class SettingsController extends ChangeNotifier {
     }
   }
 
-  Locale _parseLocale(String? value) {
-    switch (value) {
-      case 'en':
-        return const Locale('en');
-      case 'es':
-        return const Locale('es');
-      case 'it':
-        return const Locale('it');
-      case 'fr':
-        return const Locale('fr');
-      default:
-        return const Locale('pt', 'BR');
-    }
+  Locale? _parseLocale(String? value) {
+    if (value == null) return null;
+    return supportedLocales.firstWhere(
+      (locale) => _serializeLocale(locale) == value,
+      orElse: () => defaultLocale,
+    );
+  }
+
+  Locale _matchDeviceLocale(Locale deviceLocale) {
+    return supportedLocales.firstWhere(
+      (locale) => locale.languageCode == deviceLocale.languageCode,
+      orElse: () => defaultLocale,
+    );
   }
 
   String _serializeLocale(Locale locale) {

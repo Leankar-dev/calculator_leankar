@@ -1,11 +1,9 @@
-import 'dart:io' show Platform;
-
 import 'package:calculator_05122025/controllers/ad_consent_controller.dart';
+import 'package:calculator_05122025/utils/ad_platform_support.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/enums/ad_consent_load_status.dart';
 import 'package:calculator_05122025/widgets/ads/banner_ad_placeholder_widget.dart';
 import 'package:calculator_05122025/widgets/ads/banner_ad_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class AdBannerFooterWidget extends StatelessWidget {
@@ -13,7 +11,7 @@ class AdBannerFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb || !Platform.isAndroid) {
+    if (!AdPlatformSupport.isSupported) {
       return const SizedBox.shrink();
     }
 

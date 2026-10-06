@@ -78,6 +78,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguageSection => 'LANGUAGE';
 
   @override
+  String get settingsAdsSection => 'ADS';
+
+  @override
+  String get settingsAdsConsentTitle => 'Show ads';
+
+  @override
+  String get settingsAdsConsentDescription =>
+      'Ads keep the app free. You can change this choice at any time.';
+
+  @override
   String get settingsAboutSection => 'ABOUT';
 
   @override

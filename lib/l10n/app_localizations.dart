@@ -243,6 +243,24 @@ abstract class AppLocalizations {
   /// **'LANGUAGE'**
   String get settingsLanguageSection;
 
+  /// Section header in settings for ad consent
+  ///
+  /// In en, this message translates to:
+  /// **'ADS'**
+  String get settingsAdsSection;
+
+  /// Title of the switch that grants or revokes ad consent
+  ///
+  /// In en, this message translates to:
+  /// **'Show ads'**
+  String get settingsAdsConsentTitle;
+
+  /// Explanation below the ad consent switch
+  ///
+  /// In en, this message translates to:
+  /// **'Ads keep the app free. You can change this choice at any time.'**
+  String get settingsAdsConsentDescription;
+
   /// Section header in settings for app info
   ///
   /// In en, this message translates to:

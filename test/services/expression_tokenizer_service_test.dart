@@ -412,5 +412,35 @@ void main() {
         );
       });
     });
+
+    group('Vírgula decimal sem dígitos após ela', () {
+      test('"5," é um número válido', () {
+        expectTokens(tokenizer.tokenize('5,'), [(TokenType.number, '5,')]);
+      });
+
+      test('"5, + 3" tokeniza como soma', () {
+        expectTokens(tokenizer.tokenize('5, + 3'), [
+          (TokenType.number, '5,'),
+          (TokenType.binaryOperator, '+'),
+          (TokenType.number, '3'),
+        ]);
+      });
+
+      test(
+        'número com expoente fora do alcance de double lança syntaxError',
+        () {
+          expect(
+            () => tokenizer.tokenize('1e999'),
+            throwsA(
+              isA<ScientificCalculationException>().having(
+                (e) => e.errorType,
+                'errorType',
+                ScientificErrorType.syntaxError,
+              ),
+            ),
+          );
+        },
+      );
+    });
   });
 }

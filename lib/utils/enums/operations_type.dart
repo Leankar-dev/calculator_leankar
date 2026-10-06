@@ -1,10 +1,14 @@
 enum OperationsType {
-  addition(symbol: '+'),
-  subtraction(symbol: '-'),
-  multiplication(symbol: '×'),
-  division(symbol: '÷');
+  addition(symbol: '+', percentageIsRelativeToFirstOperand: true),
+  subtraction(symbol: '-', percentageIsRelativeToFirstOperand: true),
+  multiplication(symbol: '×', percentageIsRelativeToFirstOperand: false),
+  division(symbol: '÷', percentageIsRelativeToFirstOperand: false);
 
   final String symbol;
+  final bool percentageIsRelativeToFirstOperand;
 
-  const OperationsType({required this.symbol});
+  const OperationsType({
+    required this.symbol,
+    required this.percentageIsRelativeToFirstOperand,
+  });
 }

@@ -112,28 +112,74 @@ void main() {
           expect(NumberFormatter.parse('12.345,67'), 12345.67);
         },
       );
+      test(
+        'deve interpretar ponto como decimal quando a parte inteira começa com zero ou tem mais de 3 dígitos',
+        () {
+          expect(NumberFormatter.parse('0.123'), 0.123);
+          expect(NumberFormatter.parse('-0.123'), -0.123);
+          expect(NumberFormatter.parse('1234.567'), 1234.567);
+        },
+      );
+
+      test('deve aceitar vírgula decimal sem dígitos após ela', () {
+        expect(NumberFormatter.parse('5,'), 5);
+      });
+
+      test('deve retornar null para valores não finitos', () {
+        expect(NumberFormatter.parse('NaN'), isNull);
+        expect(NumberFormatter.parse('Infinity'), isNull);
+        expect(NumberFormatter.parse('1e999'), isNull);
+      });
     });
 
-    group('isValidNumber', () {
-      test('deve validar números válidos', () {
-        expect(NumberFormatter.isValidNumber('42'), isTrue);
-        expect(NumberFormatter.isValidNumber('3,14'), isTrue);
-        expect(NumberFormatter.isValidNumber('1.000'), isTrue);
+    group('format em notação científica', () {
+      test(
+        'deve formatar potências exatas de dez sem arredondar o expoente',
+        () {
+          expect(NumberFormatter.format(1e12), '1e12');
+          expect(NumberFormatter.format(1e13), '1e13');
+          expect(NumberFormatter.format(1e15), '1e15');
+          expect(NumberFormatter.format(1e100), '1e100');
+        },
+      );
+
+      test('deve formatar mantissa decimal com vírgula', () {
+        expect(NumberFormatter.format(1.5e12), '1,5e12');
+        expect(NumberFormatter.format(-2.5e-7), '-2,5e-7');
       });
 
-      test('deve invalidar strings inválidas', () {
-        expect(NumberFormatter.isValidNumber('abc'), isFalse);
-        expect(NumberFormatter.isValidNumber(''), isFalse);
+      test('deve formatar o menor número positivo representável', () {
+        expect(NumberFormatter.format(5e-324), '4,9407e-324');
       });
     });
 
-    group('formatForHistory', () {
-      test('deve formatar texto numérico', () {
-        expect(NumberFormatter.formatForHistory('1000'), '1.000');
+    group('toCanonicalString', () {
+      test('deve escrever inteiros sem casas decimais', () {
+        expect(NumberFormatter.toCanonicalString(42), '42');
+        expect(NumberFormatter.toCanonicalString(-7), '-7');
+        expect(NumberFormatter.toCanonicalString(-0.0), '0');
       });
 
-      test('deve retornar texto original se inválido', () {
-        expect(NumberFormatter.formatForHistory('abc'), 'abc');
+      test('deve escrever decimais com vírgula', () {
+        expect(NumberFormatter.toCanonicalString(0.5), '0,5');
+      });
+
+      test(
+        'deve preservar inteiros acima do limite de 64 bits sem saturar',
+        () {
+          expect(
+            NumberFormatter.toCanonicalString(1e19),
+            '10000000000000000000',
+          );
+          expect(NumberFormatter.toCanonicalString(1e21), '1e+21');
+        },
+      );
+
+      test('deve produzir texto que o parse converte de volta', () {
+        for (final value in [0.1, 1e-7, 123456.789, 1e19, 1e25, -3.5e-9]) {
+          final canonical = NumberFormatter.toCanonicalString(value);
+          expect(NumberFormatter.parse(canonical), value);
+        }
       });
     });
   });

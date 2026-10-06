@@ -254,7 +254,7 @@ void main() {
           for (int i = 0; i < 14; i++) {
             controller.appendNumber('9');
           }
-          controller.setOperationType(OperationsType.multiplication);
+          controller.setOperationType(OperationsType.addition);
           controller.appendNumber('9');
           for (int i = 0; i < 14; i++) {
             controller.appendNumber('9');
@@ -579,14 +579,32 @@ void main() {
         expect(controller.hasError, false);
       });
 
-      test('deve tratar erro ao carregar histórico', () async {
-        mockStorageService.shouldFail = true;
-        await controller.loadHistory();
+      test(
+        'deve tratar erro ao carregar histórico sem colocar a calculadora em estado de erro',
+        () async {
+          mockStorageService.shouldFail = true;
+          await controller.loadHistory();
 
-        expect(controller.history, isEmpty);
-        expect(controller.hasError, true);
-        expect(controller.isLoading, false);
-      });
+          expect(controller.history, isEmpty);
+          expect(controller.hasError, false);
+          expect(controller.isLoading, false);
+        },
+      );
+
+      test(
+        'deve continuar calculando normalmente após falha ao carregar histórico',
+        () async {
+          mockStorageService.shouldFail = true;
+          await controller.loadHistory();
+
+          controller.appendNumber('2');
+          controller.setOperationType(OperationsType.addition);
+          controller.appendNumber('3');
+          await controller.calculateResult();
+
+          expect(controller.displayText, '5');
+        },
+      );
 
       test('não deve adicionar erro ao histórico', () async {
         controller.appendNumber('5');
@@ -855,6 +873,109 @@ void main() {
         final success = await controller.copyToClipboard();
         expect(success, isTrue);
         expect(clipboardContent, controller.displayText);
+      });
+    });
+
+    group('porcentagem conforme o operador pendente', () {
+      void typeOperation(
+        String first,
+        OperationsType operation,
+        String second,
+      ) {
+        for (final digit in first.split('')) {
+          controller.appendNumber(digit);
+        }
+        controller.setOperationType(operation);
+        for (final digit in second.split('')) {
+          controller.appendNumber(digit);
+        }
+      }
+
+      test('após + calcula a porcentagem do primeiro operando', () {
+        typeOperation('200', OperationsType.addition, '10');
+        controller.calculatePercentage();
+        expect(controller.displayText, '20');
+      });
+
+      test('após - calcula a porcentagem do primeiro operando', () {
+        typeOperation('200', OperationsType.subtraction, '10');
+        controller.calculatePercentage();
+        expect(controller.displayText, '20');
+      });
+
+      test('após × divide o valor atual por 100', () {
+        typeOperation('200', OperationsType.multiplication, '10');
+        controller.calculatePercentage();
+        expect(controller.displayText, '0,1');
+      });
+
+      test('após ÷ divide o valor atual por 100', () {
+        typeOperation('200', OperationsType.division, '50');
+        controller.calculatePercentage();
+        expect(controller.displayText, '0,5');
+      });
+
+      test('200 × 10% = 20', () async {
+        typeOperation('200', OperationsType.multiplication, '10');
+        controller.calculatePercentage();
+        await controller.calculateResult();
+        expect(controller.displayText, '20');
+      });
+
+      test('200 + 10% = 220', () async {
+        typeOperation('200', OperationsType.addition, '10');
+        controller.calculatePercentage();
+        await controller.calculateResult();
+        expect(controller.displayText, '220');
+      });
+    });
+
+    group('backspace sobre valores já calculados', () {
+      test(
+        'não altera um resultado formatado com separador de milhares',
+        () async {
+          for (final digit in '1000'.split('')) {
+            controller.appendNumber(digit);
+          }
+          controller.setOperationType(OperationsType.addition);
+          for (final digit in '234'.split('')) {
+            controller.appendNumber(digit);
+          }
+          await controller.calculateResult();
+          expect(controller.displayText, '1.234');
+
+          controller.backspace();
+
+          expect(controller.displayText, '1.234');
+        },
+      );
+
+      test(
+        'não altera o primeiro operando exibido após escolher o operador',
+        () {
+          controller.appendNumber('4');
+          controller.appendNumber('2');
+          controller.setOperationType(OperationsType.addition);
+
+          controller.backspace();
+
+          expect(controller.displayText, '42');
+        },
+      );
+
+      test('volta a editar normalmente após digitar um novo número', () async {
+        for (final digit in '1000'.split('')) {
+          controller.appendNumber(digit);
+        }
+        controller.setOperationType(OperationsType.addition);
+        controller.appendNumber('1');
+        await controller.calculateResult();
+
+        controller.appendNumber('7');
+        controller.appendNumber('5');
+        controller.backspace();
+
+        expect(controller.displayText, '7');
       });
     });
   });

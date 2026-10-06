@@ -11,7 +11,6 @@ class ButtonWidget extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color? color;
-  final bool isAccent;
   final VoidCallback? onLongPress;
   final String? semanticLabel;
 
@@ -20,7 +19,6 @@ class ButtonWidget extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.color,
-    this.isAccent = false,
     this.onLongPress,
     this.semanticLabel,
   });

@@ -210,4 +210,8 @@ class AppSizes {
   static const double adConsentDialogButtonPaddingH = 20.0;
   static const double adConsentDialogButtonPaddingV = 12.0;
   static const double adConsentDialogButtonFontSize = 14.0;
+
+  static const double settingsAdsDescriptionFontSize = 12.0;
+  static const double settingsAdsTextToSwitchSpacing = 16.0;
+  static const double settingsAdsTitleToDescriptionSpacing = 4.0;
 }

@@ -78,6 +78,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsLanguageSection => 'IDIOMA';
 
   @override
+  String get settingsAdsSection => 'ANÚNCIOS';
+
+  @override
+  String get settingsAdsConsentTitle => 'Exibir anúncios';
+
+  @override
+  String get settingsAdsConsentDescription =>
+      'Os anúncios mantêm o app gratuito. Você pode alterar esta escolha a qualquer momento.';
+
+  @override
   String get settingsAboutSection => 'SOBRE O APP';
 
   @override
@@ -404,6 +414,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsLanguageSection => 'IDIOMA';
+
+  @override
+  String get settingsAdsSection => 'ANÚNCIOS';
+
+  @override
+  String get settingsAdsConsentTitle => 'Exibir anúncios';
+
+  @override
+  String get settingsAdsConsentDescription =>
+      'Os anúncios mantêm o app gratuito. Você pode alterar esta escolha a qualquer momento.';
 
   @override
   String get settingsAboutSection => 'SOBRE O APP';

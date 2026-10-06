@@ -78,6 +78,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLanguageSection => 'IDIOMA';
 
   @override
+  String get settingsAdsSection => 'ANUNCIOS';
+
+  @override
+  String get settingsAdsConsentTitle => 'Mostrar anuncios';
+
+  @override
+  String get settingsAdsConsentDescription =>
+      'Los anuncios mantienen la app gratuita. Puede cambiar esta elección en cualquier momento.';
+
+  @override
   String get settingsAboutSection => 'SOBRE LA APP';
 
   @override

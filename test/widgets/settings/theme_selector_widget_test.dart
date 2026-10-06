@@ -30,7 +30,7 @@ void main() {
       expect(find.text('Escuro'), findsOneWidget);
     });
 
-    testWidgets('deve exibir segmento Sistema selecionado por padrão', (
+    testWidgets('deve exibir segmento Claro selecionado em instalação nova', (
       tester,
     ) async {
       await tester.pumpWidget(buildTestWidget());
@@ -38,7 +38,20 @@ void main() {
       final button = tester.widget<SegmentedButton<ThemeMode>>(
         find.byType(SegmentedButton<ThemeMode>),
       );
-      expect(button.selected, {ThemeMode.system});
+      expect(button.selected, {ThemeMode.light});
+    });
+
+    testWidgets('deve exibir o segmento Escuro quando o tema salvo é escuro', (
+      tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({'theme_mode': 'dark'});
+      await SettingsController.instance.loadSettings();
+      await tester.pumpWidget(buildTestWidget());
+
+      final button = tester.widget<SegmentedButton<ThemeMode>>(
+        find.byType(SegmentedButton<ThemeMode>),
+      );
+      expect(button.selected, {ThemeMode.dark});
     });
 
     testWidgets('deve exibir segmento correto após mudança no controller', (

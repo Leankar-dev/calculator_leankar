@@ -4,13 +4,16 @@ import 'package:calculator_05122025/models/expression_token.dart';
 import 'package:calculator_05122025/services/expression_evaluator_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/services/storage_service.dart';
-import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
+import 'package:calculator_05122025/utils/enums/scientific_function_insertion.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
+import 'package:calculator_05122025/utils/expression_serializer.dart';
+import 'package:calculator_05122025/utils/extensions/calculation_history_list_extension.dart';
+import 'package:calculator_05122025/utils/extensions/expression_token_extension.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +25,7 @@ class ScientificCalculatorController extends ChangeNotifier {
 
   static const String _powerSymbol = '^';
   static const String _permutationSymbol = 'P';
+  static const String _logTag = 'ScientificCalculatorController';
 
   ScientificCalculatorState _state = ScientificCalculatorState.initial();
 
@@ -41,7 +45,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (_state.tokens.isEmpty) {
       return '';
     }
-    return _serializeExpression(_state.tokens, _state.currentInput);
+    return ExpressionSerializer.serialize(_state.tokens, _state.currentInput);
   }
 
   String get resultDisplay => _state.resultDisplay;
@@ -55,38 +59,24 @@ class ScientificCalculatorController extends ChangeNotifier {
   bool get hasError => _state.hasError;
 
   void appendNumber(String digit) {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
-    if (_state.shouldResetCurrentInput) {
-      _state = _state.copyWith(
-        currentInput: digit,
-        shouldResetCurrentInput: false,
-      );
-      notifyListeners();
-      _previewResult();
-      return;
-    }
-    final updatedInput = _state.currentInput.isEmpty
-        ? digit
-        : _state.currentInput + digit;
-    _state = _state.copyWith(currentInput: updatedInput);
-    notifyListeners();
-    _previewResult();
+    _resetExpressionIfInError();
+    final base = _state.shouldResetCurrentInput ? '' : _state.currentInput;
+    _state = _state.copyWith(
+      currentInput: base + digit,
+      shouldResetCurrentInput: false,
+    );
+    _notifyWithPreview();
   }
 
   void appendDecimal() {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     if (_state.shouldResetCurrentInput) {
       _state = _state.copyWith(
         currentInput:
             '${AppStrings.initialDisplayValue}${AppStrings.decimalSeparator}',
         shouldResetCurrentInput: false,
       );
-      notifyListeners();
-      _previewResult();
+      _notifyWithPreview();
       return;
     }
     if (_state.currentInput.contains(AppStrings.decimalSeparator)) {
@@ -98,14 +88,11 @@ class ScientificCalculatorController extends ChangeNotifier {
     _state = _state.copyWith(
       currentInput: '$base${AppStrings.decimalSeparator}',
     );
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void calculatePercentage() {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     if (_state.currentInput.isEmpty) {
       return;
     }
@@ -114,150 +101,68 @@ class ScientificCalculatorController extends ChangeNotifier {
       return;
     }
     _state = _state.copyWith(
-      currentInput: _toCanonicalNumberString(value / 100),
+      currentInput: NumberFormatter.toCanonicalString(_percentageOf(value)),
       shouldResetCurrentInput: true,
     );
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void openParen() {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     _commitPendingOperand();
-    _state = _state.copyWith(
-      tokens: [
-        ..._state.tokens,
-        const ExpressionToken(type: TokenType.openParen, value: '('),
-      ],
-    );
-    notifyListeners();
-    _previewResult();
+    _appendToken(const ExpressionToken(type: TokenType.openParen, value: '('));
+    _notifyWithPreview();
   }
 
   void closeParen() {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     _commitPendingOperand();
-    _state = _state.copyWith(
-      tokens: [
-        ..._state.tokens,
-        const ExpressionToken(type: TokenType.closeParen, value: ')'),
-      ],
-    );
-    notifyListeners();
-    _previewResult();
+    _appendToken(const ExpressionToken(type: TokenType.closeParen, value: ')'));
+    _notifyWithPreview();
   }
 
   void appendFunction(ScientificFunctionType function) {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
 
-    switch (function) {
-      case ScientificFunctionType.sin:
-        _appendPrefixFunction('sin');
-        break;
-      case ScientificFunctionType.cos:
-        _appendPrefixFunction('cos');
-        break;
-      case ScientificFunctionType.tan:
-        _appendPrefixFunction('tan');
-        break;
-      case ScientificFunctionType.asin:
-        _appendPrefixFunction('asin');
-        break;
-      case ScientificFunctionType.acos:
-        _appendPrefixFunction('acos');
-        break;
-      case ScientificFunctionType.atan:
-        _appendPrefixFunction('atan');
-        break;
-      case ScientificFunctionType.log:
-        _appendPrefixFunction('log');
-        break;
-      case ScientificFunctionType.ln:
-        _appendPrefixFunction('ln');
-        break;
-      case ScientificFunctionType.sqrt:
-        _appendPrefixFunction('√');
-        break;
-      case ScientificFunctionType.cbrt:
-        _appendPrefixFunction('³√');
-        break;
-      case ScientificFunctionType.absoluteValue:
-        _appendPrefixFunction('abs');
-        break;
-      case ScientificFunctionType.square:
-        _appendPostfixOperator('²');
-        break;
-      case ScientificFunctionType.cube:
-        _appendPostfixOperator('³');
-        break;
-      case ScientificFunctionType.reciprocal:
-        _appendPostfixOperator('⁻¹');
-        break;
-      case ScientificFunctionType.factorial:
-        _appendPostfixOperator('!');
-        break;
-      case ScientificFunctionType.exp10:
+    switch (function.insertion) {
+      case ScientificFunctionInsertion.prefixFunction:
+        _appendPrefixFunction(function.lexeme);
+      case ScientificFunctionInsertion.postfixOperator:
+        _appendPostfixOperator(function.lexeme);
+      case ScientificFunctionInsertion.powerOfNumber:
         _appendPowerSugar(
-          const ExpressionToken(type: TokenType.number, value: '10'),
+          ExpressionToken(type: TokenType.number, value: function.lexeme),
         );
-        break;
-      case ScientificFunctionType.expE:
+      case ScientificFunctionInsertion.powerOfConstant:
         _appendPowerSugar(
-          const ExpressionToken(type: TokenType.constant, value: 'e'),
+          ExpressionToken(type: TokenType.constant, value: function.lexeme),
         );
-        break;
-      case ScientificFunctionType.power:
-      case ScientificFunctionType.nthRoot:
-      case ScientificFunctionType.permutation:
-      case ScientificFunctionType.combination:
+      case ScientificFunctionInsertion.notInsertable:
         return;
     }
 
     _resetShiftIfNotLocked();
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void appendConstant(String constant) {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     _commitPendingOperand();
-    _state = _state.copyWith(
-      tokens: [
-        ..._state.tokens,
-        ExpressionToken(type: TokenType.constant, value: constant),
-      ],
-    );
-    notifyListeners();
-    _previewResult();
+    _appendToken(ExpressionToken(type: TokenType.constant, value: constant));
+    _notifyWithPreview();
   }
 
   void setBinaryOperator(String operator) {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
 
     if (operator == AppStrings.subtractionSymbol && _expectsNewOperand()) {
-      _state = _state.copyWith(
-        tokens: [
-          ..._state.tokens,
-          const ExpressionToken(type: TokenType.unaryMinus, value: '-'),
-        ],
+      _appendToken(
+        const ExpressionToken(type: TokenType.unaryMinus, value: '-'),
       );
     } else {
       _commitPendingOperand();
-      _state = _state.copyWith(
-        tokens: [
-          ..._state.tokens,
-          ExpressionToken(type: TokenType.binaryOperator, value: operator),
-        ],
+      _appendToken(
+        ExpressionToken(type: TokenType.binaryOperator, value: operator),
       );
     }
 
@@ -265,8 +170,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       _resetShiftIfNotLocked();
     }
 
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   Future<void> calculateResult() async {
@@ -280,7 +184,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       return;
     }
 
-    final expression = _serializeExpression(
+    final expression = ExpressionSerializer.serializeWithClosedParens(
       _state.tokens,
       _state.currentInput,
     );
@@ -292,28 +196,33 @@ class ScientificCalculatorController extends ChangeNotifier {
       final formatted = NumberFormatter.format(result);
       _state = _state.copyWith(
         tokens: const [],
-        currentInput: _toCanonicalNumberString(result),
+        currentInput: NumberFormatter.toCanonicalString(result),
         resultDisplay: formatted,
         shouldResetCurrentInput: true,
+        history: _state.history.withEntryAtFront(
+          CalculationHistory(
+            expression: expression,
+            result: formatted,
+            timestamp: DateTime.now().toUtc(),
+          ),
+        ),
       );
-      _addToHistory(expression, formatted);
       _logger.debug(
         'Cálculo científico: $expression = $formatted',
-        tag: 'ScientificCalculatorController',
+        tag: _logTag,
       );
       shouldPersistHistory = true;
     } on ScientificCalculationException catch (e) {
       _state = _state.copyWith(
         hasError: true,
         errorType: e.errorType,
-        tokens: const [],
         currentInput: '',
         resultDisplay: AppStrings.initialDisplayValue,
         shouldResetCurrentInput: false,
       );
       _logger.warning(
         'Erro no cálculo científico "$expression": ${e.errorType}',
-        tag: 'ScientificCalculatorController',
+        tag: _logTag,
       );
     }
 
@@ -344,15 +253,13 @@ class ScientificCalculatorController extends ChangeNotifier {
           ? AngleMode.rad
           : AngleMode.deg,
     );
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void backspace() {
-    if (_state.hasError) {
-      _resetCurrentExpression();
-      notifyListeners();
-      return;
+    final wasInError = _state.hasError;
+    if (wasInError) {
+      _clearErrorKeepingExpression();
     }
 
     if (_state.currentInput.isNotEmpty) {
@@ -364,12 +271,14 @@ class ScientificCalculatorController extends ChangeNotifier {
         currentInput: trimmed,
         shouldResetCurrentInput: false,
       );
-      notifyListeners();
-      _previewResult();
+      _notifyWithPreview();
       return;
     }
 
     if (_state.tokens.isEmpty) {
+      if (wasInError) {
+        notifyListeners();
+      }
       return;
     }
 
@@ -381,8 +290,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       tokens.removeLast();
     }
     _state = _state.copyWith(tokens: tokens);
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void clearAll() {
@@ -418,21 +326,15 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (!_state.hasMemoryValue) {
       return;
     }
-    if (_state.hasError) {
-      _resetCurrentExpression();
-    }
+    _resetExpressionIfInError();
     _commitPendingOperand();
-    _state = _state.copyWith(
-      tokens: [
-        ..._state.tokens,
-        ExpressionToken(
-          type: TokenType.number,
-          value: _toCanonicalNumberString(_state.memoryValue),
-        ),
-      ],
+    _appendToken(
+      ExpressionToken(
+        type: TokenType.number,
+        value: NumberFormatter.toCanonicalString(_state.memoryValue),
+      ),
     );
-    notifyListeners();
-    _previewResult();
+    _notifyWithPreview();
   }
 
   void memoryClear() {
@@ -442,24 +344,15 @@ class ScientificCalculatorController extends ChangeNotifier {
 
   Future<bool> copyToClipboard() async {
     if (_state.hasError) {
-      _logger.debug(
-        'Tentativa de copiar em estado de erro',
-        tag: 'ScientificCalculatorController',
-      );
+      _logger.debug('Tentativa de copiar em estado de erro', tag: _logTag);
       return false;
     }
     try {
       await Clipboard.setData(ClipboardData(text: _state.resultDisplay));
-      _logger.info(
-        'Valor copiado: ${_state.resultDisplay}',
-        tag: 'ScientificCalculatorController',
-      );
+      _logger.info('Valor copiado: ${_state.resultDisplay}', tag: _logTag);
       return true;
     } catch (e) {
-      _logger.warning(
-        'Falha ao copiar: $e',
-        tag: 'ScientificCalculatorController',
-      );
+      _logger.warning('Falha ao copiar: $e', tag: _logTag);
       return false;
     }
   }
@@ -468,10 +361,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       if (data?.text == null || data!.text!.isEmpty) {
-        _logger.debug(
-          'Área de transferência vazia',
-          tag: 'ScientificCalculatorController',
-        );
+        _logger.debug('Área de transferência vazia', tag: _logTag);
         return PasteResult.emptyClipboard;
       }
 
@@ -479,42 +369,20 @@ class ScientificCalculatorController extends ChangeNotifier {
       final parsed = NumberFormatter.parse(text);
 
       if (parsed == null) {
-        _logger.debug(
-          'Valor inválido para colar: $text',
-          tag: 'ScientificCalculatorController',
-        );
+        _logger.debug('Valor inválido para colar: $text', tag: _logTag);
         return PasteResult.invalidFormat;
       }
 
-      if (parsed.isNaN ||
-          parsed.isInfinite ||
-          parsed.abs() > AppStrings.maxDisplayValue) {
-        _logger.debug(
-          'Valor fora dos limites: $text',
-          tag: 'ScientificCalculatorController',
-        );
-        return PasteResult.outOfRange;
-      }
-
-      if (_state.hasError) {
-        _resetCurrentExpression();
-      }
+      _resetExpressionIfInError();
       _state = _state.copyWith(
-        currentInput: _toCanonicalNumberString(parsed),
+        currentInput: NumberFormatter.toCanonicalString(parsed),
         shouldResetCurrentInput: true,
       );
-      _logger.info(
-        'Valor colado: ${_state.currentInput}',
-        tag: 'ScientificCalculatorController',
-      );
-      notifyListeners();
-      _previewResult();
+      _logger.info('Valor colado: ${_state.currentInput}', tag: _logTag);
+      _notifyWithPreview();
       return PasteResult.success;
     } catch (e) {
-      _logger.warning(
-        'Falha ao colar: $e',
-        tag: 'ScientificCalculatorController',
-      );
+      _logger.warning('Falha ao colar: $e', tag: _logTag);
       return PasteResult.invalidFormat;
     }
   }
@@ -531,7 +399,7 @@ class ScientificCalculatorController extends ChangeNotifier {
       onFailure: (error, details) {
         _logger.warning(
           'Falha ao carregar histórico científico: ${error.fullMessage}',
-          tag: 'ScientificCalculatorController',
+          tag: _logTag,
         );
       },
     );
@@ -544,7 +412,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     _state = _state.copyWith(
       tokens: const [],
       currentInput: parsed != null
-          ? _toCanonicalNumberString(parsed)
+          ? NumberFormatter.toCanonicalString(parsed)
           : item.result,
       resultDisplay: item.result,
       hasError: false,
@@ -564,22 +432,9 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (result.isFailure) {
       _logger.warning(
         'Falha ao limpar histórico científico: ${result.errorFullMessage}',
-        tag: 'ScientificCalculatorController',
+        tag: _logTag,
       );
     }
-  }
-
-  void _addToHistory(String expression, String result) {
-    final newEntry = CalculationHistory(
-      expression: expression,
-      result: result,
-      timestamp: DateTime.now().toUtc(),
-    );
-    final updated = [newEntry, ..._state.history];
-    final trimmed = updated.length > AppSizes.maxHistoryItems
-        ? updated.sublist(0, AppSizes.maxHistoryItems)
-        : updated;
-    _state = _state.copyWith(history: trimmed);
   }
 
   Future<void> _persistHistory() async {
@@ -588,28 +443,17 @@ class ScientificCalculatorController extends ChangeNotifier {
       key: AppStrings.prefScientificHistoryKey,
     );
     saveResult.fold(
-      onSuccess: (_) => _logger.debug(
-        'Histórico científico salvo',
-        tag: 'ScientificCalculatorController',
-      ),
+      onSuccess: (_) =>
+          _logger.debug('Histórico científico salvo', tag: _logTag),
       onFailure: (error, details) => _logger.warning(
         'Falha ao salvar histórico científico: ${error.fullMessage}',
-        tag: 'ScientificCalculatorController',
+        tag: _logTag,
       ),
     );
   }
 
   bool _expectsNewOperand() {
-    if (_state.currentInput.isNotEmpty) {
-      return false;
-    }
-    if (_state.tokens.isEmpty) {
-      return true;
-    }
-    final last = _state.tokens.last;
-    return last.type == TokenType.binaryOperator ||
-        last.type == TokenType.openParen ||
-        last.type == TokenType.unaryMinus;
+    return _state.currentInput.isEmpty && _state.tokens.expectsOperand;
   }
 
   void _commitPendingOperand() {
@@ -625,56 +469,53 @@ class ScientificCalculatorController extends ChangeNotifier {
     );
   }
 
-  String _serializeExpression(
-    List<ExpressionToken> tokens,
-    String currentInput,
-  ) {
-    final buffer = StringBuffer();
-    ExpressionToken? previous;
+  void _appendToken(ExpressionToken token) {
+    _state = _state.copyWith(tokens: [..._state.tokens, token]);
+  }
 
-    for (final token in tokens) {
-      if (token.type == TokenType.binaryOperator) {
-        buffer.write(' ${token.value} ');
-      } else {
-        if (previous != null && _closesValue(previous) && _opensValue(token)) {
-          buffer.write(' × ');
-        }
-        buffer.write(token.value);
-      }
-      previous = token;
+  double _percentageOf(double value) {
+    final runningTotal = _runningTotalBeforePendingAdditiveOperator();
+    if (runningTotal == null) {
+      return value / 100;
+    }
+    return runningTotal * value / 100;
+  }
+
+  double? _runningTotalBeforePendingAdditiveOperator() {
+    final tokens = _state.tokens;
+    if (tokens.length < 2) {
+      return null;
+    }
+    final pendingOperator = tokens.last;
+    final isAdditive =
+        pendingOperator.type == TokenType.binaryOperator &&
+        (pendingOperator.value == AppStrings.additionSymbol ||
+            pendingOperator.value == AppStrings.subtractionSymbol);
+    if (!isAdditive) {
+      return null;
     }
 
-    if (currentInput.isNotEmpty) {
-      if (previous != null && _closesValue(previous)) {
-        buffer.write(' × ');
-      }
-      buffer.write(currentInput);
+    final totalTokens = tokens.sublist(0, tokens.length - 1);
+    final totalExpression = ExpressionSerializer.serializeWithClosedParens(
+      totalTokens,
+      '',
+    );
+    try {
+      return _evaluator.evaluate(totalExpression, _state.angleMode);
+    } on ScientificCalculationException {
+      return null;
     }
-
-    return buffer.toString().trim();
   }
 
-  bool _closesValue(ExpressionToken token) {
-    return token.type == TokenType.number ||
-        token.type == TokenType.closeParen ||
-        token.type == TokenType.postfixOperator ||
-        token.type == TokenType.constant;
+  void _notifyWithPreview() {
+    _applyPreview();
+    notifyListeners();
   }
 
-  bool _opensValue(ExpressionToken token) {
-    return token.type == TokenType.number ||
-        token.type == TokenType.constant ||
-        token.type == TokenType.unaryFunction ||
-        token.type == TokenType.openParen;
-  }
-
-  void _previewResult() {
+  void _applyPreview() {
     if (_state.tokens.isEmpty && _state.currentInput.isEmpty) {
       if (_state.resultDisplay != AppStrings.initialDisplayValue) {
-        _state = _state.copyWith(
-          resultDisplay: AppStrings.initialDisplayValue,
-        );
-        notifyListeners();
+        _state = _state.copyWith(resultDisplay: AppStrings.initialDisplayValue);
       }
       return;
     }
@@ -682,47 +523,28 @@ class ScientificCalculatorController extends ChangeNotifier {
       return;
     }
 
-    final rawExpression = _serializeExpression(
+    final value = _tryEvaluateCurrentExpression();
+    if (value != null) {
+      _state = _state.copyWith(resultDisplay: NumberFormatter.format(value));
+    }
+  }
+
+  double? _tryEvaluateCurrentExpression() {
+    final expression = ExpressionSerializer.serializeWithClosedParens(
       _state.tokens,
       _state.currentInput,
     );
-    final expression = _withAutoClosedParens(rawExpression);
-
     try {
-      final result = _evaluator.evaluate(expression, _state.angleMode);
-      _state = _state.copyWith(resultDisplay: NumberFormatter.format(result));
-      notifyListeners();
+      return _evaluator.evaluate(expression, _state.angleMode);
     } on ScientificCalculationException {
-      return;
+      return null;
     }
   }
 
   bool _shouldSkipPreview() {
-    if (_state.currentInput.isNotEmpty) {
-      return false;
-    }
-    if (_state.tokens.isEmpty) {
-      return false;
-    }
-    final last = _state.tokens.last;
-    return last.type == TokenType.openParen ||
-        last.type == TokenType.binaryOperator ||
-        last.type == TokenType.unaryMinus;
-  }
-
-  String _withAutoClosedParens(String expression) {
-    var openCount = 0;
-    for (final token in _state.tokens) {
-      if (token.type == TokenType.openParen) {
-        openCount++;
-      } else if (token.type == TokenType.closeParen) {
-        openCount--;
-      }
-    }
-    if (openCount <= 0) {
-      return expression;
-    }
-    return expression + List.filled(openCount, ')').join();
+    return _state.currentInput.isEmpty &&
+        _state.tokens.isNotEmpty &&
+        _state.tokens.last.expectsOperandAfter;
   }
 
   void _appendPrefixFunction(String name) {
@@ -738,11 +560,8 @@ class ScientificCalculatorController extends ChangeNotifier {
 
   void _appendPostfixOperator(String symbol) {
     _commitPendingOperand();
-    _state = _state.copyWith(
-      tokens: [
-        ..._state.tokens,
-        ExpressionToken(type: TokenType.postfixOperator, value: symbol),
-      ],
+    _appendToken(
+      ExpressionToken(type: TokenType.postfixOperator, value: symbol),
     );
   }
 
@@ -752,7 +571,10 @@ class ScientificCalculatorController extends ChangeNotifier {
       tokens: [
         ..._state.tokens,
         base,
-        const ExpressionToken(type: TokenType.binaryOperator, value: '^'),
+        const ExpressionToken(
+          type: TokenType.binaryOperator,
+          value: _powerSymbol,
+        ),
       ],
     );
   }
@@ -761,6 +583,20 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (_state.isShiftActive && !_state.isShiftLocked) {
       _state = _state.copyWith(isShiftActive: false);
     }
+  }
+
+  void _resetExpressionIfInError() {
+    if (_state.hasError) {
+      _resetCurrentExpression();
+    }
+  }
+
+  void _clearErrorKeepingExpression() {
+    _state = _state.copyWith(
+      hasError: false,
+      clearErrorType: true,
+      resultDisplay: AppStrings.initialDisplayValue,
+    );
   }
 
   void _resetCurrentExpression() {
@@ -781,13 +617,7 @@ class ScientificCalculatorController extends ChangeNotifier {
     if (_state.tokens.isEmpty && _state.currentInput.isEmpty) {
       return null;
     }
-    return NumberFormatter.parse(_state.resultDisplay);
-  }
-
-  String _toCanonicalNumberString(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toInt().toString();
-    }
-    return value.toString().replaceAll('.', AppStrings.decimalSeparator);
+    return _tryEvaluateCurrentExpression() ??
+        NumberFormatter.parse(_state.resultDisplay);
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:intl/intl.dart';
 
@@ -15,9 +14,11 @@ class NumberFormatter {
     AppStrings.locale,
   );
 
-  static const double _scientificThresholdSmall = 1e-6;
+  static const int _scientificMantissaDecimals = 4;
 
-  static const double _scientificThresholdLarge = 1e12;
+  static const double _maxPlainIntegerMagnitude = 1e21;
+
+  static const int _thousandsGroupLength = 3;
 
   static String format(double value) {
     if (value.isNaN) return 'NaN';
@@ -25,37 +26,42 @@ class NumberFormatter {
 
     final absValue = value.abs();
 
-    if (absValue > 0 && absValue < _scientificThresholdSmall) {
+    if (absValue > 0 && absValue < AppStrings.scientificThresholdSmall) {
       return _formatScientific(value);
     }
 
-    if (absValue >= _scientificThresholdLarge) {
+    if (absValue >= AppStrings.scientificThresholdLarge) {
       return _formatScientific(value);
     }
 
-    if (value == value.roundToDouble() &&
-        absValue < _scientificThresholdLarge) {
+    if (value == value.roundToDouble()) {
       return _integerFormatter.format(value.toInt());
     }
 
-    String formatted = _thousandsFormatter.format(value);
-    formatted = _removeTrailingZeros(formatted);
+    return _removeTrailingZeros(_thousandsFormatter.format(value));
+  }
 
-    return formatted;
+  static String toCanonicalString(double value) {
+    if (value == 0) return AppStrings.initialDisplayValue;
+
+    final isWholeNumber = value == value.roundToDouble();
+    if (isWholeNumber && value.abs() < _maxPlainIntegerMagnitude) {
+      return value.toStringAsFixed(0);
+    }
+
+    return value.toString().replaceAll('.', AppStrings.decimalSeparator);
   }
 
   static String _formatScientific(double value) {
-    if (value == 0) return '0';
+    final parts = value
+        .toStringAsExponential(_scientificMantissaDecimals)
+        .split('e');
+    final mantissa = _removeTrailingZeros(
+      parts.first.replaceAll('.', AppStrings.decimalSeparator),
+    );
+    final exponent = int.parse(parts.last);
 
-    final exponent = (math.log(value.abs()) / math.ln10).floor();
-    final mantissa = value / math.pow(10, exponent).toDouble();
-
-    final int decimalPlaces = mantissa == mantissa.roundToDouble() ? 0 : 4;
-    String mantissaStr = mantissa.toStringAsFixed(decimalPlaces);
-    mantissaStr = mantissaStr.replaceAll('.', AppStrings.decimalSeparator);
-    mantissaStr = _removeTrailingZeros(mantissaStr);
-
-    return '${mantissaStr}e$exponent';
+    return '${mantissa}e$exponent';
   }
 
   static String _removeTrailingZeros(String formatted) {
@@ -77,24 +83,29 @@ class NumberFormatter {
   static double? parse(String text) {
     if (text.isEmpty) return null;
 
-    try {
-      String cleaned = text.trim();
+    final cleaned = text.trim();
 
-      if (cleaned.contains('e') || cleaned.contains('E')) {
-        return _parseScientific(cleaned);
-      }
-
-      if (_looksLikeUnambiguousDotDecimal(cleaned)) {
-        return double.tryParse(cleaned);
-      }
-
-      cleaned = cleaned.replaceAll('.', '');
-      cleaned = cleaned.replaceAll(AppStrings.decimalSeparator, '.');
-
-      return double.tryParse(cleaned);
-    } catch (_) {
-      return null;
+    if (cleaned.contains('e') || cleaned.contains('E')) {
+      return _finiteOrNull(
+        double.tryParse(cleaned.replaceAll(AppStrings.decimalSeparator, '.')),
+      );
     }
+
+    if (_looksLikeUnambiguousDotDecimal(cleaned)) {
+      return _finiteOrNull(double.tryParse(cleaned));
+    }
+
+    final withoutThousands = cleaned.replaceAll('.', '');
+    return _finiteOrNull(
+      double.tryParse(
+        withoutThousands.replaceAll(AppStrings.decimalSeparator, '.'),
+      ),
+    );
+  }
+
+  static double? _finiteOrNull(double? value) {
+    if (value == null || !value.isFinite) return null;
+    return value;
   }
 
   static bool _looksLikeUnambiguousDotDecimal(String cleaned) {
@@ -104,25 +115,15 @@ class NumberFormatter {
     if (dotIndex == -1 || dotIndex != cleaned.lastIndexOf('.')) return false;
 
     final digitsAfterDot = cleaned.length - dotIndex - 1;
-    return digitsAfterDot > 0 && digitsAfterDot != 3;
-  }
+    if (digitsAfterDot == 0) return false;
+    if (digitsAfterDot != _thousandsGroupLength) return true;
 
-  static double? _parseScientific(String text) {
-    try {
-      final normalized = text.replaceAll(AppStrings.decimalSeparator, '.');
-      return double.tryParse(normalized);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  static bool isValidNumber(String text) {
-    return parse(text) != null;
-  }
-
-  static String formatForHistory(String text) {
-    final value = parse(text);
-    if (value == null) return text;
-    return format(value);
+    final unsignedIntegerPart = cleaned
+        .substring(0, dotIndex)
+        .replaceFirst(RegExp(r'^[+-]'), '');
+    final cannotBeThousandsGroup =
+        unsignedIntegerPart.startsWith('0') ||
+        unsignedIntegerPart.length > _thousandsGroupLength;
+    return cannotBeThousandsGroup;
   }
 }

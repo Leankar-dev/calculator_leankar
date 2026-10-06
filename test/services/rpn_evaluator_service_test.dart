@@ -335,13 +335,39 @@ void main() {
         );
       });
 
-      test('resultado acima do limite lança overflow', () {
+      test('resultado infinito lança overflow', () {
         expect(
           () => evaluator.evaluate(
-            [_number('10'), _number('20'), _op('^')],
+            [_number('10'), _number('400'), _op('^')],
             AngleMode.deg,
           ),
           throwsA(_hasErrorType(ScientificErrorType.overflow)),
+        );
+      });
+
+      test('resultado muito grande porém finito é aceito', () {
+        final result = evaluator.evaluate(
+          [_number('10'), _number('20'), _op('^')],
+          AngleMode.deg,
+        );
+        expect(result, 1e20);
+      });
+
+      test('fatorial de 170 é calculável', () {
+        final result = evaluator.evaluate(
+          [_number('170'), _postfix('!')],
+          AngleMode.deg,
+        );
+        expect(result, closeTo(7.257415615307994e306, 1e293));
+      });
+
+      test('fatorial de operando infinito lança factorialOverflow', () {
+        expect(
+          () => evaluator.evaluate(
+            [_number('10'), _number('400'), _op('^'), _postfix('!')],
+            AngleMode.deg,
+          ),
+          throwsA(_hasErrorType(ScientificErrorType.factorialOverflow)),
         );
       });
 
@@ -356,6 +382,114 @@ void main() {
         expect(
           () => evaluator.evaluate([_number('2'), _number('3')], AngleMode.deg),
           throwsA(_hasErrorType(ScientificErrorType.syntaxError)),
+        );
+      });
+    });
+
+    group('Precisão numérica', () {
+      test('0,1 + 0,2 - 0,3 resulta em 0', () {
+        final result = evaluator.evaluate(
+          [
+            _number('0,1'),
+            _number('0,2'),
+            _op('+'),
+            _number('0,3'),
+            _op('-'),
+          ],
+          AngleMode.deg,
+        );
+        expect(result, 0);
+      });
+
+      test('1,1 × 1,1 - 1,21 resulta em 0', () {
+        final result = evaluator.evaluate(
+          [
+            _number('1,1'),
+            _number('1,1'),
+            _op('×'),
+            _number('1,21'),
+            _op('-'),
+          ],
+          AngleMode.deg,
+        );
+        expect(result, 0);
+      });
+
+      test('0,1 + 0,2 resulta exatamente em 0,3', () {
+        final result = evaluator.evaluate(
+          [_number('0,1'), _number('0,2'), _op('+')],
+          AngleMode.deg,
+        );
+        expect(result, 0.3);
+      });
+
+      test('log(1000) resulta exatamente em 3', () {
+        final result = evaluator.evaluate(
+          [_number('1000'), _function('log')],
+          AngleMode.deg,
+        );
+        expect(result, 3);
+      });
+
+      test('√2 elevado ao quadrado resulta exatamente em 2', () {
+        final result = evaluator.evaluate(
+          [_number('2'), _function('√'), _postfix('²')],
+          AngleMode.deg,
+        );
+        expect(result, 2);
+      });
+
+      test('sin(180) em DEG resulta em 0', () {
+        final result = evaluator.evaluate(
+          [_number('180'), _function('sin')],
+          AngleMode.deg,
+        );
+        expect(result, 0);
+      });
+
+      test('cos(90) em DEG resulta em 0', () {
+        final result = evaluator.evaluate(
+          [_number('90'), _function('cos')],
+          AngleMode.deg,
+        );
+        expect(result, 0);
+      });
+
+      test('sin(30) em DEG resulta exatamente em 0,5', () {
+        final result = evaluator.evaluate(
+          [_number('30'), _function('sin')],
+          AngleMode.deg,
+        );
+        expect(result, 0.5);
+      });
+
+      test('tan(90) em DEG lança domainError', () {
+        expect(
+          () => evaluator.evaluate(
+            [_number('90'), _function('tan')],
+            AngleMode.deg,
+          ),
+          throwsA(_hasErrorType(ScientificErrorType.domainError)),
+        );
+      });
+
+      test('diferença pequena porém legítima não é zerada', () {
+        final result = evaluator.evaluate(
+          [_number('1'), _number('0,999999999'), _op('-')],
+          AngleMode.deg,
+        );
+        expect(result, closeTo(1e-9, 1e-15));
+      });
+    });
+
+    group('Operandos não finitos', () {
+      test('permutação com operando infinito lança domainError', () {
+        expect(
+          () => evaluator.evaluate(
+            [_number('10'), _number('400'), _op('^'), _number('2'), _op('P')],
+            AngleMode.deg,
+          ),
+          throwsA(_hasErrorType(ScientificErrorType.domainError)),
         );
       });
     });

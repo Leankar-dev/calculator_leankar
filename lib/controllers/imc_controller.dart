@@ -46,13 +46,13 @@ class ImcController extends ChangeNotifier {
       _heightInput.replaceAll(AppStrings.decimalSeparator, '.'),
     );
 
-    if (weight == null || weight <= 0 || weight > 500) {
+    if (weight == null || !weight.isFinite || weight <= 0 || weight > 500) {
       _errorType = ImcErrorType.invalidWeight;
       notifyListeners();
       return;
     }
 
-    if (height == null || height < 50 || height > 250) {
+    if (height == null || !height.isFinite || height < 50 || height > 250) {
       _errorType = ImcErrorType.invalidHeight;
       notifyListeners();
       return;

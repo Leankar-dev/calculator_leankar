@@ -2,8 +2,6 @@ class AppStrings {
   AppStrings._();
 
   static const String decimalSeparator = ',';
-  static const String thousandsSeparator = '.';
-  static const int maxDecimalPlaces = 8;
 
   static const double maxDisplayValue = 1e15;
   static const double scientificThresholdSmall = 1e-6;
@@ -33,7 +31,6 @@ class AppStrings {
   static const String prefScientificHistoryKey =
       'scientific_calculation_history';
   static const String prefAdConsentKey = 'ad_consent_can_request';
-  static const String prefLastAppBuildNumberKey = 'last_app_build_number';
 
   static const String themeModeSerialLight = 'light';
   static const String themeModeSerialDark = 'dark';

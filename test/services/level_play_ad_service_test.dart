@@ -16,6 +16,33 @@ void main() {
           expect(result.error, equals(ErrorType.adInitError));
         },
       );
+
+      test(
+        'chamadas simultâneas compartilham a mesma inicialização em andamento',
+        () async {
+          final service = LevelPlayAdService();
+
+          final first = service.initialize();
+          final second = service.initialize();
+
+          expect(identical(first, second), isTrue);
+          await first;
+        },
+      );
+
+      test(
+        'após uma falha, uma nova chamada tenta inicializar novamente',
+        () async {
+          final service = LevelPlayAdService();
+
+          final first = service.initialize();
+          await first;
+          final second = service.initialize();
+          await second;
+
+          expect(identical(first, second), isFalse);
+        },
+      );
     });
   });
 }

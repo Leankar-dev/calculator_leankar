@@ -3,13 +3,14 @@ import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
+import 'package:calculator_05122025/utils/extensions/expression_token_extension.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 
 class ExpressionTokenizerService {
   static final RegExp _numberPattern = RegExp(r'\d[\d.,]*([eE][+-]?\d+)?');
 
   static final RegExp _validNumberFormat = RegExp(
-    r'^(\d+|\d{1,3}(\.\d{3})+)(,\d+)?([eE][+-]?\d+)?$',
+    r'^(\d+|\d{1,3}(\.\d{3})+)(,\d*)?([eE][+-]?\d+)?$',
   );
 
   static const List<String> _prefixFunctionLexemes = [
@@ -132,8 +133,7 @@ class ExpressionTokenizerService {
       }
 
       if (_isBinaryOperatorChar(char)) {
-        if (char == AppStrings.subtractionSymbol &&
-            _expectsNewOperand(tokens)) {
+        if (char == AppStrings.subtractionSymbol && tokens.expectsOperand) {
           tokens.add(
             const ExpressionToken(type: TokenType.unaryMinus, value: '-'),
           );
@@ -185,16 +185,6 @@ class ExpressionTokenizerService {
         char == _permutationSymbol;
   }
 
-  bool _expectsNewOperand(List<ExpressionToken> tokensSoFar) {
-    if (tokensSoFar.isEmpty) {
-      return true;
-    }
-    final last = tokensSoFar.last;
-    return last.type == TokenType.binaryOperator ||
-        last.type == TokenType.openParen ||
-        last.type == TokenType.unaryMinus;
-  }
-
   List<ExpressionToken> _insertImplicitMultiplication(
     List<ExpressionToken> tokens,
   ) {
@@ -202,7 +192,7 @@ class ExpressionTokenizerService {
     for (var i = 1; i < tokens.length; i++) {
       final previous = tokens[i - 1];
       final current = tokens[i];
-      if (_closesValue(previous) && _opensValue(current)) {
+      if (previous.closesValue && current.opensValue) {
         result.add(
           const ExpressionToken(type: TokenType.binaryOperator, value: '×'),
         );
@@ -210,19 +200,5 @@ class ExpressionTokenizerService {
       result.add(current);
     }
     return result;
-  }
-
-  bool _closesValue(ExpressionToken token) {
-    return token.type == TokenType.number ||
-        token.type == TokenType.closeParen ||
-        token.type == TokenType.postfixOperator ||
-        token.type == TokenType.constant;
-  }
-
-  bool _opensValue(ExpressionToken token) {
-    return token.type == TokenType.number ||
-        token.type == TokenType.constant ||
-        token.type == TokenType.unaryFunction ||
-        token.type == TokenType.openParen;
   }
 }

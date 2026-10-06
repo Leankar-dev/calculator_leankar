@@ -5,11 +5,11 @@ import 'package:calculator_05122025/models/calculation_history.dart';
 import 'package:calculator_05122025/services/error_handler.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/services/storage_service.dart';
-import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/enums/operations_type.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
+import 'package:calculator_05122025/utils/extensions/calculation_history_list_extension.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,22 +53,14 @@ class CalculatorController extends ChangeNotifier {
 
     result.fold(
       onSuccess: (loadedHistory) {
-        _state = _state.copyWith(
-          history: loadedHistory,
-          hasError: false,
-          isLoading: false,
-        );
+        _state = _state.copyWith(history: loadedHistory, isLoading: false);
       },
       onFailure: (error, details) {
         _logger.warning(
           'Falha ao carregar histórico: ${error.fullMessage}',
           tag: 'CalculatorController',
         );
-        _state = _state.copyWith(
-          history: [],
-          hasError: true,
-          isLoading: false,
-        );
+        _state = _state.copyWith(history: [], isLoading: false);
       },
     );
 
@@ -114,6 +106,10 @@ class CalculatorController extends ChangeNotifier {
       return;
     }
 
+    if (_state.shouldResetDisplay) {
+      return;
+    }
+
     if (_state.displayText.length > 1) {
       _state = _state.copyWith(
         displayText: _state.displayText.substring(
@@ -130,10 +126,7 @@ class CalculatorController extends ChangeNotifier {
   void calculatePercentage() {
     if (_isErrorState()) return;
 
-    final parseResult = _errorHandler.parseDouble(
-      _state.displayText,
-      decimalSeparator: AppStrings.decimalSeparator,
-    );
+    final parseResult = _errorHandler.parseDouble(_state.displayText);
 
     if (parseResult.isFailure) {
       _setErrorDisplay(parseResult.error!);
@@ -141,12 +134,12 @@ class CalculatorController extends ChangeNotifier {
     }
 
     double value = parseResult.value;
+    final operation = _state.currentOperation;
 
-    if (_state.firstOperand.isNotEmpty && _state.currentOperation != null) {
-      final firstResult = _errorHandler.parseDouble(
-        _state.firstOperand,
-        decimalSeparator: AppStrings.decimalSeparator,
-      );
+    if (_state.firstOperand.isNotEmpty &&
+        operation != null &&
+        operation.percentageIsRelativeToFirstOperand) {
+      final firstResult = _errorHandler.parseDouble(_state.firstOperand);
 
       if (firstResult.isFailure) {
         _setErrorDisplay(firstResult.error!);
@@ -243,20 +236,14 @@ class CalculatorController extends ChangeNotifier {
     final secondOperand = _state.displayText;
     _state = _state.copyWith(secondOperand: secondOperand);
 
-    final firstResult = _errorHandler.parseDouble(
-      _state.firstOperand,
-      decimalSeparator: AppStrings.decimalSeparator,
-    );
+    final firstResult = _errorHandler.parseDouble(_state.firstOperand);
 
     if (firstResult.isFailure) {
       _setErrorDisplay(firstResult.error!);
       return;
     }
 
-    final secondResult = _errorHandler.parseDouble(
-      secondOperand,
-      decimalSeparator: AppStrings.decimalSeparator,
-    );
+    final secondResult = _errorHandler.parseDouble(secondOperand);
 
     if (secondResult.isFailure) {
       _setErrorDisplay(secondResult.error!);
@@ -337,11 +324,9 @@ class CalculatorController extends ChangeNotifier {
       result: result,
       timestamp: DateTime.now().toUtc(),
     );
-    final updated = [newEntry, ..._state.history];
-    final trimmed = updated.length > AppSizes.maxHistoryItems
-        ? updated.sublist(0, AppSizes.maxHistoryItems)
-        : updated;
-    _state = _state.copyWith(history: trimmed);
+    _state = _state.copyWith(
+      history: _state.history.withEntryAtFront(newEntry),
+    );
   }
 
   Future<void> _persistHistory() async {

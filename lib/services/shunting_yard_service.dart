@@ -22,18 +22,15 @@ class ShuntingYardService {
         case TokenType.number:
         case TokenType.constant:
           output.add(token);
-          break;
         case TokenType.unaryFunction:
         case TokenType.unaryMinus:
           operatorStack.add(token);
-          break;
         case TokenType.postfixOperator:
           while (operatorStack.isNotEmpty &&
               _precedence(operatorStack.last) >= _postfixPrecedence) {
             output.add(operatorStack.removeLast());
           }
           output.add(token);
-          break;
         case TokenType.binaryOperator:
           while (operatorStack.isNotEmpty &&
               operatorStack.last.type != TokenType.openParen &&
@@ -41,10 +38,8 @@ class ShuntingYardService {
             output.add(operatorStack.removeLast());
           }
           operatorStack.add(token);
-          break;
         case TokenType.openParen:
           operatorStack.add(token);
-          break;
         case TokenType.closeParen:
           while (operatorStack.isNotEmpty &&
               operatorStack.last.type != TokenType.openParen) {
@@ -60,7 +55,6 @@ class ShuntingYardService {
               operatorStack.last.type == TokenType.unaryFunction) {
             output.add(operatorStack.removeLast());
           }
-          break;
       }
     }
 

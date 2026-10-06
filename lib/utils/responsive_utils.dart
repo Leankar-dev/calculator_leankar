@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class ResponsiveUtils {
   static double _getScaleFactor(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.sizeOf(context).width;
     final clampedWidth = width.clamp(
       AppSizes.minWidth,
       AppSizes.maxCalculatorWidth,
@@ -13,8 +13,7 @@ class ResponsiveUtils {
 
   static double getDisplayHeight(BuildContext context) {
     final scale = _getScaleFactor(context);
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape = ResponsiveUtils.isLandscape(context);
     if (isLandscape) {
       return (AppSizes.displayHeightLandscape * scale).clamp(
         AppSizes.displayHeightLandscapeMin,
@@ -45,8 +44,7 @@ class ResponsiveUtils {
 
   static double getButtonFontSize(BuildContext context) {
     final scale = _getScaleFactor(context);
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape = ResponsiveUtils.isLandscape(context);
     if (isLandscape) {
       return (AppSizes.buttonFontSizeLandscape * scale).clamp(
         AppSizes.buttonFontSizeLandscapeMin,
@@ -61,8 +59,7 @@ class ResponsiveUtils {
 
   static double getButtonPadding(BuildContext context) {
     final scale = _getScaleFactor(context);
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape = ResponsiveUtils.isLandscape(context);
     if (isLandscape) {
       return (AppSizes.buttonPaddingLandscape * scale).clamp(
         AppSizes.buttonPaddingLandscapeMin,
@@ -88,11 +85,11 @@ class ResponsiveUtils {
   }
 
   static bool isLandscape(BuildContext context) {
-    return MediaQuery.of(context).orientation == Orientation.landscape;
+    return MediaQuery.orientationOf(context) == Orientation.landscape;
   }
 
   static bool isTablet(BuildContext context) {
-    final shortestSide = MediaQuery.of(context).size.shortestSide;
+    final shortestSide = MediaQuery.sizeOf(context).shortestSide;
     return shortestSide >= AppSizes.tabletBreakpoint;
   }
 }

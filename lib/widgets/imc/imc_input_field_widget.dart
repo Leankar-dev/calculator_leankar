@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class ImcInputFieldWidget extends StatelessWidget {
@@ -8,6 +9,8 @@ class ImcInputFieldWidget extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final void Function(String) onChanged;
+
+  static final RegExp _allowedCharacters = RegExp(r'[0-9.,]');
 
   const ImcInputFieldWidget({
     super.key,
@@ -49,6 +52,9 @@ class ImcInputFieldWidget extends StatelessWidget {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(_allowedCharacters),
+                  ],
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hint,

@@ -5,9 +5,11 @@ import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
-import 'package:calculator_05122025/utils/enums/paste_result.dart';
+import 'package:calculator_05122025/utils/enums/calculator_key_action.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
+import 'package:calculator_05122025/utils/keyboard/calculator_key_resolver.dart';
+import 'package:calculator_05122025/utils/mixins/clipboard_feedback_mixin.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
 import 'package:calculator_05122025/widgets/app_bar_title_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
@@ -27,7 +29,8 @@ class ScientificCalculatorPage extends StatefulWidget {
       _ScientificCalculatorPageState();
 }
 
-class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
+class _ScientificCalculatorPageState extends State<ScientificCalculatorPage>
+    with ClipboardFeedbackMixin<ScientificCalculatorPage> {
   late final ScientificCalculatorController _controller;
   late final bool _ownsController;
   final FocusNode _focusNode = FocusNode();
@@ -85,139 +88,15 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
   }
 
   void _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
+
     try {
-      if (event is! KeyDownEvent) return;
-
-      final String? key = event.character;
-      final String? lowerKey = key?.toLowerCase();
-      final LogicalKeyboardKey logicalKey = event.logicalKey;
-
-      final isControlPressed =
-          HardwareKeyboard.instance.isControlPressed ||
-          HardwareKeyboard.instance.isMetaPressed;
-
-      if (isControlPressed) {
-        if (logicalKey == LogicalKeyboardKey.keyC) {
-          _controller.copyToClipboard().then((success) {
-            if (success && mounted) {
-              _showSnackBar(AppLocalizations.of(context).snackbarValueCopied);
-            }
-          });
-          return;
-        }
-        if (logicalKey == LogicalKeyboardKey.keyV) {
-          _controller.pasteFromClipboard().then((result) {
-            if (result == PasteResult.success || !mounted) return;
-            final l10n = AppLocalizations.of(context);
-            switch (result) {
-              case PasteResult.emptyClipboard:
-                _showSnackBar(l10n.snackbarEmptyClipboard);
-                break;
-              case PasteResult.invalidFormat:
-                _showSnackBar(l10n.snackbarInvalidPaste);
-                break;
-              case PasteResult.outOfRange:
-                _showSnackBar(l10n.snackbarOutOfRange);
-                break;
-              case PasteResult.success:
-                break;
-            }
-          });
-          return;
-        }
-      }
-
-      if (logicalKey == LogicalKeyboardKey.enter ||
-          logicalKey == LogicalKeyboardKey.numpadEnter) {
-        _controller.calculateResult();
+      final action = CalculatorKeyResolver.resolve(event);
+      if (action != null) {
+        _runKeyAction(action, event.character);
         return;
       }
-
-      if (logicalKey == LogicalKeyboardKey.backspace) {
-        _controller.backspace();
-        return;
-      }
-
-      if (logicalKey == LogicalKeyboardKey.escape ||
-          logicalKey == LogicalKeyboardKey.delete) {
-        _controller.clearAll();
-        return;
-      }
-
-      if (key != null && RegExp(r'^[0-9]$').hasMatch(key)) {
-        _controller.appendNumber(key);
-        return;
-      }
-
-      if (key == AppStrings.additionSymbol) {
-        _controller.setBinaryOperator(AppStrings.additionSymbol);
-        return;
-      }
-      if (key == AppStrings.subtractionSymbol) {
-        _controller.setBinaryOperator(AppStrings.subtractionSymbol);
-        return;
-      }
-      if (key == AppStrings.keyboardAsterisk ||
-          key == AppStrings.keyboardXLower ||
-          key == AppStrings.keyboardXUpper) {
-        _controller.setBinaryOperator(AppStrings.multiplicationSymbol);
-        return;
-      }
-      if (key == AppStrings.keyboardSlash) {
-        _controller.setBinaryOperator(AppStrings.divisionSymbol);
-        return;
-      }
-
-      if (key == AppStrings.decimalSeparator || key == AppStrings.keyboardDot) {
-        _controller.appendDecimal();
-        return;
-      }
-
-      if (key == AppStrings.equalsButtonText) {
-        _controller.calculateResult();
-        return;
-      }
-
-      if (lowerKey == 's') {
-        _controller.appendFunction(ScientificFunctionType.sin);
-        return;
-      }
-      if (lowerKey == 'c') {
-        _controller.appendFunction(ScientificFunctionType.cos);
-        return;
-      }
-      if (lowerKey == 't') {
-        _controller.appendFunction(ScientificFunctionType.tan);
-        return;
-      }
-      if (lowerKey == 'l') {
-        _controller.appendFunction(ScientificFunctionType.log);
-        return;
-      }
-      if (lowerKey == 'n') {
-        _controller.appendFunction(ScientificFunctionType.ln);
-        return;
-      }
-      if (lowerKey == 'p') {
-        _controller.appendConstant(AppScientificStrings.pi);
-        return;
-      }
-      if (key == '(') {
-        _controller.openParen();
-        return;
-      }
-      if (key == ')') {
-        _controller.closeParen();
-        return;
-      }
-      if (key == '!') {
-        _controller.appendFunction(ScientificFunctionType.factorial);
-        return;
-      }
-      if (key == '^') {
-        _controller.setBinaryOperator('^');
-        return;
-      }
+      _runScientificKey(event.character);
     } catch (e, stackTrace) {
       logger.error(
         'Erro ao processar evento de teclado',
@@ -228,14 +107,60 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
     }
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 1),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+  void _runKeyAction(CalculatorKeyAction action, String? character) {
+    switch (action) {
+      case CalculatorKeyAction.copy:
+        copyWithFeedback(_controller.copyToClipboard);
+      case CalculatorKeyAction.paste:
+        pasteWithFeedback(_controller.pasteFromClipboard);
+      case CalculatorKeyAction.calculate:
+        _controller.calculateResult();
+      case CalculatorKeyAction.backspace:
+        _controller.backspace();
+      case CalculatorKeyAction.clear:
+        _controller.clearAll();
+      case CalculatorKeyAction.digit:
+        if (character != null) {
+          _controller.appendNumber(character);
+        }
+      case CalculatorKeyAction.decimal:
+        _controller.appendDecimal();
+      case CalculatorKeyAction.add:
+        _controller.setBinaryOperator(AppStrings.additionSymbol);
+      case CalculatorKeyAction.subtract:
+        _controller.setBinaryOperator(AppStrings.subtractionSymbol);
+      case CalculatorKeyAction.multiply:
+        _controller.setBinaryOperator(AppStrings.multiplicationSymbol);
+      case CalculatorKeyAction.divide:
+        _controller.setBinaryOperator(AppStrings.divisionSymbol);
+    }
+  }
+
+  void _runScientificKey(String? character) {
+    if (character == null) return;
+
+    switch (character.toLowerCase()) {
+      case 's':
+        _controller.appendFunction(ScientificFunctionType.sin);
+      case 'c':
+        _controller.appendFunction(ScientificFunctionType.cos);
+      case 't':
+        _controller.appendFunction(ScientificFunctionType.tan);
+      case 'l':
+        _controller.appendFunction(ScientificFunctionType.log);
+      case 'n':
+        _controller.appendFunction(ScientificFunctionType.ln);
+      case 'p':
+        _controller.appendConstant(AppScientificStrings.pi);
+      case '(':
+        _controller.openParen();
+      case ')':
+        _controller.closeParen();
+      case '!':
+        _controller.appendFunction(ScientificFunctionType.factorial);
+      case '^':
+        _controller.setBinaryOperator(ScientificFunctionType.power.lexeme);
+    }
   }
 
   void _showHistory() {
@@ -248,33 +173,6 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
         onItemTap: _controller.useHistoryResult,
         onClearHistory: _controller.clearHistory,
       ),
-    );
-  }
-
-  Widget _buildKeypad() {
-    return ScientificKeypadWidget(
-      angleMode: _controller.angleMode,
-      isShiftActive: _controller.isShiftActive,
-      hasMemoryValue: _controller.state.hasMemoryValue,
-      onToggleAngleMode: _controller.toggleAngleMode,
-      onToggleShift: _controller.toggleShift,
-      onLockShift: _controller.lockShift,
-      onPi: () => _controller.appendConstant(AppScientificStrings.pi),
-      onEuler: () => _controller.appendConstant(AppScientificStrings.euler),
-      onFunction: _controller.appendFunction,
-      onBinaryOperator: _controller.setBinaryOperator,
-      onOpenParen: _controller.openParen,
-      onCloseParen: _controller.closeParen,
-      onMemoryAdd: _controller.memoryAdd,
-      onMemorySubtract: _controller.memorySubtract,
-      onMemoryRecall: _controller.memoryRecall,
-      onMemoryClear: _controller.memoryClear,
-      onClear: _controller.clearAll,
-      onBackspace: _controller.backspace,
-      onPercentage: _controller.calculatePercentage,
-      onDecimal: _controller.appendDecimal,
-      onCalculate: _controller.calculateResult,
-      onNumberPressed: _controller.appendNumber,
     );
   }
 
@@ -329,31 +227,61 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
                   constraints: BoxConstraints(
                     maxWidth: isLandscape ? double.infinity : maxWidth,
                   ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: isLandscape
-                            ? LandscapeLayoutWidget(
-                                displayText: resolvedDisplayText,
-                                expressionDisplay:
-                                    _controller.expressionDisplay,
-                                keypad: _buildKeypad(),
-                              )
-                            : PortraitLayoutWidget(
-                                displayText: resolvedDisplayText,
-                                expressionDisplay:
-                                    _controller.expressionDisplay,
-                                keypad: _buildKeypad(),
-                              ),
-                      ),
-                    ],
-                  ),
+                  child: isLandscape
+                      ? LandscapeLayoutWidget(
+                          displayText: resolvedDisplayText,
+                          expressionDisplay: _controller.expressionDisplay,
+                          keypad: _ScientificKeypadSection(
+                            controller: _controller,
+                          ),
+                        )
+                      : PortraitLayoutWidget(
+                          displayText: resolvedDisplayText,
+                          expressionDisplay: _controller.expressionDisplay,
+                          keypad: _ScientificKeypadSection(
+                            controller: _controller,
+                          ),
+                        ),
                 ),
               );
             },
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ScientificKeypadSection extends StatelessWidget {
+  final ScientificCalculatorController controller;
+
+  const _ScientificKeypadSection({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScientificKeypadWidget(
+      angleMode: controller.angleMode,
+      isShiftActive: controller.isShiftActive,
+      hasMemoryValue: controller.state.hasMemoryValue,
+      onToggleAngleMode: controller.toggleAngleMode,
+      onToggleShift: controller.toggleShift,
+      onLockShift: controller.lockShift,
+      onPi: () => controller.appendConstant(AppScientificStrings.pi),
+      onEuler: () => controller.appendConstant(AppScientificStrings.euler),
+      onFunction: controller.appendFunction,
+      onBinaryOperator: controller.setBinaryOperator,
+      onOpenParen: controller.openParen,
+      onCloseParen: controller.closeParen,
+      onMemoryAdd: controller.memoryAdd,
+      onMemorySubtract: controller.memorySubtract,
+      onMemoryRecall: controller.memoryRecall,
+      onMemoryClear: controller.memoryClear,
+      onClear: controller.clearAll,
+      onBackspace: controller.backspace,
+      onPercentage: controller.calculatePercentage,
+      onDecimal: controller.appendDecimal,
+      onCalculate: controller.calculateResult,
+      onNumberPressed: controller.appendNumber,
     );
   }
 }

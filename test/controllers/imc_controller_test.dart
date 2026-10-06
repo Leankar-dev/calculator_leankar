@@ -264,4 +264,35 @@ void main() {
       expect(count, 1);
     });
   });
+
+  group('calculate — valores não finitos', () {
+    test('peso NaN deve gerar erro de peso inválido', () {
+      controller.setWeight('NaN');
+      controller.setHeight('170');
+
+      controller.calculate();
+
+      expect(controller.errorType, ImcErrorType.invalidWeight);
+      expect(controller.result, isNull);
+    });
+
+    test('peso Infinity deve gerar erro de peso inválido', () {
+      controller.setWeight('Infinity');
+      controller.setHeight('170');
+
+      controller.calculate();
+
+      expect(controller.errorType, ImcErrorType.invalidWeight);
+    });
+
+    test('altura NaN deve gerar erro de altura inválida', () {
+      controller.setWeight('70');
+      controller.setHeight('NaN');
+
+      controller.calculate();
+
+      expect(controller.errorType, ImcErrorType.invalidHeight);
+      expect(controller.result, isNull);
+    });
+  });
 }

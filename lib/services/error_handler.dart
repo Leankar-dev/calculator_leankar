@@ -1,17 +1,23 @@
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:calculator_05122025/utils/result.dart';
 
 class ErrorHandler {
-  ErrorHandler();
+  static const int _maxInputDigits = 15;
+
+  final LoggerService _logger;
+
+  ErrorHandler({LoggerService? logger})
+    : _logger = logger ?? LoggerService.instance;
 
   static final ErrorHandler _instance = ErrorHandler();
   static ErrorHandler get instance => _instance;
 
   Result<double> validateCalculationResult(double value) {
     if (value.isNaN) {
-      logger.logError(
+      _logger.logError(
         ErrorType.notANumber,
         tag: 'Calculation',
         details: 'Resultado: $value',
@@ -20,7 +26,7 @@ class ErrorHandler {
     }
 
     if (value.isInfinite) {
-      logger.logError(
+      _logger.logError(
         ErrorType.infinity,
         tag: 'Calculation',
         details: 'Resultado: $value',
@@ -28,8 +34,8 @@ class ErrorHandler {
       return Result.failure(ErrorType.infinity);
     }
 
-    if (value.abs() > 1e15) {
-      logger.logError(
+    if (value.abs() > AppStrings.maxDisplayValue) {
+      _logger.logError(
         ErrorType.overflow,
         tag: 'Calculation',
         details: 'Valor: $value',
@@ -40,7 +46,7 @@ class ErrorHandler {
     return Result.success(value);
   }
 
-  Result<double> parseDouble(String value, {String decimalSeparator = ','}) {
+  Result<double> parseDouble(String value) {
     if (value.isEmpty) {
       return Result.failure(
         ErrorType.invalidNumber,
@@ -51,7 +57,7 @@ class ErrorHandler {
     final parsed = NumberFormatter.parse(value);
 
     if (parsed == null) {
-      logger.logError(
+      _logger.logError(
         ErrorType.invalidNumber,
         tag: 'Parse',
         details: 'Não foi possível converter: $value',
@@ -67,7 +73,7 @@ class ErrorHandler {
 
   Result<double> safeDivide(double dividend, double divisor) {
     if (divisor == 0) {
-      logger.logError(
+      _logger.logError(
         ErrorType.divisionByZero,
         tag: 'Calculation',
         details: '$dividend / $divisor',
@@ -79,46 +85,6 @@ class ErrorHandler {
     return validateCalculationResult(result);
   }
 
-  Result<T> tryExecute<T>(
-    T Function() operation, {
-    ErrorType defaultError = ErrorType.unknown,
-    String? tag,
-  }) {
-    try {
-      final result = operation();
-      return Result.success(result);
-    } catch (e, stackTrace) {
-      logger.logError(
-        defaultError,
-        tag: tag,
-        details: e.toString(),
-        error: e,
-        stackTrace: stackTrace,
-      );
-      return Result.failure(defaultError, e.toString());
-    }
-  }
-
-  Future<Result<T>> tryExecuteAsync<T>(
-    Future<T> Function() operation, {
-    ErrorType defaultError = ErrorType.unknown,
-    String? tag,
-  }) async {
-    try {
-      final result = await operation();
-      return Result.success(result);
-    } catch (e, stackTrace) {
-      logger.logError(
-        defaultError,
-        tag: tag,
-        details: e.toString(),
-        error: e,
-        stackTrace: stackTrace,
-      );
-      return Result.failure(defaultError, e.toString());
-    }
-  }
-
   bool isValidNumberInput(
     String currentDisplay,
     String newDigit, {
@@ -126,7 +92,7 @@ class ErrorHandler {
   }) {
     if (newDigit == decimalSeparator) {
       if (currentDisplay.contains(decimalSeparator)) {
-        logger.debug(
+        _logger.debug(
           'Tentativa de adicionar segundo separador decimal',
           tag: 'Input',
         );
@@ -135,14 +101,15 @@ class ErrorHandler {
     }
 
     final wouldBe = currentDisplay + newDigit;
-    if (wouldBe.replaceAll(decimalSeparator, '').replaceAll('-', '').length >
-        15) {
-      logger.debug('Número muito longo: $wouldBe', tag: 'Input');
+    final digitCount = wouldBe
+        .replaceAll(decimalSeparator, '')
+        .replaceAll('-', '')
+        .length;
+    if (digitCount > _maxInputDigits) {
+      _logger.debug('Número muito longo: $wouldBe', tag: 'Input');
       return false;
     }
 
     return true;
   }
 }
-
-ErrorHandler get errorHandler => ErrorHandler.instance;

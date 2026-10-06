@@ -1,70 +1,98 @@
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 
-class Result<T> {
-  final T? _value;
-  final ErrorType? _error;
-  final String? _errorDetails;
+sealed class Result<T> {
+  const Result();
 
-  const Result._({this._value, this._error, this._errorDetails});
+  factory Result.success(T value) = Success<T>;
 
-  factory Result.success(T value) => Result._(value: value);
+  factory Result.failure(ErrorType error, [String? details]) = Failure<T>;
 
-  factory Result.failure(ErrorType error, [String? details]) =>
-      Result._(error: error, errorDetails: details);
+  bool get isSuccess => this is Success<T>;
 
-  bool get isSuccess => _error == null;
+  bool get isFailure => this is Failure<T>;
 
-  bool get isFailure => _error != null;
+  T get value => switch (this) {
+    Success<T>(:final data) => data,
+    Failure<T>(:final errorType) => throw StateError(
+      'Tentativa de acessar valor de um Result com erro: ${errorType.fullMessage}',
+    ),
+  };
 
-  T get value {
-    if (_error != null) {
-      throw StateError(
-        'Tentativa de acessar valor de um Result com erro: ${_error.fullMessage}',
-      );
-    }
-    return _value as T;
-  }
+  T? get valueOrNull => switch (this) {
+    Success<T>(:final data) => data,
+    Failure<T>() => null,
+  };
 
-  T? get valueOrNull => _value;
+  ErrorType? get error => switch (this) {
+    Success<T>() => null,
+    Failure<T>(:final errorType) => errorType,
+  };
 
-  ErrorType? get error => _error;
+  String? get errorDetails => switch (this) {
+    Success<T>() => null,
+    Failure<T>(:final details) => details,
+  };
 
-  String? get errorDetails => _errorDetails;
+  String get errorMessage => error?.shortMessage ?? '';
 
-  String get errorMessage => _error?.shortMessage ?? '';
-
-  String get errorFullMessage => _error?.fullMessage ?? '';
+  String get errorFullMessage => error?.fullMessage ?? '';
 
   R fold<R>({
     required R Function(T value) onSuccess,
     required R Function(ErrorType error, String? details) onFailure,
   }) {
-    if (isSuccess) {
-      return onSuccess(_value as T);
-    } else {
-      return onFailure(_error!, _errorDetails);
-    }
+    return switch (this) {
+      Success<T>(:final data) => onSuccess(data),
+      Failure<T>(:final errorType, :final details) => onFailure(
+        errorType,
+        details,
+      ),
+    };
   }
 
   Result<R> map<R>(R Function(T value) transform) {
-    if (isSuccess) {
-      return Result.success(transform(_value as T));
-    } else {
-      return Result.failure(_error!, _errorDetails);
-    }
+    return switch (this) {
+      Success<T>(:final data) => Result.success(transform(data)),
+      Failure<T>(:final errorType, :final details) => Result.failure(
+        errorType,
+        details,
+      ),
+    };
   }
 
-  T getOrElse(T defaultValue) => isSuccess ? _value as T : defaultValue;
+  T getOrElse(T defaultValue) {
+    return switch (this) {
+      Success<T>(:final data) => data,
+      Failure<T>() => defaultValue,
+    };
+  }
 
-  T getOrElseCompute(T Function() compute) =>
-      isSuccess ? _value as T : compute();
+  T getOrElseCompute(T Function() compute) {
+    return switch (this) {
+      Success<T>(:final data) => data,
+      Failure<T>() => compute(),
+    };
+  }
+}
+
+final class Success<T> extends Result<T> {
+  final T data;
+
+  const Success(this.data);
+
+  @override
+  String toString() => 'Result.success($data)';
+}
+
+final class Failure<T> extends Result<T> {
+  final ErrorType errorType;
+  final String? details;
+
+  const Failure(this.errorType, [this.details]);
 
   @override
   String toString() {
-    if (isSuccess) {
-      return 'Result.success($_value)';
-    } else {
-      return 'Result.failure($_error${_errorDetails != null ? ': $_errorDetails' : ''})';
-    }
+    final detailsSuffix = details != null ? ': $details' : '';
+    return 'Result.failure($errorType$detailsSuffix)';
   }
 }
