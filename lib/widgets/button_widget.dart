@@ -13,6 +13,7 @@ class ButtonWidget extends StatelessWidget {
   final Color? color;
   final bool isAccent;
   final VoidCallback? onLongPress;
+  final String? semanticLabel;
 
   const ButtonWidget({
     super.key,
@@ -21,6 +22,7 @@ class ButtonWidget extends StatelessWidget {
     this.color,
     this.isAccent = false,
     this.onLongPress,
+    this.semanticLabel,
   });
 
   String _getSemanticLabel(String text, AppLocalizations l10n) {
@@ -97,9 +99,6 @@ class ButtonWidget extends StatelessWidget {
         return l10n.semanticMemoryRecall;
       case AppScientificStrings.memoryClear:
         return l10n.semanticMemoryClear;
-      case AppScientificStrings.degMode:
-      case AppScientificStrings.radMode:
-        return l10n.semanticAngleModeToggle;
       default:
         return text;
     }
@@ -119,7 +118,7 @@ class ButtonWidget extends StatelessWidget {
         padding: EdgeInsets.all(buttonSpacing),
         child: Semantics(
           button: true,
-          label: _getSemanticLabel(text, l10n),
+          label: semanticLabel ?? _getSemanticLabel(text, l10n),
           child: GestureDetector(
             onLongPress: onLongPress,
             child: NeumorphicButton(

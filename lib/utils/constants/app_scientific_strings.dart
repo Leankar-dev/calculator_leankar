@@ -25,11 +25,8 @@ class AppScientificStrings {
   static const String pi = 'π';
   static const String euler = 'e';
   static const String shift = 'SHIFT';
-  static const String degMode = 'DEG';
-  static const String radMode = 'RAD';
   static const String memoryAdd = 'M+';
   static const String memorySubtract = 'M-';
   static const String memoryRecall = 'MR';
   static const String memoryClear = 'MC';
-  static const String memoryIndicator = 'M';
 }

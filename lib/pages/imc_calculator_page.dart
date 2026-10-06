@@ -4,6 +4,7 @@ import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/imc_error_type.dart';
+import 'package:calculator_05122025/widgets/app_bar_title_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_calculate_button_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_input_field_widget.dart';
 import 'package:calculator_05122025/widgets/imc/imc_result_card_widget.dart';
@@ -67,13 +68,7 @@ class _ImcCalculatorPageState extends State<ImcCalculatorPage> {
             color: AppColors.primaryText,
           ),
         ),
-        title: Text(
-          l10n.imcPageTitle,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryText,
-          ),
-        ),
+        title: AppBarTitleWidget(text: l10n.imcPageTitle),
         actions: [
           NeumorphicButton(
             style: const NeumorphicStyle(

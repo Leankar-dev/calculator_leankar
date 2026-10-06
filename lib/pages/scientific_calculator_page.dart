@@ -9,10 +9,10 @@ import 'package:calculator_05122025/utils/enums/paste_result.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/responsive_utils.dart';
+import 'package:calculator_05122025/widgets/app_bar_title_widget.dart';
 import 'package:calculator_05122025/widgets/history_bottom_sheet.dart';
 import 'package:calculator_05122025/widgets/landscape_layout_widget.dart';
 import 'package:calculator_05122025/widgets/portrait_layout_widget.dart';
-import 'package:calculator_05122025/widgets/scientific/scientific_display_indicators_widget.dart';
 import 'package:calculator_05122025/widgets/scientific/scientific_keypad_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -297,13 +297,7 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
             color: AppColors.primaryText,
           ),
         ),
-        title: Text(
-          l10n.scientificPageTitle,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryText,
-          ),
-        ),
+        title: AppBarTitleWidget(text: l10n.scientificPageTitle),
         centerTitle: true,
         actions: [
           NeumorphicButton(
@@ -337,10 +331,6 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage> {
                   ),
                   child: Column(
                     children: [
-                      ScientificDisplayIndicatorsWidget(
-                        angleMode: _controller.angleMode,
-                        hasMemoryValue: _controller.state.hasMemoryValue,
-                      ),
                       Expanded(
                         child: isLandscape
                             ? LandscapeLayoutWidget(

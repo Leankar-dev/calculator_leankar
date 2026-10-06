@@ -1,6 +1,8 @@
+import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
+import 'package:calculator_05122025/utils/extensions/angle_mode_l10n_extension.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -26,13 +28,14 @@ class ScientificModeRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Row(
       children: [
         ButtonWidget(
           key: const ValueKey('scientific_angle_mode'),
-          text: angleMode == AngleMode.deg
-              ? AppScientificStrings.degMode
-              : AppScientificStrings.radMode,
+          text: angleMode.localizedLabel(l10n),
+          semanticLabel: l10n.semanticAngleModeToggle,
           onPressed: onToggleAngleMode,
           color: AppColors.operationButton,
         ),
