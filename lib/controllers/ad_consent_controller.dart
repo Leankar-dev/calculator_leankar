@@ -54,7 +54,7 @@ class AdConsentController extends ChangeNotifier {
 
   Future<void> _applyConsent(bool accepted) async {
     try {
-      await LevelPlayPrivacySettings.setGDPRConsents({'UnityAds': accepted});
+      await LevelPlayPrivacySettings.setGDPRConsent(accepted);
     } catch (e) {
       _logger.warning(
         'Falha ao aplicar LevelPlayPrivacySettings: $e',

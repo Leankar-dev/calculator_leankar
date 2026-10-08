@@ -718,10 +718,10 @@ packages:
     dependency: "direct main"
     description:
       name: unity_levelplay_mediation
-      sha256: "686432b705c701ded78a11bee54b63bacb18277d618afb54231925f91a1f8e27"
+      sha256: f76c9aa8a0e59ef2e747f58d32884ebe41da7ccebf8ac7666c79414a126413fa
       url: "https://pub.dev"
     source: hosted
-    version: "9.2.0"
+    version: "9.3.0"
   universal_io:
     dependency: transitive
     description:
