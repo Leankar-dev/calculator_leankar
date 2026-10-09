@@ -758,6 +758,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Toggle angle mode'**
   String get semanticAngleModeToggle;
+
+  /// Tagline shown under the app name on the splash screen
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate everything. In one app.'**
+  String get splashTagline;
+
+  /// Screen reader label for the splash screen
+  ///
+  /// In en, this message translates to:
+  /// **'Leankar Calc, loading'**
+  String get splashSemanticLabel;
 }
 
 class _AppLocalizationsDelegate

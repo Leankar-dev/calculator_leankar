@@ -340,6 +340,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get semanticAngleModeToggle => 'Alternar modo de ângulo';
+
+  @override
+  String get splashTagline => 'Calcule tudo. Em um só app.';
+
+  @override
+  String get splashSemanticLabel => 'Leankar Calc, carregando';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -678,4 +684,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get semanticAngleModeToggle => 'Alternar modo de ângulo';
+
+  @override
+  String get splashTagline => 'Calcule tudo. Em um só app.';
+
+  @override
+  String get splashSemanticLabel => 'Leankar Calc, carregando';
 }

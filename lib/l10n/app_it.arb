@@ -111,5 +111,8 @@
   "semanticMemorySubtract": "Sottrai dalla memoria",
   "semanticMemoryRecall": "Richiama memoria",
   "semanticMemoryClear": "Cancella memoria",
-  "semanticAngleModeToggle": "Cambia modalità angolo"
+  "semanticAngleModeToggle": "Cambia modalità angolo",
+
+  "splashTagline": "Calcola tutto. In una sola app.",
+  "splashSemanticLabel": "Leankar Calc, caricamento"
 }

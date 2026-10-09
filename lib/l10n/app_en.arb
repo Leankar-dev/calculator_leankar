@@ -326,5 +326,11 @@
   "@semanticMemoryClear": { "description": "Accessibility label for memory clear button" },
 
   "semanticAngleModeToggle": "Toggle angle mode",
-  "@semanticAngleModeToggle": { "description": "Accessibility label for DEG/RAD toggle button" }
+  "@semanticAngleModeToggle": { "description": "Accessibility label for DEG/RAD toggle button" },
+
+  "splashTagline": "Calculate everything. In one app.",
+  "@splashTagline": { "description": "Tagline shown under the app name on the splash screen" },
+
+  "splashSemanticLabel": "Leankar Calc, loading",
+  "@splashSemanticLabel": { "description": "Screen reader label for the splash screen" }
 }

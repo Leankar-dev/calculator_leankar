@@ -340,4 +340,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get semanticAngleModeToggle => 'Alternar modo de ángulo';
+
+  @override
+  String get splashTagline => 'Calcula todo. En una sola app.';
+
+  @override
+  String get splashSemanticLabel => 'Leankar Calc, cargando';
 }
