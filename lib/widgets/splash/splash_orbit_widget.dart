@@ -1,4 +1,4 @@
-import 'package:calculator_05122025/utils/constants/app_sizes.dart';
+import 'package:calculator_05122025/models/splash_layout_metrics.dart';
 import 'package:calculator_05122025/utils/enums/splash_symbol.dart';
 import 'package:calculator_05122025/widgets/splash/splash_orbit_key_widget.dart';
 import 'package:flutter/widgets.dart';
@@ -15,12 +15,10 @@ class SplashOrbitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final keyExtent = tileExtent * AppSizes.splashKeyExtentFactor;
-    final radius =
-        tileExtent * AppSizes.splashOrbitRadiusFactor + keyExtent / 2;
+    final metrics = SplashLayoutMetrics.fromTileExtent(tileExtent);
     return RepaintBoundary(
       child: SizedBox.square(
-        dimension: radius * 2,
+        dimension: metrics.orbitRadius * 2,
         child: Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
@@ -29,8 +27,8 @@ class SplashOrbitWidget extends StatelessWidget {
               SplashOrbitKeyWidget(
                 animation: animation,
                 symbol: symbol,
-                keyExtent: keyExtent,
-                radius: radius,
+                keyExtent: metrics.keyExtent,
+                radius: metrics.orbitRadius,
               ),
           ],
         ),

@@ -245,6 +245,7 @@ class AppSizes {
   static const double splashKeyMaxScale = 1.2;
   static const double splashTitleSpaceFactor = 0.3;
   static const double splashTaglineRise = 10.0;
+  static const double splashTaglineGap = 8.0;
   static const double splashTaglineMaxWidthFactor = 0.8;
   static const double splashShimmerBandStart = 0.35;
   static const double splashShimmerBandCenter = 0.5;

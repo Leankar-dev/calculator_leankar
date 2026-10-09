@@ -8,8 +8,10 @@ class AppSplashTimeline {
   static const Duration routeTransitionDuration = Duration(milliseconds: 350);
   static const Duration reducedMotionHold = Duration(milliseconds: 500);
   static const Duration reducedMotionTransition = Duration(milliseconds: 200);
+  static const Duration precacheTimeout = Duration(milliseconds: 150);
 
   static const double exitStart = 0.78;
+  static const double reducedMotionFrame = 0.7;
   static const double titleLetterSpan = 8.0;
   static const double shimmerSweepStart = -1.0;
   static const double shimmerSweepEnd = 2.0;
