@@ -17,9 +17,7 @@ Future<void> bootstrap() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await _loadPersistedState();
 
-  runApp(const AppCalculator());
-
-  FlutterNativeSplash.remove();
+  runApp(const AppCalculator(onSplashReady: FlutterNativeSplash.remove));
 }
 
 void _registerGlobalErrorHandlers() {

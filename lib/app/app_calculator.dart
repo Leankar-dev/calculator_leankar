@@ -1,13 +1,16 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/pages/calculator_page.dart';
+import 'package:calculator_05122025/pages/splash_page.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class AppCalculator extends StatelessWidget {
-  const AppCalculator({super.key});
+  final VoidCallback? onSplashReady;
+
+  const AppCalculator({super.key, this.onSplashReady});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,10 @@ class AppCalculator extends StatelessWidget {
           depth: AppSizes.appThemeDepthDark,
           intensity: AppSizes.appThemeIntensityDark,
         ),
-        home: const CalculatorPage(),
+        home: SplashPage(
+          onFirstFrame: onSplashReady,
+          nextPageBuilder: (context) => const CalculatorPage(),
+        ),
       ),
     );
   }
