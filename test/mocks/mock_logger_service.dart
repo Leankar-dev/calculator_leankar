@@ -2,6 +2,8 @@ import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 
 class MockLoggerService extends LoggerService {
+  final List<String> warningMessages = [];
+
   @override
   void debug(String message, {String? tag, Object? data}) {}
 
@@ -9,7 +11,9 @@ class MockLoggerService extends LoggerService {
   void info(String message, {String? tag, Object? data}) {}
 
   @override
-  void warning(String message, {String? tag, Object? data}) {}
+  void warning(String message, {String? tag, Object? data}) {
+    warningMessages.add(message);
+  }
 
   @override
   void error(
