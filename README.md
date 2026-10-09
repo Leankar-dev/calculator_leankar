@@ -32,6 +32,7 @@ Uma calculadora Flutter com design neumórfico moderno, desenvolvida seguindo as
 - Histórico de cálculos com persistência local
 - Copiar/colar resultados (Ctrl+C / Ctrl+V)
 - Formatação automática de números grandes
+- Calculadora científica (trigonometria em graus/radianos, logaritmos, raiz, potência, fatorial, parênteses e memória)
 - Calculadora de IMC com classificação e peso ideal
 - Tela de configurações (tema e idioma)
 - Suporte a 5 idiomas: inglês, espanhol, francês, italiano e português (Brasil)
@@ -94,6 +95,7 @@ flutter analyze
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - Informações de versão do app
 - [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Anúncios banner via Unity LevelPlay (Android)
 - [envied](https://pub.dev/packages/envied) + `build_runner` - Chave do Unity App carregada de forma ofuscada a partir de `.env`
+- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) - Splash screen nativa
 - `flutter_localizations` - Internacionalização (5 idiomas)
 
 ### Arquitetura
@@ -102,41 +104,59 @@ O app segue um padrão de controllers (`ChangeNotifier`) + páginas + widgets, c
 
 ```
 lib/
-├── main.dart                              # Ponto de entrada
-├── app_calculator.dart                    # Configuração do app (tema, rotas)
+├── main.dart                                       # Ponto de entrada (delega ao bootstrap)
+├── app/
+│   ├── bootstrap.dart                              # Inicialização: splash, handlers de erro, orientação e estado persistido
+│   └── app_calculator.dart                         # Widget raiz (tema, idioma e tela inicial)
 ├── controllers/
-│   ├── calculator_controller.dart         # Lógica da calculadora (ChangeNotifier)
-│   ├── calculator_state.dart              # Estado imutável da calculadora
-│   ├── imc_controller.dart                # Lógica do IMC
-│   ├── settings_controller.dart           # Tema/idioma
-│   ├── ad_consent_controller.dart         # Diálogo de consentimento próprio para anúncios (sem UMP)
+│   ├── calculator_controller.dart                  # Lógica da calculadora (ChangeNotifier)
+│   ├── calculator_state.dart                       # Estado imutável da calculadora
+│   ├── scientific_calculator_controller.dart       # Lógica da calculadora científica
+│   ├── scientific_calculator_state.dart            # Estado imutável da calculadora científica
+│   ├── imc_controller.dart                         # Lógica do IMC
+│   ├── settings_controller.dart                    # Tema/idioma
+│   ├── ad_consent_controller.dart                  # Diálogo de consentimento próprio para anúncios (sem UMP)
 │   └── ad_consent_state.dart
 ├── models/
-│   ├── calculation_history.dart           # Modelo do histórico de cálculos
-│   └── imc_result.dart                    # Modelo do resultado de IMC
+│   ├── calculation_history.dart                    # Modelo do histórico de cálculos
+│   ├── expression_token.dart                       # Token de expressão da calculadora científica
+│   └── imc_result.dart                             # Modelo do resultado de IMC
 ├── pages/
-│   ├── calculator_page.dart               # Tela principal (StatefulWidget)
-│   ├── imc_calculator_page.dart           # Tela de IMC
-│   └── settings_page.dart                 # Tela de configurações
+│   ├── calculator_page.dart                        # Tela principal (StatefulWidget)
+│   ├── scientific_calculator_page.dart             # Tela da calculadora científica
+│   ├── imc_calculator_page.dart                    # Tela de IMC
+│   └── settings_page.dart                          # Tela de configurações
 ├── services/
-│   ├── level_play_ad_service.dart         # Integração com Unity LevelPlay (Android)
-│   ├── error_handler.dart                 # Tratamento centralizado de erros
-│   ├── logger_service.dart                # Serviço de logging para debug
-│   └── storage_service.dart               # Persistência com SharedPreferences
+│   ├── level_play_ad_service.dart                  # Integração com Unity LevelPlay (Android)
+│   ├── error_handler.dart                          # Tratamento centralizado de erros
+│   ├── logger_service.dart                         # Serviço de logging para debug
+│   ├── storage_service.dart                        # Persistência com SharedPreferences
+│   ├── expression_tokenizer_service.dart           # Tokenização de expressões
+│   ├── shunting_yard_service.dart                  # Conversão de notação infixa para polonesa reversa
+│   ├── rpn_evaluator_service.dart                  # Avaliação em notação polonesa reversa
+│   ├── expression_evaluator_service.dart           # Avaliação de expressões (orquestra as etapas anteriores)
+│   └── trigonometry_service.dart                   # Funções trigonométricas (graus/radianos)
 ├── widgets/
-│   ├── ads/                               # Banner de anúncios e placeholder
-│   ├── imc/                               # Widgets da calculadora de IMC
-│   ├── settings/                          # Widgets da tela de configurações
-│   └── ...                                # Widgets da calculadora (botão, display, teclado, histórico)
+│   ├── ads/                                        # Banner de anúncios, diálogo de consentimento e placeholder
+│   ├── imc/                                        # Widgets da calculadora de IMC
+│   ├── scientific/                                 # Teclado e linhas da calculadora científica
+│   ├── settings/                                   # Widgets da tela de configurações
+│   └── ...                                         # Widgets da calculadora (botão, display, teclado, histórico, drawer)
 ├── utils/
-│   ├── constants/                         # Cores, tamanhos, strings, IDs de anúncio
-│   ├── enums/                             # Tipos de erro, operações, IMC, etc.
-│   ├── extensions/                        # Extensões de localização
-│   ├── env/                               # Chave do Unity App via envied (gerado a partir de .env)
-│   ├── number_formatter.dart              # Formatação de números grandes
-│   ├── responsive_utils.dart              # Utilitários responsivos
-│   └── result.dart                        # Padrão Result para tratamento de erros
-└── l10n/                                  # Arquivos .arb (en, es, fr, it, pt, pt_BR) + código gerado
+│   ├── constants/                                  # Cores, tamanhos, strings, IDs de anúncio
+│   ├── enums/                                      # Tipos de erro, operações, IMC, funções científicas, etc.
+│   ├── exceptions/                                 # Exceções da calculadora científica
+│   ├── extensions/                                 # Extensões de localização e de listas
+│   ├── keyboard/                                   # Mapeamento de teclas físicas para ações
+│   ├── mixins/                                     # Feedback de copiar/colar
+│   ├── env/                                        # Chave do Unity App via envied (gerado a partir de .env)
+│   ├── ad_platform_support.dart                    # Suporte a anúncios por plataforma
+│   ├── expression_serializer.dart                  # Serialização de expressões
+│   ├── number_formatter.dart                       # Formatação de números grandes
+│   ├── numeric_precision.dart                      # Correção de precisão numérica
+│   ├── responsive_utils.dart                       # Utilitários responsivos
+│   └── result.dart                                 # Padrão Result para tratamento de erros
+└── l10n/                                           # Arquivos .arb (en, es, fr, it, pt, pt_BR) + código gerado
 ```
 
 ### Testes
@@ -155,7 +175,7 @@ test/
 └── widgets/        # Testes de widgets, incluindo ads/, imc/ e settings/
 ```
 
-**Total: 383 testes automatizados**
+**Total: 815 testes automatizados**
 
 ### Padrões de Código
 
@@ -185,6 +205,7 @@ A Flutter calculator with modern neumorphic design, developed following best pra
 - Calculation history with local persistence
 - Copy/paste results (Ctrl+C / Ctrl+V)
 - Automatic formatting for large numbers
+- Scientific calculator (trigonometry in degrees/radians, logarithms, square root, power, factorial, parentheses and memory)
 - BMI calculator with classification and ideal weight
 - Settings screen (theme and language)
 - Support for 5 languages: English, Spanish, French, Italian, and Portuguese (Brazil)
@@ -247,6 +268,7 @@ flutter analyze
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - App version info
 - [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Banner ads via Unity LevelPlay (Android)
 - [envied](https://pub.dev/packages/envied) + `build_runner` - Unity App key loaded obfuscated from `.env`
+- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) - Native splash screen
 - `flutter_localizations` - Internationalization (5 languages)
 
 ### Architecture
@@ -255,41 +277,59 @@ The app follows a controller (`ChangeNotifier`) + pages + widgets pattern, with 
 
 ```
 lib/
-├── main.dart                              # Entry point
-├── app_calculator.dart                    # App configuration (theme, routes)
+├── main.dart                                       # Entry point (delegates to bootstrap)
+├── app/
+│   ├── bootstrap.dart                              # Initialization: splash, error handlers, orientation and persisted state
+│   └── app_calculator.dart                         # Root widget (theme, language and home screen)
 ├── controllers/
-│   ├── calculator_controller.dart         # Calculator business logic (ChangeNotifier)
-│   ├── calculator_state.dart              # Immutable calculator state
-│   ├── imc_controller.dart                # BMI business logic
-│   ├── settings_controller.dart           # Theme/language
-│   ├── ad_consent_controller.dart         # Custom in-app ad consent dialog (no UMP)
+│   ├── calculator_controller.dart                  # Calculator business logic (ChangeNotifier)
+│   ├── calculator_state.dart                       # Immutable calculator state
+│   ├── scientific_calculator_controller.dart       # Scientific calculator business logic
+│   ├── scientific_calculator_state.dart            # Immutable scientific calculator state
+│   ├── imc_controller.dart                         # BMI business logic
+│   ├── settings_controller.dart                    # Theme/language
+│   ├── ad_consent_controller.dart                  # Custom in-app ad consent dialog (no UMP)
 │   └── ad_consent_state.dart
 ├── models/
-│   ├── calculation_history.dart           # Calculation history model
-│   └── imc_result.dart                    # BMI result model
+│   ├── calculation_history.dart                    # Calculation history model
+│   ├── expression_token.dart                       # Expression token for the scientific calculator
+│   └── imc_result.dart                             # BMI result model
 ├── pages/
-│   ├── calculator_page.dart               # Main screen (StatefulWidget)
-│   ├── imc_calculator_page.dart           # BMI screen
-│   └── settings_page.dart                 # Settings screen
+│   ├── calculator_page.dart                        # Main screen (StatefulWidget)
+│   ├── scientific_calculator_page.dart             # Scientific calculator screen
+│   ├── imc_calculator_page.dart                    # BMI screen
+│   └── settings_page.dart                          # Settings screen
 ├── services/
-│   ├── level_play_ad_service.dart         # Unity LevelPlay integration (Android)
-│   ├── error_handler.dart                 # Centralized error handling
-│   ├── logger_service.dart                # Logging service for debug
-│   └── storage_service.dart               # Persistence with SharedPreferences
+│   ├── level_play_ad_service.dart                  # Unity LevelPlay integration (Android)
+│   ├── error_handler.dart                          # Centralized error handling
+│   ├── logger_service.dart                         # Logging service for debug
+│   ├── storage_service.dart                        # Persistence with SharedPreferences
+│   ├── expression_tokenizer_service.dart           # Expression tokenization
+│   ├── shunting_yard_service.dart                  # Infix to reverse Polish notation conversion
+│   ├── rpn_evaluator_service.dart                  # Reverse Polish notation evaluation
+│   ├── expression_evaluator_service.dart           # Expression evaluation (orchestrates the previous steps)
+│   └── trigonometry_service.dart                   # Trigonometric functions (degrees/radians)
 ├── widgets/
-│   ├── ads/                               # Ad banner and placeholder
-│   ├── imc/                               # BMI calculator widgets
-│   ├── settings/                          # Settings screen widgets
-│   └── ...                                # Calculator widgets (button, display, keypad, history)
+│   ├── ads/                                        # Ad banner, consent dialog and placeholder
+│   ├── imc/                                        # BMI calculator widgets
+│   ├── scientific/                                 # Scientific calculator keypad and rows
+│   ├── settings/                                   # Settings screen widgets
+│   └── ...                                         # Calculator widgets (button, display, keypad, history, drawer)
 ├── utils/
-│   ├── constants/                         # Colors, sizes, strings, ad unit IDs
-│   ├── enums/                             # Error types, operations, BMI, etc.
-│   ├── extensions/                        # Localization extensions
-│   ├── env/                               # Unity App key via envied (generated from .env)
-│   ├── number_formatter.dart              # Large number formatting
-│   ├── responsive_utils.dart              # Responsive utilities
-│   └── result.dart                        # Result pattern for error handling
-└── l10n/                                  # .arb files (en, es, fr, it, pt, pt_BR) + generated code
+│   ├── constants/                                  # Colors, sizes, strings, ad unit IDs
+│   ├── enums/                                      # Error types, operations, BMI, scientific functions, etc.
+│   ├── exceptions/                                 # Scientific calculator exceptions
+│   ├── extensions/                                 # Localization and list extensions
+│   ├── keyboard/                                   # Physical key to action mapping
+│   ├── mixins/                                     # Copy/paste feedback
+│   ├── env/                                        # Unity App key via envied (generated from .env)
+│   ├── ad_platform_support.dart                    # Per-platform ad support
+│   ├── expression_serializer.dart                  # Expression serialization
+│   ├── number_formatter.dart                       # Large number formatting
+│   ├── numeric_precision.dart                      # Numeric precision correction
+│   ├── responsive_utils.dart                       # Responsive utilities
+│   └── result.dart                                 # Result pattern for error handling
+└── l10n/                                           # .arb files (en, es, fr, it, pt, pt_BR) + generated code
 ```
 
 ### Tests
@@ -308,7 +348,7 @@ test/
 └── widgets/        # Widget tests, including ads/, imc/, and settings/
 ```
 
-**Total: 383 automated tests**
+**Total: 815 automated tests**
 
 ### Code Standards
 
@@ -338,6 +378,7 @@ Una calculadora Flutter con diseño neumórfico moderno, desarrollada siguiendo 
 - Historial de cálculos con persistencia local
 - Copiar/pegar resultados (Ctrl+C / Ctrl+V)
 - Formato automático para números grandes
+- Calculadora científica (trigonometría en grados/radianes, logaritmos, raíz, potencia, factorial, paréntesis y memoria)
 - Calculadora de IMC con clasificación y peso ideal
 - Pantalla de configuración (tema e idioma)
 - Soporte para 5 idiomas: inglés, español, francés, italiano y portugués (Brasil)
@@ -400,6 +441,7 @@ flutter analyze
 - [package_info_plus](https://pub.dev/packages/package_info_plus) - Información de versión de la app
 - [unity_levelplay_mediation](https://pub.dev/packages/unity_levelplay_mediation) - Anuncios banner mediante Unity LevelPlay (Android)
 - [envied](https://pub.dev/packages/envied) + `build_runner` - Clave del Unity App cargada de forma ofuscada desde `.env`
+- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) - Splash screen nativa
 - `flutter_localizations` - Internacionalización (5 idiomas)
 
 ### Arquitectura
@@ -408,41 +450,59 @@ La app sigue un patrón de controllers (`ChangeNotifier`) + páginas + widgets, 
 
 ```
 lib/
-├── main.dart                              # Punto de entrada
-├── app_calculator.dart                    # Configuración de la app (tema, rutas)
+├── main.dart                                       # Punto de entrada (delega al bootstrap)
+├── app/
+│   ├── bootstrap.dart                              # Inicialización: splash, handlers de error, orientación y estado persistido
+│   └── app_calculator.dart                         # Widget raíz (tema, idioma y pantalla inicial)
 ├── controllers/
-│   ├── calculator_controller.dart         # Lógica de la calculadora (ChangeNotifier)
-│   ├── calculator_state.dart              # Estado inmutable de la calculadora
-│   ├── imc_controller.dart                # Lógica del IMC
-│   ├── settings_controller.dart           # Tema/idioma
-│   ├── ad_consent_controller.dart         # Diálogo de consentimiento propio para anuncios (sin UMP)
+│   ├── calculator_controller.dart                  # Lógica de la calculadora (ChangeNotifier)
+│   ├── calculator_state.dart                       # Estado inmutable de la calculadora
+│   ├── scientific_calculator_controller.dart       # Lógica de la calculadora científica
+│   ├── scientific_calculator_state.dart            # Estado inmutable de la calculadora científica
+│   ├── imc_controller.dart                         # Lógica del IMC
+│   ├── settings_controller.dart                    # Tema/idioma
+│   ├── ad_consent_controller.dart                  # Diálogo de consentimiento propio para anuncios (sin UMP)
 │   └── ad_consent_state.dart
 ├── models/
-│   ├── calculation_history.dart           # Modelo del historial de cálculos
-│   └── imc_result.dart                    # Modelo del resultado de IMC
+│   ├── calculation_history.dart                    # Modelo del historial de cálculos
+│   ├── expression_token.dart                       # Token de expresión de la calculadora científica
+│   └── imc_result.dart                             # Modelo del resultado de IMC
 ├── pages/
-│   ├── calculator_page.dart               # Pantalla principal (StatefulWidget)
-│   ├── imc_calculator_page.dart           # Pantalla de IMC
-│   └── settings_page.dart                 # Pantalla de configuración
+│   ├── calculator_page.dart                        # Pantalla principal (StatefulWidget)
+│   ├── scientific_calculator_page.dart             # Pantalla de la calculadora científica
+│   ├── imc_calculator_page.dart                    # Pantalla de IMC
+│   └── settings_page.dart                          # Pantalla de configuración
 ├── services/
-│   ├── level_play_ad_service.dart         # Integración con Unity LevelPlay (Android)
-│   ├── error_handler.dart                 # Manejo centralizado de errores
-│   ├── logger_service.dart                # Servicio de logging para debug
-│   └── storage_service.dart               # Persistencia con SharedPreferences
+│   ├── level_play_ad_service.dart                  # Integración con Unity LevelPlay (Android)
+│   ├── error_handler.dart                          # Manejo centralizado de errores
+│   ├── logger_service.dart                         # Servicio de logging para debug
+│   ├── storage_service.dart                        # Persistencia con SharedPreferences
+│   ├── expression_tokenizer_service.dart           # Tokenización de expresiones
+│   ├── shunting_yard_service.dart                  # Conversión de notación infija a polaca inversa
+│   ├── rpn_evaluator_service.dart                  # Evaluación en notación polaca inversa
+│   ├── expression_evaluator_service.dart           # Evaluación de expresiones (orquesta los pasos anteriores)
+│   └── trigonometry_service.dart                   # Funciones trigonométricas (grados/radianes)
 ├── widgets/
-│   ├── ads/                               # Banner de anuncios y placeholder
-│   ├── imc/                               # Widgets de la calculadora de IMC
-│   ├── settings/                          # Widgets de la pantalla de configuración
-│   └── ...                                # Widgets de la calculadora (botón, display, teclado, historial)
+│   ├── ads/                                        # Banner de anuncios, diálogo de consentimiento y placeholder
+│   ├── imc/                                        # Widgets de la calculadora de IMC
+│   ├── scientific/                                 # Teclado y filas de la calculadora científica
+│   ├── settings/                                   # Widgets de la pantalla de configuración
+│   └── ...                                         # Widgets de la calculadora (botón, display, teclado, historial, drawer)
 ├── utils/
-│   ├── constants/                         # Colores, tamaños, strings, IDs de anuncio
-│   ├── enums/                             # Tipos de error, operaciones, IMC, etc.
-│   ├── extensions/                        # Extensiones de localización
-│   ├── env/                               # Clave del Unity App vía envied (generada desde .env)
-│   ├── number_formatter.dart              # Formato de números grandes
-│   ├── responsive_utils.dart              # Utilidades responsivas
-│   └── result.dart                        # Patrón Result para manejo de errores
-└── l10n/                                  # Archivos .arb (en, es, fr, it, pt, pt_BR) + código generado
+│   ├── constants/                                  # Colores, tamaños, strings, IDs de anuncio
+│   ├── enums/                                      # Tipos de error, operaciones, IMC, funciones científicas, etc.
+│   ├── exceptions/                                 # Excepciones de la calculadora científica
+│   ├── extensions/                                 # Extensiones de localización y de listas
+│   ├── keyboard/                                   # Mapeo de teclas físicas a acciones
+│   ├── mixins/                                     # Feedback de copiar/pegar
+│   ├── env/                                        # Clave del Unity App vía envied (generada desde .env)
+│   ├── ad_platform_support.dart                    # Soporte de anuncios por plataforma
+│   ├── expression_serializer.dart                  # Serialización de expresiones
+│   ├── number_formatter.dart                       # Formato de números grandes
+│   ├── numeric_precision.dart                      # Corrección de precisión numérica
+│   ├── responsive_utils.dart                       # Utilidades responsivas
+│   └── result.dart                                 # Patrón Result para manejo de errores
+└── l10n/                                           # Archivos .arb (en, es, fr, it, pt, pt_BR) + código generado
 ```
 
 ### Pruebas
@@ -461,7 +521,7 @@ test/
 └── widgets/        # Pruebas de widgets, incluyendo ads/, imc/ y settings/
 ```
 
-**Total: 383 pruebas automatizadas**
+**Total: 815 pruebas automatizadas**
 
 ### Estándares de Código
 
