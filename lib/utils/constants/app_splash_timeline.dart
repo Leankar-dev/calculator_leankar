@@ -10,6 +10,9 @@ class AppSplashTimeline {
   static const Duration reducedMotionTransition = Duration(milliseconds: 200);
 
   static const double exitStart = 0.78;
+  static const double titleLetterSpan = 8.0;
+  static const double shimmerSweepStart = -1.0;
+  static const double shimmerSweepEnd = 2.0;
 
   static const Interval background = Interval(
     0.00,
@@ -43,5 +46,10 @@ class AppSplashTimeline {
     exitStart,
     1.00,
     curve: Curves.easeInCubic,
+  );
+  static const Interval keysExit = Interval(
+    exitStart,
+    1.00,
+    curve: Curves.easeInBack,
   );
 }

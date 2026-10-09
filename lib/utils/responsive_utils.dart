@@ -80,6 +80,30 @@ class ResponsiveUtils {
     );
   }
 
+  static double getSplashTitleFontSize(BuildContext context) {
+    final scale = _getScaleFactor(context);
+    return (AppSizes.splashTitleFontSize * scale).clamp(
+      AppSizes.splashTitleFontSizeMin,
+      AppSizes.splashTitleFontSizeMax,
+    );
+  }
+
+  static double getSplashTaglineFontSize(BuildContext context) {
+    final scale = _getScaleFactor(context);
+    return (AppSizes.splashTaglineFontSize * scale).clamp(
+      AppSizes.splashTaglineFontSizeMin,
+      AppSizes.splashTaglineFontSizeMax,
+    );
+  }
+
+  static double getSplashTaglineMaxWidth(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width.clamp(
+      AppSizes.minWidth,
+      AppSizes.maxCalculatorWidth,
+    );
+    return width * AppSizes.splashTaglineMaxWidthFactor;
+  }
+
   static double getMaxCalculatorWidth() {
     return AppSizes.maxCalculatorWidth;
   }

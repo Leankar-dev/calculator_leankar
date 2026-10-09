@@ -238,4 +238,15 @@ class AppSizes {
   static const double splashLogoReleaseScale = 1.03;
   static const double splashLogoExitScale = 1.06;
   static const double splashRouteStartScale = 0.98;
+  static const double splashKeyLabelFactor = 0.5;
+  static const double splashKeyBurstSpan = 0.5;
+  static const double splashKeyEntryRotation = 0.8;
+  static const double splashKeyFloatCycles = 3.0;
+  static const double splashKeyMaxScale = 1.2;
+  static const double splashTitleSpaceFactor = 0.3;
+  static const double splashTaglineRise = 10.0;
+  static const double splashTaglineMaxWidthFactor = 0.8;
+  static const double splashShimmerBandStart = 0.35;
+  static const double splashShimmerBandCenter = 0.5;
+  static const double splashShimmerBandEnd = 0.65;
 }
