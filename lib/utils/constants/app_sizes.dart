@@ -214,4 +214,28 @@ class AppSizes {
   static const double settingsAdsDescriptionFontSize = 12.0;
   static const double settingsAdsTextToSwitchSpacing = 16.0;
   static const double settingsAdsTitleToDescriptionSpacing = 4.0;
+
+  static const double splashLogoWidthFactor = 0.62;
+  static const double splashLogoTileFactor = 0.338;
+  static const double splashLogoStartScale = 0.62;
+  static const double splashOrbitRadiusFactor = 1.05;
+  static const double splashKeyExtentFactor = 0.46;
+  static const double splashKeyCornerFactor = 0.32;
+  static const double splashKeyShadowOffset = 4.0;
+  static const double splashKeyShadowBlur = 10.0;
+  static const double splashTitleFontSize = 28.0;
+  static const double splashTitleFontSizeMin = 22.0;
+  static const double splashTitleFontSizeMax = 36.0;
+  static const double splashTaglineFontSize = 14.0;
+  static const double splashTaglineFontSizeMin = 12.0;
+  static const double splashTaglineFontSizeMax = 18.0;
+  static const double splashTitleGap = 28.0;
+  static const double splashTitleLetterSpacing = 0.6;
+  static const double splashLetterRise = 14.0;
+  static const double splashKeyFloatAmplitude = 3.0;
+  static const double splashOrbitDriftDegrees = 24.0;
+  static const double splashLogoPressScale = 0.95;
+  static const double splashLogoReleaseScale = 1.03;
+  static const double splashLogoExitScale = 1.06;
+  static const double splashRouteStartScale = 0.98;
 }

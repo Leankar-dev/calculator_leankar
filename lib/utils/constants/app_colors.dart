@@ -32,4 +32,13 @@ class AppColors {
   static const Color scientificShiftActive = Color(0xFFBA68C8);
   static const Color scientificFunction = Color(0xFF4DB6AC);
   static const Color scientificConstant = Color(0xFFFFB300);
+
+  static const Color splashGradientStart = Color(0xFFFFFFFF);
+  static const Color splashGradientEnd = Color(0xFFBBDEFB);
+  static const Color splashNativeFlat = Color(0xFFEAF4FF);
+  static const Color splashTitle = Color(0xFF102C6C);
+  static const Color splashTagline = Color(0xFF4F6A8F);
+  static const Color splashKeyShadowDark = Color(0x33000000);
+  static const Color splashKeyShadowLight = Color(0xCCFFFFFF);
+  static const Color splashShimmerHighlight = Color(0x66FFFFFF);
 }
