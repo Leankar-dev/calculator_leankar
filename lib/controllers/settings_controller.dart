@@ -1,3 +1,4 @@
+import 'package:calculator_05122025/utils/constants/app_languages.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,15 +7,9 @@ class SettingsController extends ChangeNotifier {
   static final SettingsController instance = SettingsController._();
   SettingsController._();
 
-  static const Locale defaultLocale = Locale('pt', 'BR');
+  static const Locale defaultLocale = AppLanguages.defaultLocale;
 
-  static const List<Locale> supportedLocales = [
-    defaultLocale,
-    Locale('en'),
-    Locale('es'),
-    Locale('it'),
-    Locale('fr'),
-  ];
+  static final List<Locale> supportedLocales = AppLanguages.locales;
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;

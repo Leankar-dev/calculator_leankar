@@ -37,9 +37,9 @@ class ButtonWidget extends StatelessWidget {
         return l10n.semanticBackspace;
       case AppStrings.percentSymbol:
         return l10n.semanticPercent;
-      case '=':
+      case AppStrings.equalsButtonText:
         return l10n.semanticEquals;
-      case 'C':
+      case AppStrings.clearButtonText:
         return l10n.semanticClear;
       case AppStrings.decimalSeparator:
         return l10n.semanticDecimalSeparator;

@@ -1,6 +1,10 @@
 import 'package:calculator_05122025/models/expression_token.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
+import 'package:calculator_05122025/utils/enums/scientific_function_insertion.dart';
+import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
 import 'package:calculator_05122025/utils/extensions/expression_token_extension.dart';
@@ -13,26 +17,16 @@ class ExpressionTokenizerService {
     r'^(\d+|\d{1,3}(\.\d{3})+)(,\d*)?([eE][+-]?\d+)?$',
   );
 
-  static const List<String> _prefixFunctionLexemes = [
-    'asin(',
-    'acos(',
-    'atan(',
-    'sin(',
-    'cos(',
-    'tan(',
-    'log(',
-    'ln(',
-    '³√(',
-    '√(',
-    'abs(',
+  static final List<String> _prefixFunctionLexemes = [
+    for (final lexeme in ScientificFunctionType.lexemesFor(
+      ScientificFunctionInsertion.prefixFunction,
+    ))
+      '$lexeme${AppScientificStrings.openParen}',
   ];
 
-  static const List<String> _postfixLexemes = ['⁻¹', '!', '²', '³'];
-
-  static const String _piSymbol = 'π';
-  static const String _eulerSymbol = 'e';
-  static const String _powerSymbol = '^';
-  static const String _permutationSymbol = 'P';
+  static final List<String> _postfixLexemes = ScientificFunctionType.lexemesFor(
+    ScientificFunctionInsertion.postfixOperator,
+  );
 
   List<ExpressionToken> tokenize(String expression) {
     final tokens = <ExpressionToken>[];
@@ -75,23 +69,32 @@ class ExpressionTokenizerService {
           ExpressionToken(type: TokenType.unaryFunction, value: functionName),
         );
         tokens.add(
-          const ExpressionToken(type: TokenType.openParen, value: '('),
+          const ExpressionToken(
+            type: TokenType.openParen,
+            value: AppScientificStrings.openParen,
+          ),
         );
         index += prefixFunction.length;
         continue;
       }
 
-      if (char == '(') {
+      if (char == AppScientificStrings.openParen) {
         tokens.add(
-          const ExpressionToken(type: TokenType.openParen, value: '('),
+          const ExpressionToken(
+            type: TokenType.openParen,
+            value: AppScientificStrings.openParen,
+          ),
         );
         index++;
         continue;
       }
 
-      if (char == ')') {
+      if (char == AppScientificStrings.closeParen) {
         tokens.add(
-          const ExpressionToken(type: TokenType.closeParen, value: ')'),
+          const ExpressionToken(
+            type: TokenType.closeParen,
+            value: AppScientificStrings.closeParen,
+          ),
         );
         index++;
         continue;
@@ -113,19 +116,22 @@ class ExpressionTokenizerService {
         continue;
       }
 
-      if (char == _piSymbol) {
+      if (char == AppScientificStrings.pi) {
         tokens.add(
-          const ExpressionToken(type: TokenType.constant, value: _piSymbol),
+          const ExpressionToken(
+            type: TokenType.constant,
+            value: AppScientificStrings.pi,
+          ),
         );
         index++;
         continue;
       }
 
-      if (char == _eulerSymbol) {
+      if (char == AppScientificStrings.euler) {
         tokens.add(
           const ExpressionToken(
             type: TokenType.constant,
-            value: _eulerSymbol,
+            value: AppScientificStrings.euler,
           ),
         );
         index++;
@@ -135,7 +141,10 @@ class ExpressionTokenizerService {
       if (_isBinaryOperatorChar(char)) {
         if (char == AppStrings.subtractionSymbol && tokens.expectsOperand) {
           tokens.add(
-            const ExpressionToken(type: TokenType.unaryMinus, value: '-'),
+            const ExpressionToken(
+              type: TokenType.unaryMinus,
+              value: AppStrings.subtractionSymbol,
+            ),
           );
         } else {
           tokens.add(
@@ -181,8 +190,8 @@ class ExpressionTokenizerService {
         char == AppStrings.subtractionSymbol ||
         char == AppStrings.multiplicationSymbol ||
         char == AppStrings.divisionSymbol ||
-        char == _powerSymbol ||
-        char == _permutationSymbol;
+        char == AppScientificLexemes.power ||
+        char == AppScientificLexemes.permutation;
   }
 
   List<ExpressionToken> _insertImplicitMultiplication(
@@ -194,7 +203,10 @@ class ExpressionTokenizerService {
       final current = tokens[i];
       if (previous.closesValue && current.opensValue) {
         result.add(
-          const ExpressionToken(type: TokenType.binaryOperator, value: '×'),
+          const ExpressionToken(
+            type: TokenType.binaryOperator,
+            value: AppStrings.multiplicationSymbol,
+          ),
         );
       }
       result.add(current);

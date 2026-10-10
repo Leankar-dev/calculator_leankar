@@ -4,6 +4,8 @@ import 'package:calculator_05122025/models/expression_token.dart';
 import 'package:calculator_05122025/services/expression_evaluator_service.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/services/storage_service.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/paste_result.dart';
@@ -23,8 +25,6 @@ class ScientificCalculatorController extends ChangeNotifier {
   final LoggerService _logger;
   final StorageService _storageService;
 
-  static const String _powerSymbol = '^';
-  static const String _permutationSymbol = 'P';
   static const String _logTag = 'ScientificCalculatorController';
 
   ScientificCalculatorState _state = ScientificCalculatorState.initial();
@@ -110,14 +110,24 @@ class ScientificCalculatorController extends ChangeNotifier {
   void openParen() {
     _resetExpressionIfInError();
     _commitPendingOperand();
-    _appendToken(const ExpressionToken(type: TokenType.openParen, value: '('));
+    _appendToken(
+      const ExpressionToken(
+        type: TokenType.openParen,
+        value: AppScientificStrings.openParen,
+      ),
+    );
     _notifyWithPreview();
   }
 
   void closeParen() {
     _resetExpressionIfInError();
     _commitPendingOperand();
-    _appendToken(const ExpressionToken(type: TokenType.closeParen, value: ')'));
+    _appendToken(
+      const ExpressionToken(
+        type: TokenType.closeParen,
+        value: AppScientificStrings.closeParen,
+      ),
+    );
     _notifyWithPreview();
   }
 
@@ -157,7 +167,10 @@ class ScientificCalculatorController extends ChangeNotifier {
 
     if (operator == AppStrings.subtractionSymbol && _expectsNewOperand()) {
       _appendToken(
-        const ExpressionToken(type: TokenType.unaryMinus, value: '-'),
+        const ExpressionToken(
+          type: TokenType.unaryMinus,
+          value: AppStrings.subtractionSymbol,
+        ),
       );
     } else {
       _commitPendingOperand();
@@ -166,7 +179,8 @@ class ScientificCalculatorController extends ChangeNotifier {
       );
     }
 
-    if (operator == _powerSymbol || operator == _permutationSymbol) {
+    if (operator == AppScientificLexemes.power ||
+        operator == AppScientificLexemes.permutation) {
       _resetShiftIfNotLocked();
     }
 
@@ -553,7 +567,10 @@ class ScientificCalculatorController extends ChangeNotifier {
       tokens: [
         ..._state.tokens,
         ExpressionToken(type: TokenType.unaryFunction, value: name),
-        const ExpressionToken(type: TokenType.openParen, value: '('),
+        const ExpressionToken(
+          type: TokenType.openParen,
+          value: AppScientificStrings.openParen,
+        ),
       ],
     );
   }
@@ -573,7 +590,7 @@ class ScientificCalculatorController extends ChangeNotifier {
         base,
         const ExpressionToken(
           type: TokenType.binaryOperator,
-          value: _powerSymbol,
+          value: AppScientificLexemes.power,
         ),
       ],
     );

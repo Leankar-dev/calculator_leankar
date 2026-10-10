@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
+const String _bootstrapLogTag = 'Bootstrap';
+
 Future<void> bootstrap() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -24,7 +26,7 @@ void _registerGlobalErrorHandlers() {
   FlutterError.onError = (details) {
     logger.error(
       'Erro do framework',
-      tag: 'Bootstrap',
+      tag: _bootstrapLogTag,
       error: details.exception,
       stackTrace: details.stack,
     );
@@ -34,7 +36,7 @@ void _registerGlobalErrorHandlers() {
   PlatformDispatcher.instance.onError = (error, stackTrace) {
     logger.error(
       'Erro não tratado',
-      tag: 'Bootstrap',
+      tag: _bootstrapLogTag,
       error: error,
       stackTrace: stackTrace,
     );
@@ -50,7 +52,7 @@ Future<void> _loadPersistedState() async {
   } catch (e, stackTrace) {
     logger.error(
       'Falha ao carregar configurações, usando padrões',
-      tag: 'Bootstrap',
+      tag: _bootstrapLogTag,
       error: e,
       stackTrace: stackTrace,
     );
@@ -61,7 +63,7 @@ Future<void> _loadPersistedState() async {
   } catch (e, stackTrace) {
     logger.error(
       'Falha ao carregar consentimento, anúncios desativados',
-      tag: 'Bootstrap',
+      tag: _bootstrapLogTag,
       error: e,
       stackTrace: stackTrace,
     );

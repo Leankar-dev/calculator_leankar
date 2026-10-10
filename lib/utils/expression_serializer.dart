@@ -1,11 +1,14 @@
 import 'package:calculator_05122025/models/expression_token.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/extensions/expression_token_extension.dart';
 
 class ExpressionSerializer {
   ExpressionSerializer._();
 
-  static const String _implicitMultiplication = ' × ';
+  static const String _implicitMultiplication =
+      ' ${AppStrings.multiplicationSymbol} ';
 
   static String serialize(List<ExpressionToken> tokens, String currentInput) {
     final buffer = StringBuffer();
@@ -42,6 +45,6 @@ class ExpressionSerializer {
     if (unclosedCount <= 0) {
       return expression;
     }
-    return expression + ')' * unclosedCount;
+    return expression + AppScientificStrings.closeParen * unclosedCount;
   }
 }

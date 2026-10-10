@@ -1,8 +1,22 @@
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
+
 enum OperationsType {
-  addition(symbol: '+', percentageIsRelativeToFirstOperand: true),
-  subtraction(symbol: '-', percentageIsRelativeToFirstOperand: true),
-  multiplication(symbol: '×', percentageIsRelativeToFirstOperand: false),
-  division(symbol: '÷', percentageIsRelativeToFirstOperand: false);
+  addition(
+    symbol: AppStrings.additionSymbol,
+    percentageIsRelativeToFirstOperand: true,
+  ),
+  subtraction(
+    symbol: AppStrings.subtractionSymbol,
+    percentageIsRelativeToFirstOperand: true,
+  ),
+  multiplication(
+    symbol: AppStrings.multiplicationSymbol,
+    percentageIsRelativeToFirstOperand: false,
+  ),
+  division(
+    symbol: AppStrings.divisionSymbol,
+    percentageIsRelativeToFirstOperand: false,
+  );
 
   final String symbol;
   final bool percentageIsRelativeToFirstOperand;

@@ -1,6 +1,8 @@
 import 'package:calculator_05122025/controllers/settings_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
+import 'package:calculator_05122025/models/language_option.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_languages.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -40,12 +42,12 @@ class LanguageSelectorWidget extends StatelessWidget {
             listenable: controller,
             builder: (context, child) {
               return Column(
-                children: SettingsController.supportedLocales
+                children: AppLanguages.options
                     .map(
-                      (locale) => _LanguageTile(
-                        locale: locale,
-                        isSelected: controller.locale == locale,
-                        onTap: () => controller.setLocale(locale),
+                      (option) => _LanguageTile(
+                        option: option,
+                        isSelected: controller.locale == option.locale,
+                        onTap: () => controller.setLocale(option.locale),
                       ),
                     )
                     .toList(),
@@ -59,38 +61,15 @@ class LanguageSelectorWidget extends StatelessWidget {
 }
 
 class _LanguageTile extends StatelessWidget {
-  final Locale locale;
+  final LanguageOption option;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _LanguageTile({
-    required this.locale,
+    required this.option,
     required this.isSelected,
     required this.onTap,
   });
-
-  static const Map<String, String> _flagEmojis = {
-    'pt_BR': '🇧🇷',
-    'en': '🇺🇸',
-    'es': '🇪🇸',
-    'it': '🇮🇹',
-    'fr': '🇫🇷',
-  };
-
-  static const Map<String, String> _nativeNames = {
-    'pt_BR': 'Português',
-    'en': 'English',
-    'es': 'Español',
-    'it': 'Italiano',
-    'fr': 'Français',
-  };
-
-  String get _localeKey {
-    if (locale.countryCode != null) {
-      return '${locale.languageCode}_${locale.countryCode}';
-    }
-    return locale.languageCode;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +90,12 @@ class _LanguageTile extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            _flagEmojis[_localeKey] ?? '',
+            option.flagEmoji,
             style: const TextStyle(fontSize: AppSizes.drawerTitleFontSize),
           ),
           const SizedBox(width: AppSizes.drawerItemIconSpacing),
           Text(
-            _nativeNames[_localeKey] ?? locale.languageCode,
+            option.nativeName,
             style: TextStyle(
               fontSize: AppSizes.drawerItemFontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

@@ -4,6 +4,8 @@ import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:calculator_05122025/utils/result.dart';
 
+const String _calculationLogTag = 'Calculation';
+
 class ErrorHandler {
   static const int _maxInputDigits = 15;
 
@@ -19,7 +21,7 @@ class ErrorHandler {
     if (value.isNaN) {
       _logger.logError(
         ErrorType.notANumber,
-        tag: 'Calculation',
+        tag: _calculationLogTag,
         details: 'Resultado: $value',
       );
       return Result.failure(ErrorType.notANumber);
@@ -28,7 +30,7 @@ class ErrorHandler {
     if (value.isInfinite) {
       _logger.logError(
         ErrorType.infinity,
-        tag: 'Calculation',
+        tag: _calculationLogTag,
         details: 'Resultado: $value',
       );
       return Result.failure(ErrorType.infinity);
@@ -37,7 +39,7 @@ class ErrorHandler {
     if (value.abs() > AppStrings.maxDisplayValue) {
       _logger.logError(
         ErrorType.overflow,
-        tag: 'Calculation',
+        tag: _calculationLogTag,
         details: 'Valor: $value',
       );
       return Result.failure(ErrorType.overflow);
@@ -75,7 +77,7 @@ class ErrorHandler {
     if (divisor == 0) {
       _logger.logError(
         ErrorType.divisionByZero,
-        tag: 'Calculation',
+        tag: _calculationLogTag,
         details: '$dividend / $divisor',
       );
       return Result.failure(ErrorType.divisionByZero);
@@ -88,7 +90,7 @@ class ErrorHandler {
   bool isValidNumberInput(
     String currentDisplay,
     String newDigit, {
-    String decimalSeparator = ',',
+    String decimalSeparator = AppStrings.decimalSeparator,
   }) {
     if (newDigit == decimalSeparator) {
       if (currentDisplay.contains(decimalSeparator)) {
@@ -103,7 +105,7 @@ class ErrorHandler {
     final wouldBe = currentDisplay + newDigit;
     final digitCount = wouldBe
         .replaceAll(decimalSeparator, '')
-        .replaceAll('-', '')
+        .replaceAll(AppStrings.subtractionSymbol, '')
         .length;
     if (digitCount > _maxInputDigits) {
       _logger.debug('Número muito longo: $wouldBe', tag: 'Input');

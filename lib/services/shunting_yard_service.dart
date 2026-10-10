@@ -1,4 +1,6 @@
 import 'package:calculator_05122025/models/expression_token.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
 import 'package:calculator_05122025/utils/exceptions/scientific_calculation_exception.dart';
@@ -11,7 +13,10 @@ class ShuntingYardService {
   static const int _multiplicativePrecedence = 3;
   static const int _additivePrecedence = 2;
 
-  static const Set<String> _rightAssociativeOperators = {'^', 'P'};
+  static const Set<String> _rightAssociativeOperators = {
+    AppScientificLexemes.power,
+    AppScientificLexemes.permutation,
+  };
 
   List<ExpressionToken> toRpn(List<ExpressionToken> infix) {
     final output = <ExpressionToken>[];
@@ -103,7 +108,8 @@ class ShuntingYardService {
         if (_rightAssociativeOperators.contains(token.value)) {
           return _powerPrecedence;
         }
-        if (token.value == '×' || token.value == '÷') {
+        if (token.value == AppStrings.multiplicationSymbol ||
+            token.value == AppStrings.divisionSymbol) {
           return _multiplicativePrecedence;
         }
         return _additivePrecedence;

@@ -1,4 +1,5 @@
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/enums/scientific_function_type.dart';
 import 'package:calculator_05122025/widgets/button_widget.dart';
@@ -50,7 +51,7 @@ class LogRowWidget extends StatelessWidget {
               ? AppScientificStrings.permutation
               : AppScientificStrings.factorial,
           onPressed: () => isShiftActive
-              ? onBinaryOperator('P')
+              ? onBinaryOperator(AppScientificLexemes.permutation)
               : onFunction(ScientificFunctionType.factorial),
           color: AppColors.scientificFunction,
         ),

@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 
+const String _adConsentControllerLogTag = 'AdConsentController';
+
 class AdConsentController extends ChangeNotifier {
   static final AdConsentController instance = AdConsentController();
 
@@ -39,7 +41,7 @@ class AdConsentController extends ChangeNotifier {
       );
       _logger.info(
         'Sem preferência salva: aguardando escolha do usuário',
-        tag: 'AdConsentController',
+        tag: _adConsentControllerLogTag,
       );
       return;
     }
@@ -58,7 +60,7 @@ class AdConsentController extends ChangeNotifier {
     } catch (e) {
       _logger.warning(
         'Falha ao aplicar LevelPlayPrivacySettings: $e',
-        tag: 'AdConsentController',
+        tag: _adConsentControllerLogTag,
       );
     }
 
@@ -67,7 +69,7 @@ class AdConsentController extends ChangeNotifier {
       if (result.isFailure) {
         _logger.warning(
           'Falha ao inicializar SDK após consentimento: ${result.errorFullMessage}',
-          tag: 'AdConsentController',
+          tag: _adConsentControllerLogTag,
         );
       }
     }
@@ -81,7 +83,7 @@ class AdConsentController extends ChangeNotifier {
 
     _logger.info(
       'Consentimento finalizado: canRequestAds=$accepted',
-      tag: 'AdConsentController',
+      tag: _adConsentControllerLogTag,
     );
   }
 

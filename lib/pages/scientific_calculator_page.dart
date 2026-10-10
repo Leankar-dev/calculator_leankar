@@ -2,6 +2,7 @@ import 'package:calculator_05122025/controllers/scientific_calculator_controller
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/services/logger_service.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
 import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
 import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
@@ -152,13 +153,13 @@ class _ScientificCalculatorPageState extends State<ScientificCalculatorPage>
         _controller.appendFunction(ScientificFunctionType.ln);
       case 'p':
         _controller.appendConstant(AppScientificStrings.pi);
-      case '(':
+      case AppScientificStrings.openParen:
         _controller.openParen();
-      case ')':
+      case AppScientificStrings.closeParen:
         _controller.closeParen();
-      case '!':
+      case AppScientificLexemes.factorial:
         _controller.appendFunction(ScientificFunctionType.factorial);
-      case '^':
+      case AppScientificLexemes.power:
         _controller.setBinaryOperator(ScientificFunctionType.power.lexeme);
     }
   }

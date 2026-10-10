@@ -1,7 +1,11 @@
 import 'dart:convert';
+
 import 'package:calculator_05122025/services/logger_service.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/result.dart';
+
+const String _calculationHistoryLogTag = 'CalculationHistory';
 
 class CalculationHistory {
   final String expression;
@@ -16,25 +20,31 @@ class CalculationHistory {
 
   Map<String, dynamic> toJson() {
     return {
-      'expression': expression,
-      'result': result,
-      'timestamp': timestamp.toIso8601String(),
+      AppStrings.historyJsonExpressionKey: expression,
+      AppStrings.historyJsonResultKey: result,
+      AppStrings.historyJsonTimestampKey: timestamp.toIso8601String(),
     };
   }
 
   factory CalculationHistory.fromJson(Map<String, dynamic> json) {
-    final expression = json['expression'];
-    final result = json['result'];
-    final timestamp = json['timestamp'];
+    final expression = json[AppStrings.historyJsonExpressionKey];
+    final result = json[AppStrings.historyJsonResultKey];
+    final timestamp = json[AppStrings.historyJsonTimestampKey];
 
     if (expression == null || expression is! String) {
-      throw FormatException('Campo "expression" inválido ou ausente');
+      throw FormatException(
+        'Campo "${AppStrings.historyJsonExpressionKey}" inválido ou ausente',
+      );
     }
     if (result == null || result is! String) {
-      throw FormatException('Campo "result" inválido ou ausente');
+      throw FormatException(
+        'Campo "${AppStrings.historyJsonResultKey}" inválido ou ausente',
+      );
     }
     if (timestamp == null || timestamp is! String) {
-      throw FormatException('Campo "timestamp" inválido ou ausente');
+      throw FormatException(
+        'Campo "${AppStrings.historyJsonTimestampKey}" inválido ou ausente',
+      );
     }
 
     DateTime parsedTimestamp;
@@ -57,7 +67,7 @@ class CalculationHistory {
     } catch (e) {
       logger.warning(
         'Falha ao parsear item do histórico: $e',
-        tag: 'CalculationHistory',
+        tag: _calculationHistoryLogTag,
       );
       return null;
     }
@@ -79,7 +89,7 @@ class CalculationHistory {
       } catch (e) {
         logger.logError(
           ErrorType.corruptedData,
-          tag: 'CalculationHistory',
+          tag: _calculationHistoryLogTag,
           details: 'JSON malformado: ${e.toString()}',
         );
         return Result.failure(
@@ -91,7 +101,7 @@ class CalculationHistory {
       if (decoded is! List) {
         logger.logError(
           ErrorType.corruptedData,
-          tag: 'CalculationHistory',
+          tag: _calculationHistoryLogTag,
           details: 'Esperado List, recebido ${decoded.runtimeType}',
         );
         return Result.failure(
@@ -108,7 +118,7 @@ class CalculationHistory {
         if (item is! Map<String, dynamic>) {
           logger.warning(
             'Item $i não é um Map válido, pulando',
-            tag: 'CalculationHistory',
+            tag: _calculationHistoryLogTag,
           );
           skippedCount++;
           continue;
@@ -125,7 +135,7 @@ class CalculationHistory {
       if (skippedCount > 0) {
         logger.warning(
           'Carregamento parcial: $skippedCount itens inválidos ignorados',
-          tag: 'CalculationHistory',
+          tag: _calculationHistoryLogTag,
         );
       }
 
@@ -133,7 +143,7 @@ class CalculationHistory {
     } catch (e, stackTrace) {
       logger.logError(
         ErrorType.corruptedData,
-        tag: 'CalculationHistory',
+        tag: _calculationHistoryLogTag,
         details: e.toString(),
         error: e,
         stackTrace: stackTrace,

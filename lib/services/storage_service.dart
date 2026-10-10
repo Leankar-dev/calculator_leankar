@@ -5,6 +5,8 @@ import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+const String _storageServiceLogTag = 'StorageService';
+
 class StorageService {
   static const String _historyKey = AppStrings.prefHistoryKey;
 
@@ -30,7 +32,7 @@ class StorageService {
     } catch (e, stackTrace) {
       logger.logError(
         ErrorType.historySaveError,
-        tag: 'StorageService',
+        tag: _storageServiceLogTag,
         details: e.toString(),
         error: e,
         stackTrace: stackTrace,
@@ -62,7 +64,7 @@ class StorageService {
       } else {
         logger.warning(
           'Dados corrompidos detectados, limpando histórico',
-          tag: 'StorageService',
+          tag: _storageServiceLogTag,
         );
         await _clearCorruptedData(prefs, key);
         return Result.failure(result.error!, result.errorDetails);
@@ -70,7 +72,7 @@ class StorageService {
     } catch (e, stackTrace) {
       logger.logError(
         ErrorType.historyLoadError,
-        tag: 'StorageService',
+        tag: _storageServiceLogTag,
         details: e.toString(),
         error: e,
         stackTrace: stackTrace,
@@ -94,7 +96,7 @@ class StorageService {
     } catch (e, stackTrace) {
       logger.logError(
         ErrorType.historyClearError,
-        tag: 'StorageService',
+        tag: _storageServiceLogTag,
         details: e.toString(),
         error: e,
         stackTrace: stackTrace,
@@ -106,11 +108,11 @@ class StorageService {
   Future<void> _clearCorruptedData(SharedPreferences prefs, String key) async {
     try {
       await prefs.remove(key);
-      logger.debug('Dados corrompidos removidos', tag: 'StorageService');
+      logger.debug('Dados corrompidos removidos', tag: _storageServiceLogTag);
     } catch (e) {
       logger.warning(
         'Falha ao remover dados corrompidos: $e',
-        tag: 'StorageService',
+        tag: _storageServiceLogTag,
       );
     }
   }

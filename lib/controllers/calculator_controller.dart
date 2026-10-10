@@ -14,6 +14,9 @@ import 'package:calculator_05122025/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+const String _calculatorControllerLogTag = 'CalculatorController';
+const String _clipboardLogTag = 'Clipboard';
+
 class CalculatorController extends ChangeNotifier {
   final StorageService _storageService;
   final ErrorHandler _errorHandler;
@@ -58,7 +61,7 @@ class CalculatorController extends ChangeNotifier {
       onFailure: (error, details) {
         _logger.warning(
           'Falha ao carregar histórico: ${error.fullMessage}',
-          tag: 'CalculatorController',
+          tag: _calculatorControllerLogTag,
         );
         _state = _state.copyWith(history: [], isLoading: false);
       },
@@ -160,7 +163,7 @@ class CalculatorController extends ChangeNotifier {
     _state = _state.copyWith(displayText: _formatResult(value));
 
     _logger.logCalculation(
-      operation: '%',
+      operation: AppStrings.percentSymbol,
       firstOperand: _state.firstOperand.isEmpty
           ? _state.displayText
           : _state.firstOperand,
@@ -333,10 +336,10 @@ class CalculatorController extends ChangeNotifier {
     final saveResult = await _storageService.saveHistory(_state.history);
     saveResult.fold(
       onSuccess: (_) =>
-          _logger.debug('Histórico salvo', tag: 'CalculatorController'),
+          _logger.debug('Histórico salvo', tag: _calculatorControllerLogTag),
       onFailure: (e, d) => _logger.warning(
         'Falha ao salvar histórico: ${e.fullMessage}',
-        tag: 'CalculatorController',
+        tag: _calculatorControllerLogTag,
       ),
     );
   }
@@ -364,23 +367,29 @@ class CalculatorController extends ChangeNotifier {
     if (result.isFailure) {
       _logger.warning(
         'Falha ao limpar histórico: ${result.errorFullMessage}',
-        tag: 'CalculatorController',
+        tag: _calculatorControllerLogTag,
       );
     }
   }
 
   Future<bool> copyToClipboard() async {
     if (_isErrorState()) {
-      _logger.debug('Tentativa de copiar em estado de erro', tag: 'Clipboard');
+      _logger.debug(
+        'Tentativa de copiar em estado de erro',
+        tag: _clipboardLogTag,
+      );
       return false;
     }
 
     try {
       await Clipboard.setData(ClipboardData(text: _state.displayText));
-      _logger.info('Valor copiado: ${_state.displayText}', tag: 'Clipboard');
+      _logger.info(
+        'Valor copiado: ${_state.displayText}',
+        tag: _clipboardLogTag,
+      );
       return true;
     } catch (e) {
-      _logger.warning('Falha ao copiar: $e', tag: 'Clipboard');
+      _logger.warning('Falha ao copiar: $e', tag: _clipboardLogTag);
       return false;
     }
   }
@@ -389,7 +398,7 @@ class CalculatorController extends ChangeNotifier {
     try {
       final data = await Clipboard.getData(Clipboard.kTextPlain);
       if (data?.text == null || data!.text!.isEmpty) {
-        _logger.debug('Área de transferência vazia', tag: 'Clipboard');
+        _logger.debug('Área de transferência vazia', tag: _clipboardLogTag);
         return PasteResult.emptyClipboard;
       }
 
@@ -397,13 +406,16 @@ class CalculatorController extends ChangeNotifier {
       final parsed = NumberFormatter.parse(text);
 
       if (parsed == null) {
-        _logger.debug('Valor inválido para colar: $text', tag: 'Clipboard');
+        _logger.debug(
+          'Valor inválido para colar: $text',
+          tag: _clipboardLogTag,
+        );
         return PasteResult.invalidFormat;
       }
 
       final validationResult = _errorHandler.validateCalculationResult(parsed);
       if (validationResult.isFailure) {
-        _logger.debug('Valor fora dos limites: $text', tag: 'Clipboard');
+        _logger.debug('Valor fora dos limites: $text', tag: _clipboardLogTag);
         return PasteResult.outOfRange;
       }
 
@@ -411,11 +423,14 @@ class CalculatorController extends ChangeNotifier {
         displayText: NumberFormatter.format(parsed),
         shouldResetDisplay: true,
       );
-      _logger.info('Valor colado: ${_state.displayText}', tag: 'Clipboard');
+      _logger.info(
+        'Valor colado: ${_state.displayText}',
+        tag: _clipboardLogTag,
+      );
       notifyListeners();
       return PasteResult.success;
     } catch (e) {
-      _logger.warning('Falha ao colar: $e', tag: 'Clipboard');
+      _logger.warning('Falha ao colar: $e', tag: _clipboardLogTag);
       return PasteResult.invalidFormat;
     }
   }

@@ -6,6 +6,8 @@ import 'package:calculator_05122025/utils/enums/error_type.dart';
 import 'package:calculator_05122025/utils/result.dart';
 import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 
+const String _levelPlayAdServiceLogTag = 'LevelPlayAdService';
+
 class LevelPlayAdService {
   static final LevelPlayAdService instance = LevelPlayAdService();
 
@@ -44,7 +46,7 @@ class LevelPlayAdService {
     } catch (e, stackTrace) {
       logger.error(
         'Falha na inicialização',
-        tag: 'LevelPlayAdService',
+        tag: _levelPlayAdServiceLogTag,
         error: e,
         stackTrace: stackTrace,
       );
@@ -56,7 +58,7 @@ class LevelPlayAdService {
       onTimeout: () {
         logger.warning(
           'Tempo esgotado aguardando a inicialização do SDK',
-          tag: 'LevelPlayAdService',
+          tag: _levelPlayAdServiceLogTag,
         );
         return Result.failure(
           ErrorType.adInitError,
@@ -74,7 +76,7 @@ class _LevelPlayAdServiceInitListener implements LevelPlayInitListener {
 
   @override
   void onInitSuccess(LevelPlayConfiguration configuration) {
-    logger.info('SDK inicializado', tag: 'LevelPlayAdService');
+    logger.info('SDK inicializado', tag: _levelPlayAdServiceLogTag);
     if (!_completer.isCompleted) {
       _completer.complete(Result.success(configuration));
     }
@@ -84,7 +86,7 @@ class _LevelPlayAdServiceInitListener implements LevelPlayInitListener {
   void onInitFailed(LevelPlayInitError error) {
     logger.error(
       'Falha na inicialização',
-      tag: 'LevelPlayAdService',
+      tag: _levelPlayAdServiceLogTag,
       error: error.errorMessage,
     );
     if (!_completer.isCompleted) {

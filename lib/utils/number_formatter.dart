@@ -49,7 +49,10 @@ class NumberFormatter {
       return value.toStringAsFixed(0);
     }
 
-    return value.toString().replaceAll('.', AppStrings.decimalSeparator);
+    return value.toString().replaceAll(
+      AppStrings.canonicalDecimalPoint,
+      AppStrings.decimalSeparator,
+    );
   }
 
   static String _formatScientific(double value) {
@@ -57,7 +60,10 @@ class NumberFormatter {
         .toStringAsExponential(_scientificMantissaDecimals)
         .split('e');
     final mantissa = _removeTrailingZeros(
-      parts.first.replaceAll('.', AppStrings.decimalSeparator),
+      parts.first.replaceAll(
+        AppStrings.canonicalDecimalPoint,
+        AppStrings.decimalSeparator,
+      ),
     );
     final exponent = int.parse(parts.last);
 
@@ -87,7 +93,12 @@ class NumberFormatter {
 
     if (cleaned.contains('e') || cleaned.contains('E')) {
       return _finiteOrNull(
-        double.tryParse(cleaned.replaceAll(AppStrings.decimalSeparator, '.')),
+        double.tryParse(
+          cleaned.replaceAll(
+            AppStrings.decimalSeparator,
+            AppStrings.canonicalDecimalPoint,
+          ),
+        ),
       );
     }
 
@@ -95,10 +106,16 @@ class NumberFormatter {
       return _finiteOrNull(double.tryParse(cleaned));
     }
 
-    final withoutThousands = cleaned.replaceAll('.', '');
+    final withoutThousands = cleaned.replaceAll(
+      AppStrings.thousandsSeparator,
+      '',
+    );
     return _finiteOrNull(
       double.tryParse(
-        withoutThousands.replaceAll(AppStrings.decimalSeparator, '.'),
+        withoutThousands.replaceAll(
+          AppStrings.decimalSeparator,
+          AppStrings.canonicalDecimalPoint,
+        ),
       ),
     );
   }
@@ -111,8 +128,11 @@ class NumberFormatter {
   static bool _looksLikeUnambiguousDotDecimal(String cleaned) {
     if (cleaned.contains(AppStrings.decimalSeparator)) return false;
 
-    final dotIndex = cleaned.indexOf('.');
-    if (dotIndex == -1 || dotIndex != cleaned.lastIndexOf('.')) return false;
+    final dotIndex = cleaned.indexOf(AppStrings.canonicalDecimalPoint);
+    final hasSingleDot =
+        dotIndex != -1 &&
+        dotIndex == cleaned.lastIndexOf(AppStrings.canonicalDecimalPoint);
+    if (!hasSingleDot) return false;
 
     final digitsAfterDot = cleaned.length - dotIndex - 1;
     if (digitsAfterDot == 0) return false;

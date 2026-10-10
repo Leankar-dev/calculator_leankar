@@ -7,6 +7,8 @@ import 'package:calculator_05122025/widgets/ads/banner_ad_placeholder_widget.dar
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:unity_levelplay_mediation/unity_levelplay_mediation.dart';
 
+const String _bannerAdWidgetLogTag = 'BannerAdWidget';
+
 class BannerAdWidget extends StatefulWidget {
   const BannerAdWidget({super.key});
 
@@ -39,7 +41,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
     } catch (e) {
       logger.warning(
         'Falha ao resolver tamanho do banner: $e',
-        tag: 'BannerAdWidget',
+        tag: _bannerAdWidgetLogTag,
       );
     }
   }
@@ -57,7 +59,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
   void onAdLoadFailed(LevelPlayAdError error) {
     logger.warning(
       'Banner falhou ao carregar: ${error.errorMessage}',
-      tag: 'BannerAdWidget',
+      tag: _bannerAdWidgetLogTag,
     );
     if (mounted) {
       setState(() {
@@ -73,7 +75,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
   void onAdDisplayFailed(LevelPlayAdInfo adInfo, LevelPlayAdError error) {
     logger.warning(
       'Banner falhou ao exibir: ${error.errorMessage}',
-      tag: 'BannerAdWidget',
+      tag: _bannerAdWidgetLogTag,
     );
   }
 

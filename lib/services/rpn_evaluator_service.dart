@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'package:calculator_05122025/models/expression_token.dart';
 import 'package:calculator_05122025/services/trigonometry_service.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_lexemes.dart';
+import 'package:calculator_05122025/utils/constants/app_scientific_strings.dart';
+import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/angle_mode.dart';
 import 'package:calculator_05122025/utils/enums/scientific_error_type.dart';
 import 'package:calculator_05122025/utils/enums/token_type.dart';
@@ -76,10 +79,10 @@ class RpnEvaluatorService {
   }
 
   double _constantValue(String symbol) {
-    if (symbol == 'π') {
+    if (symbol == AppScientificStrings.pi) {
       return math.pi;
     }
-    if (symbol == 'e') {
+    if (symbol == AppScientificStrings.euler) {
       return math.e;
     }
     throw const ScientificCalculationException(
@@ -89,32 +92,32 @@ class RpnEvaluatorService {
 
   double _applyFunction(String name, double operand, AngleMode angleMode) {
     switch (name) {
-      case 'sin':
+      case AppScientificLexemes.sin:
         return _trigonometry.sin(operand, angleMode);
-      case 'cos':
+      case AppScientificLexemes.cos:
         return _trigonometry.cos(operand, angleMode);
-      case 'tan':
+      case AppScientificLexemes.tan:
         return _trigonometry.tan(operand, angleMode);
-      case 'asin':
+      case AppScientificLexemes.asin:
         return _trigonometry.asin(operand, angleMode);
-      case 'acos':
+      case AppScientificLexemes.acos:
         return _trigonometry.acos(operand, angleMode);
-      case 'atan':
+      case AppScientificLexemes.atan:
         return _trigonometry.atan(operand, angleMode);
-      case 'log':
+      case AppScientificLexemes.log:
         _requireDomain(operand > 0);
         return math.log(operand) / math.ln10;
-      case 'ln':
+      case AppScientificLexemes.ln:
         _requireDomain(operand > 0);
         return math.log(operand);
-      case '√':
+      case AppScientificLexemes.sqrt:
         _requireDomain(operand >= 0);
         return math.sqrt(operand);
-      case '³√':
+      case AppScientificLexemes.cbrt:
         return operand < 0
             ? -math.pow(-operand, 1 / 3).toDouble()
             : math.pow(operand, 1 / 3).toDouble();
-      case 'abs':
+      case AppScientificLexemes.absoluteValue:
         return operand.abs();
       default:
         throw const ScientificCalculationException(
@@ -125,13 +128,13 @@ class RpnEvaluatorService {
 
   double _applyPostfix(String symbol, double operand) {
     switch (symbol) {
-      case '!':
+      case AppScientificLexemes.factorial:
         return _factorial(operand);
-      case '²':
+      case AppScientificLexemes.square:
         return operand * operand;
-      case '³':
+      case AppScientificLexemes.cube:
         return operand * operand * operand;
-      case '⁻¹':
+      case AppScientificLexemes.reciprocal:
         if (operand == 0) {
           throw const ScientificCalculationException(
             ScientificErrorType.divisionByZero,
@@ -172,30 +175,30 @@ class RpnEvaluatorService {
 
   double _applyBinaryOperator(String symbol, double left, double right) {
     switch (symbol) {
-      case '+':
+      case AppStrings.additionSymbol:
         return NumericPrecision.snapCancellationToZero(
           result: left + right,
           left: left,
           right: right,
         );
-      case '-':
+      case AppStrings.subtractionSymbol:
         return NumericPrecision.snapCancellationToZero(
           result: left - right,
           left: left,
           right: right,
         );
-      case '×':
+      case AppStrings.multiplicationSymbol:
         return left * right;
-      case '÷':
+      case AppStrings.divisionSymbol:
         if (right == 0) {
           throw const ScientificCalculationException(
             ScientificErrorType.divisionByZero,
           );
         }
         return left / right;
-      case '^':
+      case AppScientificLexemes.power:
         return math.pow(left, right).toDouble();
-      case 'P':
+      case AppScientificLexemes.permutation:
         return _permutation(left, right);
       default:
         throw const ScientificCalculationException(

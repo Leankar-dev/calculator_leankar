@@ -40,10 +40,16 @@ class ImcController extends ChangeNotifier {
     _errorType = null;
 
     final weight = double.tryParse(
-      _weightInput.replaceAll(AppStrings.decimalSeparator, '.'),
+      _weightInput.replaceAll(
+        AppStrings.decimalSeparator,
+        AppStrings.canonicalDecimalPoint,
+      ),
     );
     final height = double.tryParse(
-      _heightInput.replaceAll(AppStrings.decimalSeparator, '.'),
+      _heightInput.replaceAll(
+        AppStrings.decimalSeparator,
+        AppStrings.canonicalDecimalPoint,
+      ),
     );
 
     if (weight == null || !weight.isFinite || weight <= 0 || weight > 500) {

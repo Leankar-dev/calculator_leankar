@@ -78,5 +78,26 @@ void main() {
     test('power usa o símbolo de potência da expressão', () {
       expect(ScientificFunctionType.power.lexeme, '^');
     });
+
+    test('lexemesFor devolve só os lexemas do tipo de inserção pedido', () {
+      expect(
+        ScientificFunctionType.lexemesFor(
+          ScientificFunctionInsertion.postfixOperator,
+        ),
+        unorderedEquals(['²', '³', '⁻¹', '!']),
+      );
+    });
+
+    test('lexemesFor de funções prefixadas inclui as inversas e a raiz', () {
+      final lexemes = ScientificFunctionType.lexemesFor(
+        ScientificFunctionInsertion.prefixFunction,
+      );
+
+      expect(
+        lexemes,
+        containsAll(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', '√', '³√']),
+      );
+      expect(lexemes.toSet().length, lexemes.length);
+    });
   });
 }

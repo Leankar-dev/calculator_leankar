@@ -31,7 +31,10 @@ class ImcGaugeWidget extends StatelessWidget {
             child: Text(
               imc
                   .toStringAsFixed(1)
-                  .replaceAll('.', AppStrings.decimalSeparator),
+                  .replaceAll(
+                    AppStrings.canonicalDecimalPoint,
+                    AppStrings.decimalSeparator,
+                  ),
               style: TextStyle(
                 fontSize: AppSizes.imcGaugeValueFontSize,
                 fontWeight: FontWeight.bold,

@@ -32,11 +32,18 @@ class ImcResult {
     );
   }
 
-  String get formattedImc =>
-      imc.toStringAsFixed(1).replaceAll('.', AppStrings.decimalSeparator);
+  String get formattedImc => imc
+      .toStringAsFixed(1)
+      .replaceAll(
+        AppStrings.canonicalDecimalPoint,
+        AppStrings.decimalSeparator,
+      );
 
   String get formattedWeight =>
-      '${weightKg.toStringAsFixed(1).replaceAll('.', AppStrings.decimalSeparator)} ${AppStrings.imcWeightUnit}';
+      '${weightKg.toStringAsFixed(1).replaceAll(
+        AppStrings.canonicalDecimalPoint,
+        AppStrings.decimalSeparator,
+      )} ${AppStrings.imcWeightUnit}';
 
   String get formattedHeight =>
       '${heightCm.toStringAsFixed(0)} ${AppStrings.imcHeightUnit}';
@@ -66,10 +73,16 @@ class ImcResult {
   String get formattedIdealWeightRange {
     final min = idealWeightMin
         .toStringAsFixed(1)
-        .replaceAll('.', AppStrings.decimalSeparator);
+        .replaceAll(
+          AppStrings.canonicalDecimalPoint,
+          AppStrings.decimalSeparator,
+        );
     final max = idealWeightMax
         .toStringAsFixed(1)
-        .replaceAll('.', AppStrings.decimalSeparator);
+        .replaceAll(
+          AppStrings.canonicalDecimalPoint,
+          AppStrings.decimalSeparator,
+        );
     return '$min${AppStrings.imcRangeSeparator}$max ${AppStrings.imcWeightUnit}';
   }
 
@@ -79,8 +92,13 @@ class ImcResult {
     final absStr = diff
         .abs()
         .toStringAsFixed(1)
-        .replaceAll('.', AppStrings.decimalSeparator);
-    final sign = diff > 0 ? '+' : '-';
+        .replaceAll(
+          AppStrings.canonicalDecimalPoint,
+          AppStrings.decimalSeparator,
+        );
+    final sign = diff > 0
+        ? AppStrings.additionSymbol
+        : AppStrings.subtractionSymbol;
     return '$sign$absStr ${AppStrings.imcWeightUnit}';
   }
 }
