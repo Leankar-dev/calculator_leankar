@@ -37,7 +37,7 @@ class AppColors {
   static const Color splashGradientEnd = Color(0xFFBBDEFB);
   static const Color splashNativeFlat = Color(0xFFEAF4FF);
   static const Color splashTitle = Color(0xFF102C6C);
-  static const Color splashTagline = Color(0xFF4F6A8F);
+  static const Color splashTagline = Color(0xFF3F5A82);
   static const Color splashKeyShadowDark = Color(0x33000000);
   static const Color splashKeyShadowLight = Color(0xCCFFFFFF);
   static const Color splashShimmerHighlight = Color(0x66FFFFFF);

@@ -45,6 +45,7 @@ class SplashContentWidget extends StatelessWidget {
                   SplashLogoWidget(
                     animation: animation,
                     logoWidth: metrics.logoWidth,
+                    startScale: metrics.logoStartScale,
                   ),
                 ],
               ),

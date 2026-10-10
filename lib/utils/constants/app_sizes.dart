@@ -217,7 +217,9 @@ class AppSizes {
 
   static const double splashLogoWidthFactor = 0.62;
   static const double splashLogoTileFactor = 0.338;
-  static const double splashLogoStartScale = 0.62;
+  static const double splashNativeLogoWidth = 226.0;
+  static const double splashLogoStartScaleMin = 0.5;
+  static const double splashLogoStartScaleMax = 1.5;
   static const double splashOrbitRadiusFactor = 1.05;
   static const double splashKeyExtentFactor = 0.46;
   static const double splashKeyCornerFactor = 0.32;

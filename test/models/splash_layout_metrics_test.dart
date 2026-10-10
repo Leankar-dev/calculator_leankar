@@ -64,6 +64,30 @@ void main() {
       );
     });
 
+    test('a escala inicial iguala o logo ao tamanho do logo nativo', () {
+      final metrics = SplashLayoutMetrics.fromShortestSide(AppSizes.baseWidth);
+
+      expect(
+        metrics.logoStartScale * metrics.logoWidth,
+        closeTo(AppSizes.splashNativeLogoWidth, 0.0001),
+      );
+    });
+
+    test('a escala inicial diminui quando a tela é mais larga', () {
+      final narrow = SplashLayoutMetrics.fromShortestSide(320);
+      final wide = SplashLayoutMetrics.fromShortestSide(480);
+
+      expect(wide.logoStartScale, lessThan(narrow.logoStartScale));
+    });
+
+    test('a escala inicial respeita os limites mínimo e máximo', () {
+      final tiny = SplashLayoutMetrics.fromTileExtent(1);
+      final huge = SplashLayoutMetrics.fromTileExtent(10000);
+
+      expect(tiny.logoStartScale, AppSizes.splashLogoStartScaleMax);
+      expect(huge.logoStartScale, AppSizes.splashLogoStartScaleMin);
+    });
+
     test('as medidas crescem junto com a tela', () {
       final small = SplashLayoutMetrics.fromShortestSide(320);
       final large = SplashLayoutMetrics.fromShortestSide(480);

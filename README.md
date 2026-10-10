@@ -36,6 +36,7 @@ Uma calculadora Flutter com design neumórfico moderno, desenvolvida seguindo as
 - Calculadora de IMC com classificação e peso ideal
 - Tela de configurações (tema e idioma)
 - Suporte a 5 idiomas: inglês, espanhol, francês, italiano e português (Brasil)
+- Splash animada "Teclas em Órbita" (toque para pular e respeito ao modo de movimento reduzido)
 - Anúncios banner via Unity LevelPlay, exclusivos da versão Android, com diálogo de consentimento próprio (sem AdMob/UMP)
 
 ### Capturas de Tela
@@ -116,16 +117,21 @@ lib/
 │   ├── imc_controller.dart                         # Lógica do IMC
 │   ├── settings_controller.dart                    # Tema/idioma
 │   ├── ad_consent_controller.dart                  # Diálogo de consentimento próprio para anúncios (sem UMP)
-│   └── ad_consent_state.dart
+│   ├── ad_consent_state.dart
+│   ├── splash_controller.dart                      # Controller e estado imutável da splash
+│   └── splash_state.dart                           # Estado imutável da splash
 ├── models/
 │   ├── calculation_history.dart                    # Modelo do histórico de cálculos
 │   ├── expression_token.dart                       # Token de expressão da calculadora científica
-│   └── imc_result.dart                             # Modelo do resultado de IMC
+│   ├── imc_result.dart                             # Modelo do resultado de IMC
+│   ├── splash_key_placement.dart                   # Posição calculada de cada tecla da órbita
+│   └── splash_layout_metrics.dart                  # Medidas proporcionais da splash
 ├── pages/
 │   ├── calculator_page.dart                        # Tela principal (StatefulWidget)
 │   ├── scientific_calculator_page.dart             # Tela da calculadora científica
 │   ├── imc_calculator_page.dart                    # Tela de IMC
-│   └── settings_page.dart                          # Tela de configurações
+│   ├── settings_page.dart                          # Tela de configurações
+│   └── splash_page.dart                            # Splash animada (tela inicial)
 ├── services/
 │   ├── level_play_ad_service.dart                  # Integração com Unity LevelPlay (Android)
 │   ├── error_handler.dart                          # Tratamento centralizado de erros
@@ -141,9 +147,10 @@ lib/
 │   ├── imc/                                        # Widgets da calculadora de IMC
 │   ├── scientific/                                 # Teclado e linhas da calculadora científica
 │   ├── settings/                                   # Widgets da tela de configurações
+│   ├── splash/                                     # Fundo, logo, teclas em órbita, título e tagline da splash
 │   └── ...                                         # Widgets da calculadora (botão, display, teclado, histórico, drawer)
 ├── utils/
-│   ├── constants/                                  # Cores, tamanhos, strings, IDs de anúncio
+│   ├── constants/                                  # Cores, tamanhos, strings, IDs de anúncio e linha do tempo da splash
 │   ├── enums/                                      # Tipos de erro, operações, IMC, funções científicas, etc.
 │   ├── exceptions/                                 # Exceções da calculadora científica
 │   ├── extensions/                                 # Extensões de localização e de listas
@@ -175,7 +182,7 @@ test/
 └── widgets/        # Testes de widgets, incluindo ads/, imc/ e settings/
 ```
 
-**Total: 815 testes automatizados**
+**Total: 980 testes automatizados**
 
 ### Padrões de Código
 
@@ -209,6 +216,7 @@ A Flutter calculator with modern neumorphic design, developed following best pra
 - BMI calculator with classification and ideal weight
 - Settings screen (theme and language)
 - Support for 5 languages: English, Spanish, French, Italian, and Portuguese (Brazil)
+- Animated "Orbiting Keys" splash screen (tap to skip, honors reduced motion)
 - Banner ads via Unity LevelPlay, Android only, with a custom in-app consent dialog (no AdMob/UMP)
 
 ### Screenshots
@@ -289,16 +297,21 @@ lib/
 │   ├── imc_controller.dart                         # BMI business logic
 │   ├── settings_controller.dart                    # Theme/language
 │   ├── ad_consent_controller.dart                  # Custom in-app ad consent dialog (no UMP)
-│   └── ad_consent_state.dart
+│   ├── ad_consent_state.dart
+│   ├── splash_controller.dart                      # Splash state machine (ChangeNotifier)
+│   └── splash_state.dart                           # Immutable splash state
 ├── models/
 │   ├── calculation_history.dart                    # Calculation history model
 │   ├── expression_token.dart                       # Expression token for the scientific calculator
-│   └── imc_result.dart                             # BMI result model
+│   ├── imc_result.dart                             # BMI result model
+│   ├── splash_key_placement.dart                   # Computed position of each orbiting key
+│   └── splash_layout_metrics.dart                  # Proportional splash measurements
 ├── pages/
 │   ├── calculator_page.dart                        # Main screen (StatefulWidget)
 │   ├── scientific_calculator_page.dart             # Scientific calculator screen
 │   ├── imc_calculator_page.dart                    # BMI screen
-│   └── settings_page.dart                          # Settings screen
+│   ├── settings_page.dart                          # Settings screen
+│   └── splash_page.dart                            # Animated splash (home screen)
 ├── services/
 │   ├── level_play_ad_service.dart                  # Unity LevelPlay integration (Android)
 │   ├── error_handler.dart                          # Centralized error handling
@@ -314,9 +327,10 @@ lib/
 │   ├── imc/                                        # BMI calculator widgets
 │   ├── scientific/                                 # Scientific calculator keypad and rows
 │   ├── settings/                                   # Settings screen widgets
+│   ├── splash/                                     # Splash background, logo, orbiting keys, title and tagline
 │   └── ...                                         # Calculator widgets (button, display, keypad, history, drawer)
 ├── utils/
-│   ├── constants/                                  # Colors, sizes, strings, ad unit IDs
+│   ├── constants/                                  # Colors, sizes, strings, ad unit IDs and splash timeline
 │   ├── enums/                                      # Error types, operations, BMI, scientific functions, etc.
 │   ├── exceptions/                                 # Scientific calculator exceptions
 │   ├── extensions/                                 # Localization and list extensions
@@ -348,7 +362,7 @@ test/
 └── widgets/        # Widget tests, including ads/, imc/, and settings/
 ```
 
-**Total: 815 automated tests**
+**Total: 980 automated tests**
 
 ### Code Standards
 
@@ -382,6 +396,7 @@ Una calculadora Flutter con diseño neumórfico moderno, desarrollada siguiendo 
 - Calculadora de IMC con clasificación y peso ideal
 - Pantalla de configuración (tema e idioma)
 - Soporte para 5 idiomas: inglés, español, francés, italiano y portugués (Brasil)
+- Splash animada "Teclas en Órbita" (toque para saltar y respeta el movimiento reducido)
 - Anuncios banner mediante Unity LevelPlay, exclusivos de la versión Android, con un diálogo de consentimiento propio (sin AdMob/UMP)
 
 ### Capturas de Pantalla
@@ -462,16 +477,21 @@ lib/
 │   ├── imc_controller.dart                         # Lógica del IMC
 │   ├── settings_controller.dart                    # Tema/idioma
 │   ├── ad_consent_controller.dart                  # Diálogo de consentimiento propio para anuncios (sin UMP)
-│   └── ad_consent_state.dart
+│   ├── ad_consent_state.dart
+│   ├── splash_controller.dart                      # Máquina de estados de la splash (ChangeNotifier)
+│   └── splash_state.dart                           # Estado inmutable de la splash
 ├── models/
 │   ├── calculation_history.dart                    # Modelo del historial de cálculos
 │   ├── expression_token.dart                       # Token de expresión de la calculadora científica
-│   └── imc_result.dart                             # Modelo del resultado de IMC
+│   ├── imc_result.dart                             # Modelo del resultado de IMC
+│   ├── splash_key_placement.dart                   # Posición calculada de cada tecla de la órbita
+│   └── splash_layout_metrics.dart                  # Medidas proporcionales de la splash
 ├── pages/
 │   ├── calculator_page.dart                        # Pantalla principal (StatefulWidget)
 │   ├── scientific_calculator_page.dart             # Pantalla de la calculadora científica
 │   ├── imc_calculator_page.dart                    # Pantalla de IMC
-│   └── settings_page.dart                          # Pantalla de configuración
+│   ├── settings_page.dart                          # Pantalla de configuración
+│   └── splash_page.dart                            # Splash animada (pantalla inicial)
 ├── services/
 │   ├── level_play_ad_service.dart                  # Integración con Unity LevelPlay (Android)
 │   ├── error_handler.dart                          # Manejo centralizado de errores
@@ -487,9 +507,10 @@ lib/
 │   ├── imc/                                        # Widgets de la calculadora de IMC
 │   ├── scientific/                                 # Teclado y filas de la calculadora científica
 │   ├── settings/                                   # Widgets de la pantalla de configuración
+│   ├── splash/                                     # Fondo, logo, teclas en órbita, título y tagline de la splash
 │   └── ...                                         # Widgets de la calculadora (botón, display, teclado, historial, drawer)
 ├── utils/
-│   ├── constants/                                  # Colores, tamaños, strings, IDs de anuncio
+│   ├── constants/                                  # Colores, tamaños, strings, IDs de anuncio y línea de tiempo de la splash
 │   ├── enums/                                      # Tipos de error, operaciones, IMC, funciones científicas, etc.
 │   ├── exceptions/                                 # Excepciones de la calculadora científica
 │   ├── extensions/                                 # Extensiones de localización y de listas
@@ -521,7 +542,7 @@ test/
 └── widgets/        # Pruebas de widgets, incluyendo ads/, imc/ y settings/
 ```
 
-**Total: 815 pruebas automatizadas**
+**Total: 980 pruebas automatizadas**
 
 ### Estándares de Código
 

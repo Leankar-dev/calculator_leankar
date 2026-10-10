@@ -7,11 +7,13 @@ import 'package:flutter/widgets.dart';
 class SplashLogoWidget extends StatelessWidget {
   final Animation<double> animation;
   final double logoWidth;
+  final double startScale;
 
   const SplashLogoWidget({
     super.key,
     required this.animation,
     required this.logoWidth,
+    required this.startScale,
   });
 
   @override
@@ -43,7 +45,7 @@ class SplashLogoWidget extends StatelessWidget {
   double _scaleAt(double value) {
     final arrival = AppSplashTimeline.logoArrival.transform(value);
     final exit = AppSplashTimeline.exit.transform(value);
-    return _lerp(AppSizes.splashLogoStartScale, 1.0, arrival) *
+    return _lerp(startScale, 1.0, arrival) *
         _pressScale(value) *
         _lerp(1.0, AppSizes.splashLogoExitScale, exit);
   }

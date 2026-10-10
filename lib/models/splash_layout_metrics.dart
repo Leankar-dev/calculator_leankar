@@ -34,6 +34,12 @@ class SplashLayoutMetrics {
 
   double get logoWidth => tileExtent / AppSizes.splashLogoTileFactor;
 
+  double get logoStartScale =>
+      (AppSizes.splashNativeLogoWidth / logoWidth).clamp(
+        AppSizes.splashLogoStartScaleMin,
+        AppSizes.splashLogoStartScaleMax,
+      );
+
   double get titleOffsetFromCenter =>
       orbitRadius + keyExtent / 2 + AppSizes.splashTitleGap;
 }

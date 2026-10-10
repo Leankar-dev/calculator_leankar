@@ -92,6 +92,32 @@ void main() {
       );
     });
 
+    for (final locale in const [
+      Locale('pt', 'BR'),
+      Locale('en'),
+      Locale('es'),
+      Locale('it'),
+      Locale('fr'),
+    ]) {
+      testWidgets(
+        'em ${locale.toLanguageTag()} cabe em 320x568 com texto ampliado sem corte',
+        (tester) async {
+          tester.view.physicalSize = const Size(320, 568);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(tester.view.reset);
+
+          await tester.pumpWidget(
+            createTestWidget(0.7, textScale: 1.5, locale: locale),
+          );
+
+          expect(tester.takeException(), isNull);
+          final bounds = tester.getRect(find.byType(SplashTaglineWidget));
+          expect(bounds.left, greaterThanOrEqualTo(0));
+          expect(bounds.right, lessThanOrEqualTo(320));
+        },
+      );
+    }
+
     testWidgets('cabe em 320x568 com texto ampliado sem overflow', (
       tester,
     ) async {

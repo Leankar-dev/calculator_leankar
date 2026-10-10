@@ -8,6 +8,7 @@ import '../../helpers/l10n_test_app.dart';
 
 void main() {
   const logoWidth = 200.0;
+  const startScale = 0.8;
 
   Widget createTestWidget(double value) {
     return L10nTestApp(
@@ -15,6 +16,7 @@ void main() {
         child: SplashLogoWidget(
           animation: AlwaysStoppedAnimation(value),
           logoWidth: logoWidth,
+          startScale: startScale,
         ),
       ),
     );
@@ -36,7 +38,7 @@ void main() {
     testWidgets('começa com a escala inicial', (tester) async {
       await tester.pumpWidget(createTestWidget(0.0));
 
-      expect(readScale(tester), closeTo(AppSizes.splashLogoStartScale, 0.0001));
+      expect(readScale(tester), closeTo(startScale, 0.0001));
     });
 
     testWidgets('fica em escala normal entre a chegada e a saída', (

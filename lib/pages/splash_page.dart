@@ -38,6 +38,7 @@ class _SplashPageState extends State<SplashPage>
   late final bool _ownsController;
   Timer? _precacheTimeoutTimer;
   Timer? _reducedMotionTimer;
+  Timer? _handoffTimer;
   bool _launched = false;
   bool _skipAnimationStarted = false;
   bool _navigated = false;
@@ -73,12 +74,16 @@ class _SplashPageState extends State<SplashPage>
     _controller.start(reduceMotion: reduceMotion);
     if (reduceMotion) {
       _reducedMotionTimer = Timer(
-        AppSplashTimeline.reducedMotionHold,
+        AppSplashTimeline.nativeHandoffDelay +
+            AppSplashTimeline.reducedMotionHold,
         _controller.finish,
       );
       return;
     }
-    _animationController.forward();
+    _handoffTimer = Timer(
+      AppSplashTimeline.nativeHandoffDelay,
+      _animationController.forward,
+    );
   }
 
   Future<void> _precacheLogo() {
@@ -127,6 +132,7 @@ class _SplashPageState extends State<SplashPage>
       _controller.finish();
       return;
     }
+    _handoffTimer?.cancel();
     _animationController.animateTo(
       1.0,
       duration: AppSplashTimeline.skipDuration,
@@ -168,6 +174,7 @@ class _SplashPageState extends State<SplashPage>
   void dispose() {
     _precacheTimeoutTimer?.cancel();
     _reducedMotionTimer?.cancel();
+    _handoffTimer?.cancel();
     _animationController.removeListener(_handleAnimationTick);
     _animationController.removeStatusListener(_handleAnimationStatus);
     _controller.removeListener(_handleControllerChange);

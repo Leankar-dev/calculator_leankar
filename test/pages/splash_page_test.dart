@@ -1,5 +1,6 @@
 import 'package:calculator_05122025/controllers/splash_controller.dart';
 import 'package:calculator_05122025/pages/splash_page.dart';
+import 'package:calculator_05122025/utils/constants/app_colors.dart';
 import 'package:calculator_05122025/utils/constants/app_splash_timeline.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/splash_status.dart';
@@ -100,6 +101,45 @@ void main() {
 
       expect(controller.state.status, SplashStatus.running);
       expect(controller.state.reduceMotion, isFalse);
+    });
+
+    testWidgets('a coreografia só começa depois da troca com a splash nativa', (
+      tester,
+    ) async {
+      Color firstGradientColor() {
+        final box = tester.widget<DecoratedBox>(
+          find.descendant(
+            of: find.byType(SplashBackgroundWidget),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        final gradient = (box.decoration as BoxDecoration).gradient!;
+        return (gradient as LinearGradient).colors.first;
+      }
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pump(
+        AppSplashTimeline.nativeHandoffDelay - const Duration(milliseconds: 50),
+      );
+      expect(firstGradientColor(), AppColors.splashNativeFlat);
+
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(firstGradientColor(), isNot(AppColors.splashNativeFlat));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('toque durante a espera da troca nativa também pula', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pump(const Duration(milliseconds: 50));
+
+      await tester.tap(find.byType(SplashPage));
+      await tester.pumpAndSettle();
+
+      expect(find.text(destinationText), findsOneWidget);
+      expect(find.byType(SplashPage), findsNothing);
     });
 
     testWidgets('ao fim da animação navega para o destino e sai da árvore', (
