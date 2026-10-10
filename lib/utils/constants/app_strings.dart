@@ -18,7 +18,7 @@ class AppStrings {
   static const String initialDisplayValue = '0';
 
   static const String appTitle = 'Calculator App';
-  static const String appName = 'Leankar Calc';
+  static const String appName = 'Calculator Leankar';
   static const String logoAssetPath = 'assets/images/logo5.png';
   static const String splashLogoAssetPath =
       'assets/images/logo_home_fundo_transparente.png';
