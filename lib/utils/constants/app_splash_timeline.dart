@@ -3,7 +3,7 @@ import 'package:flutter/animation.dart';
 class AppSplashTimeline {
   AppSplashTimeline._();
 
-  static const Duration totalDuration = Duration(milliseconds: 1800);
+  static const Duration totalDuration = Duration(milliseconds: 3500);
   static const Duration skipDuration = Duration(milliseconds: 280);
   static const Duration routeTransitionDuration = Duration(milliseconds: 350);
   static const Duration reducedMotionHold = Duration(milliseconds: 500);
