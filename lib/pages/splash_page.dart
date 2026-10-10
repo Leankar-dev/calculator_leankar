@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:calculator_05122025/controllers/splash_controller.dart';
 import 'package:calculator_05122025/l10n/app_localizations.dart';
 import 'package:calculator_05122025/utils/constants/app_colors.dart';
-import 'package:calculator_05122025/utils/constants/app_sizes.dart';
 import 'package:calculator_05122025/utils/constants/app_splash_timeline.dart';
 import 'package:calculator_05122025/utils/constants/app_strings.dart';
 import 'package:calculator_05122025/utils/enums/splash_status.dart';
@@ -151,19 +150,9 @@ class _SplashPageState extends State<SplashPage>
         pageBuilder: (context, animation, secondaryAnimation) =>
             widget.nextPageBuilder(context),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final fade = FadeTransition(
+          return FadeTransition(
             opacity: animation.drive(CurveTween(curve: Curves.easeOut)),
             child: child,
-          );
-          if (reduceMotion) return fade;
-          return ScaleTransition(
-            scale: animation.drive(
-              Tween<double>(
-                begin: AppSizes.splashRouteStartScale,
-                end: 1.0,
-              ).chain(CurveTween(curve: Curves.easeOut)),
-            ),
-            child: fade,
           );
         },
       ),

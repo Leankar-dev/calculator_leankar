@@ -239,7 +239,6 @@ class AppSizes {
   static const double splashLogoPressScale = 0.95;
   static const double splashLogoReleaseScale = 1.03;
   static const double splashLogoExitScale = 1.06;
-  static const double splashRouteStartScale = 0.98;
   static const double splashKeyLabelFactor = 0.5;
   static const double splashKeyBurstSpan = 0.5;
   static const double splashKeyEntryRotation = 0.8;
